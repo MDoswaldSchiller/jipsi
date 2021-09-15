@@ -77,7 +77,7 @@ class MultiDocJob extends Job implements MultiDocPrintJob
   private void createJob(PrintRequestAttributeSet attributes)
   {
     IppRequest request = null;
-    request = this.printService.request(OperationsSupported.CREATE_JOB);
+    request = this.printService.createRequest(OperationsSupported.CREATE_JOB);
     //add the operationn attributes
     request.addOperationAttributes(AttributeHelper.jobOperationAttributes(attributes));
     request.setJobAttributes(AttributeHelper.jobAttributes(attributes));
@@ -91,8 +91,8 @@ class MultiDocJob extends Job implements MultiDocPrintJob
     if (response != null) {
       AttributeMap responseAttributes = response.getAttributes();
       if (responseAttributes.containsCategory(IppAttributeName.JOB_URI.getCategory())) {
-        Set jobUriSet = (Set) responseAttributes.get(IppAttributeName.JOB_URI.getCategory());
-        this.jobUri = (JobUri) jobUriSet.iterator().next();
+        Set<JobUri> jobUriSet = responseAttributes.get(IppAttributeName.JOB_URI.getCategory());
+        this.jobUri = jobUriSet.iterator().next();
       }
       if (response.getStatus().equals(IppStatus.SUCCESSFUL_OK)
           || response.getStatus().equals(IppStatus.SUCCESSFUL_OK_CONFLICTING_ATTRIBUTES)
@@ -128,8 +128,8 @@ class MultiDocJob extends Job implements MultiDocPrintJob
     if (response != null) {
       AttributeMap responseAttributes = response.getAttributes();
       if (responseAttributes.containsCategory(IppAttributeName.JOB_URI.getCategory())) {
-        Set jobUriSet = (Set) responseAttributes.get(IppAttributeName.JOB_URI.getCategory());
-        this.jobUri = (JobUri) jobUriSet.iterator().next();
+        Set<JobUri> jobUriSet = responseAttributes.get(IppAttributeName.JOB_URI.getCategory());
+        this.jobUri = jobUriSet.iterator().next();
       }
       if (response.getStatus().equals(IppStatus.SUCCESSFUL_OK)
           || response.getStatus().equals(IppStatus.SUCCESSFUL_OK_CONFLICTING_ATTRIBUTES)

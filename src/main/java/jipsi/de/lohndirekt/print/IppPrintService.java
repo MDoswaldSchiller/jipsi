@@ -20,13 +20,13 @@ package jipsi.de.lohndirekt.print;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.print.DocFlavor;
 import javax.print.DocPrintJob;
 import javax.print.PrintException;
@@ -46,6 +46,7 @@ import jipsi.de.lohndirekt.print.attribute.ipp.printerdesc.supported.DocumentFor
 import jipsi.de.lohndirekt.print.attribute.ipp.printerdesc.supported.OperationsSupported;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static jipsi.de.lohndirekt.print.attribute.ipp.printerdesc.supported.OperationsSupported.GET_PRINTER_ATTRIBUTES;
 
 /**
  * @author bpusch
@@ -67,7 +68,7 @@ public class IppPrintService implements PrintService
    */
   public IppPrintService(URI uri)
   {
-    this.uri = uri;
+    this.uri = Objects.requireNonNull(uri);
   }
 
   /**
@@ -114,8 +115,8 @@ public class IppPrintService implements PrintService
     PrintServiceAttributeSet set = new HashPrintServiceAttributeSet();
     for (Iterator<Set<Attribute>> valueIter = getAllAttributes().valueIterator(); valueIter.hasNext();) {
       Set<Attribute> values = valueIter.next();
-      for (Iterator listIter = values.iterator(); listIter.hasNext();) {
-        Attribute attribute = (Attribute) listIter.next();
+      for (var listIter = values.iterator(); listIter.hasNext();) {
+        Attribute attribute = listIter.next();
         if (attribute instanceof PrintServiceAttribute) {
           set.add(attribute);
         }
@@ -130,14 +131,13 @@ public class IppPrintService implements PrintService
   @Override
   public PrintServiceAttribute getAttribute(Class category)
   {
-    if (category == null) {
-      throw new NullPointerException("category must not be null");
-    }
+    Objects.requireNonNull(category, "category must not be null");
+    
     //TODO As CUPS seems not to support this operation-tag (requested-attributes), we need to get all attributes
-    Set attributes = (Set) getAllAttributes().get(category);
-    if (attributes != null) {
+    Set<Attribute> attr = getAllAttributes().get(category);
+    if (!attr.isEmpty()) {
       try {
-        return (PrintServiceAttribute) attributes.iterator().next();
+        return (PrintServiceAttribute) attr.iterator().next();
       }
       catch (ClassCastException e) {
         throw new IllegalArgumentException("category must be a Class that implements interface PrintServiceAttribute");
@@ -153,48 +153,52 @@ public class IppPrintService implements PrintService
   public DocFlavor[] getSupportedDocFlavors()
   {
     if (supportedFlavors == null) {
-      List flavors = new ArrayList();
-      Set flavorAttributes
-          = (Set) getAllAttributes().get(IppAttributeName.DOCUMENT_FORMAT_SUPORTED.getCategory());
-      if (flavorAttributes != null) {
-        for (Iterator iter = flavorAttributes.iterator(); iter.hasNext();) {
-          Attribute attribute = (Attribute) iter.next();
-          String mimeType = ((DocumentFormatSupported) attribute).getValue();
-          if (mimeType.equals(DocFlavor.BYTE_ARRAY.AUTOSENSE.getMimeType())) {
-            flavors.add(DocFlavor.INPUT_STREAM.AUTOSENSE);
-          }
-          else if (mimeType.equals(DocFlavor.BYTE_ARRAY.GIF.getMimeType())) {
-            flavors.add(DocFlavor.INPUT_STREAM.GIF);
-          }
-          else if (mimeType.equals(DocFlavor.BYTE_ARRAY.JPEG.getMimeType())) {
-            flavors.add(DocFlavor.INPUT_STREAM.JPEG);
-          }
-          else if (mimeType.equals(DocFlavor.BYTE_ARRAY.PCL.getMimeType())) {
-            flavors.add(DocFlavor.INPUT_STREAM.PCL);
-          }
-          else if (mimeType.equals(DocFlavor.BYTE_ARRAY.PDF.getMimeType())) {
-            flavors.add(DocFlavor.INPUT_STREAM.PDF);
-          }
-          else if (mimeType.equals(DocFlavor.BYTE_ARRAY.POSTSCRIPT.getMimeType())) {
-            flavors.add(DocFlavor.INPUT_STREAM.POSTSCRIPT);
-          }
-          else if (mimeType.equals(DocFlavor.BYTE_ARRAY.PNG.getMimeType())) {
-            flavors.add(DocFlavor.INPUT_STREAM.PNG);
-          }
-          else if (mimeType.equals(DocFlavor.BYTE_ARRAY.TEXT_HTML_HOST.getMimeType().substring(0, 9))) {
-            flavors.add(DocFlavor.INPUT_STREAM.TEXT_HTML_HOST);
-          }
-          else if (mimeType.equals(DocFlavor.BYTE_ARRAY.TEXT_PLAIN_HOST.getMimeType().substring(0, 10))) {
-            flavors.add(DocFlavor.INPUT_STREAM.TEXT_PLAIN_HOST);
-          }
-        }
-      }
-      DocFlavor[] flavorArray = new DocFlavor[flavors.size()];
-      flavorArray = (DocFlavor[]) flavors.toArray(flavorArray);
-      supportedFlavors = flavorArray;
+      Set<DocumentFormatSupported> flavorAttributes = getAllAttributes().get(IppAttributeName.DOCUMENT_FORMAT_SUPORTED.getCategory());
+
+      supportedFlavors = flavorAttributes.stream()
+          .map(attr -> getDocFlavor(attr.getValue()))
+          .filter(Objects::nonNull)
+          .collect(Collectors.toList())
+          .toArray(new DocFlavor[0]);
     }
     return supportedFlavors;
   }
+  
+  private DocFlavor getDocFlavor(String mimeType)
+  {
+    DocFlavor docFlavor = null;
+    
+    if (mimeType.equals(DocFlavor.BYTE_ARRAY.AUTOSENSE.getMimeType())) {
+      docFlavor = DocFlavor.INPUT_STREAM.AUTOSENSE;
+    }
+    else if (mimeType.equals(DocFlavor.BYTE_ARRAY.GIF.getMimeType())) {
+      docFlavor = DocFlavor.INPUT_STREAM.GIF;
+    }
+    else if (mimeType.equals(DocFlavor.BYTE_ARRAY.JPEG.getMimeType())) {
+      docFlavor = DocFlavor.INPUT_STREAM.JPEG;
+    }
+    else if (mimeType.equals(DocFlavor.BYTE_ARRAY.PCL.getMimeType())) {
+      docFlavor = DocFlavor.INPUT_STREAM.PCL;
+    }
+    else if (mimeType.equals(DocFlavor.BYTE_ARRAY.PDF.getMimeType())) {
+      docFlavor = DocFlavor.INPUT_STREAM.PDF;
+    }
+    else if (mimeType.equals(DocFlavor.BYTE_ARRAY.POSTSCRIPT.getMimeType())) {
+      docFlavor = DocFlavor.INPUT_STREAM.POSTSCRIPT;
+    }
+    else if (mimeType.equals(DocFlavor.BYTE_ARRAY.PNG.getMimeType())) {
+      docFlavor = DocFlavor.INPUT_STREAM.PNG;
+    }
+    else if (mimeType.equals(DocFlavor.BYTE_ARRAY.TEXT_HTML_HOST.getMimeType().substring(0, 9))) {
+      docFlavor = DocFlavor.INPUT_STREAM.TEXT_HTML_HOST;
+    }
+    else if (mimeType.equals(DocFlavor.BYTE_ARRAY.TEXT_PLAIN_HOST.getMimeType().substring(0, 10))) {
+      docFlavor = DocFlavor.INPUT_STREAM.TEXT_PLAIN_HOST;
+    }
+    return docFlavor;
+  }
+  
+  
 
   /* (non-Javadoc)
 	 * @see javax.print.PrintService#isDocFlavorSupported(javax.print.DocFlavor)
@@ -202,8 +206,7 @@ public class IppPrintService implements PrintService
   @Override
   public boolean isDocFlavorSupported(DocFlavor flavor)
   {
-    List supportedFlavors = Arrays.asList(getSupportedDocFlavors());
-    return supportedFlavors.contains(flavor);
+    return Arrays.asList(getSupportedDocFlavors()).contains(flavor);
   }
 
   /* (non-Javadoc)
@@ -289,43 +292,43 @@ public class IppPrintService implements PrintService
     if (category.equals(IppAttributeName.JOB_PRIORIY.getCategory())) {
       Attribute attr = getAttribute(IppAttributeName.JOB_PRIORITY_DEFAULT.getCategory());
       if (attr != null) {
-        value = new Integer(((IntegerSyntax) attr).getValue());
+        value = ((IntegerSyntax)attr).getValue();
       }
     }
     else if (category.equals(IppAttributeName.JOB_HOLD_UNTIL.getCategory())) {
       Attribute attr = getAttribute(IppAttributeName.JOB_HOLD_UNTIL.getCategory());
       if (attr != null) {
-        value = new Integer(((TextSyntax) attr).getValue());
+        value = ((TextSyntax)attr).getValue();
       }
     }
     else if (category.equals(IppAttributeName.JOB_SHEETS_DEFAULT.getCategory())) {
       Attribute attr = getAttribute(IppAttributeName.JOB_SHEETS_DEFAULT.getCategory());
       if (attr != null) {
-        value = new Integer(((TextSyntax) attr).getValue());
+        value = ((TextSyntax)attr).getValue();
       }
     }
     else if (category.equals(IppAttributeName.COPIES.getCategory())) {
       Attribute attr = getAttribute(IppAttributeName.COPIES_DEFAULT.getCategory());
       if (attr != null) {
-        value = new Integer(((IntegerSyntax) attr).getValue());
+        value = ((IntegerSyntax) attr).getValue();
       }
     }
     else if (category.equals(IppAttributeName.FINISHINGS.getCategory())) {
       Attribute attr = getAttribute(IppAttributeName.FINISHINGS_DEFAULT.getCategory());
       if (attr != null) {
-        value = new Integer(((IntegerSyntax) attr).toString());
+        value = ((IntegerSyntax) attr).toString();
       }
     }
     else if (category.equals(IppAttributeName.SIDES.getCategory())) {
       Attribute attr = getAttribute(IppAttributeName.SIDES_DEFAULT.getCategory());
       if (attr != null) {
-        value = new Integer(((TextSyntax) attr).getValue());
+        value = ((TextSyntax) attr).getValue();
       }
     }
     else if (category.equals(IppAttributeName.NUMBER_UP.getCategory())) {
       Attribute attr = getAttribute(IppAttributeName.NUMBER_UP_DEFAULT.getCategory());
       if (attr != null) {
-        value = new Integer(((IntegerSyntax) attr).getValue());
+        value = ((IntegerSyntax) attr).getValue();
       }
     }
     else if (category.equals(IppAttributeName.ORIENTATION_REQUESTED.getCategory())) {
@@ -394,7 +397,7 @@ public class IppPrintService implements PrintService
     else if (category.equals(IppAttributeName.MEDIA.getCategory())) {
       supportedAttributes = getAllAttributes().get(IppAttributeName.MEDIA_SUPPORTED.getCategory());
     }
-    else if (category.equals(IppAttributeName.PRINTER_RESOLUTION)) {
+    else if (category.equals(IppAttributeName.PRINTER_RESOLUTION.getCategory())) {
       //printer-resolution-supported attribute currently not implemented
     }
     else if (category.equals(IppAttributeName.PRINT_QUALITY.getCategory())) {
@@ -431,7 +434,7 @@ public class IppPrintService implements PrintService
     if (flavor != null) {
       operationAttributes.add(new DocumentFormat(flavor.getMimeType(), Locale.getDefault()));
     }
-    IppRequest request = this.request(OperationsSupported.VALIDATE_JOB);
+    IppRequest request = this.createRequest(OperationsSupported.VALIDATE_JOB);
     if (attributes == null) {
       attributes = new HashAttributeSet();
     }
@@ -517,20 +520,18 @@ public class IppPrintService implements PrintService
    */
   private AttributeMap getAllAttributes()
   {
-    if (this.attributes == null) {
-      IppRequest request = this.request(OperationsSupported.GET_PRINTER_ATTRIBUTES);
-      IppResponse response = null;
+    if (attributes == null) {
       try {
-        response = request.send();
+        IppResponse response = createRequest(GET_PRINTER_ATTRIBUTES).send();
+        if (response != null) {
+          attributes = response.getAttributes();
+        }
       }
-      catch (IOException e) {
-        LOG.error(e.getMessage(), e);
-      }
-      if (response != null) {
-        this.attributes = response.getAttributes();
+      catch (IOException ex) {
+        LOG.error("Error calling Get-Printer-Attributes", ex);
       }
     }
-    return this.attributes;
+    return attributes;
   }
 
   @Override
@@ -543,7 +544,7 @@ public class IppPrintService implements PrintService
    * @param operation
    * @return
    */
-  protected IppRequest request(OperationsSupported operation)
+  protected IppRequest createRequest(OperationsSupported operation)
   {
     IppRequest request = IppRequestFactory.createIppRequest(this.uri, operation, this.getRequestingUserName(), this.getRequestingUserPassword());
     AttributeSet operationAttributes = new HashAttributeSet();

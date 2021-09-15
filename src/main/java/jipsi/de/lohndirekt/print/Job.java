@@ -100,7 +100,7 @@ class Job implements DocPrintJob
   public void print(Doc doc, PrintRequestAttributeSet attributes) throws PrintException
   {
     IppRequest request = null;
-    request = this.printService.request(OperationsSupported.PRINT_JOB);
+    request = this.printService.createRequest(OperationsSupported.PRINT_JOB);
     try {
       request.setData(doc.getStreamForBytes());
     }
@@ -131,8 +131,8 @@ class Job implements DocPrintJob
           || response.getStatus().equals(IppStatus.SUCCESSFUL_OK_CONFLICTING_ATTRIBUTES)
           || response.getStatus().equals(IppStatus.SUCCESSFUL_OK_IGNORED_OR_SUBSTITUTED_ATTRIBUTES)) {
         if (responseAttributes.containsCategory(IppAttributeName.JOB_URI.getCategory())) {
-          Set jobUriList = (Set) responseAttributes.get(IppAttributeName.JOB_URI.getCategory());
-          this.jobUri = (JobUri) jobUriList.iterator().next();
+          Set<JobUri> jobUriList = responseAttributes.get(IppAttributeName.JOB_URI.getCategory());
+          this.jobUri = jobUriList.iterator().next();
         }
         notifyJobListeners(PrintJobEvent.JOB_COMPLETE);
         this.ok = true;

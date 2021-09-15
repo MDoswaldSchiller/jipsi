@@ -4,6 +4,7 @@
  */
 package jipsi.de.lohndirekt.print.attribute;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -34,9 +35,11 @@ public final class AttributeMap
     values.add(attribute);
   }
   
-  public Set<Attribute> get(Class<? extends Attribute> category)
+  @SuppressWarnings("unchecked")
+  public <T extends Attribute> Set<T> get(Class<T> category)
   {
-    return attributes.get(category);
+    Set<T> set = (Set<T>)attributes.get(category);
+    return set != null ? set : Collections.emptySet();
   }
   
   public Iterator<Set<Attribute>> valueIterator()

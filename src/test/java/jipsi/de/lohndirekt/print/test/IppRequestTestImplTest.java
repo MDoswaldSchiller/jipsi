@@ -45,14 +45,13 @@ public class IppRequestTestImplTest extends TestCase
     Class unknownAttributeCategory = new UnknownAttribute("x", Locale.getDefault()).getCategory();
     IppRequest request = new IppRequestTestImpl(new URI("http://127.0.0.1"), OperationsSupported.GET_PRINTER_ATTRIBUTES);
     AttributeMap attributes = request.send().getAttributes();
-    for (Iterator iter = attributes.keyIterator(); iter.hasNext();) {
-      Class category = (Class) iter.next();
+    for (Iterator<Class<? extends Attribute>> iter = attributes.keyIterator(); iter.hasNext();) {
+      Class<? extends Attribute> category = iter.next();
       //Should not return any unknown Attributes
       assertFalse(category.equals(unknownAttributeCategory));
-      Set attrs = (Set) attributes.get(category);
+      Set<? extends Attribute> attrs = attributes.get(category);
       assertNotNull(attrs);
-      for (Iterator iterator = attrs.iterator(); iterator.hasNext();) {
-        Attribute element = (Attribute) iterator.next();
+      for (Attribute element : attrs) {
         assertEquals(category, element.getCategory());
       }
     }

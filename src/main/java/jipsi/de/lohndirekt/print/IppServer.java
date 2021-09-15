@@ -21,11 +21,9 @@ package jipsi.de.lohndirekt.print;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import javax.print.attribute.Attribute;
 import javax.print.attribute.URISyntax;
 import javax.print.attribute.standard.RequestingUserName;
 import jipsi.de.lohndirekt.print.attribute.IppAttributeName;
@@ -80,16 +78,13 @@ class IppServer
     }
     List services = new ArrayList();
     if (response != null) {
-      Set uriAttributes = (Set) response.getAttributes().get(IppAttributeName.PRINTER_URI_SUPPORTED.getCategory());
-      if (uriAttributes != null) {
-        for (Iterator iter = uriAttributes.iterator(); iter.hasNext();) {
-          Attribute attribute = (Attribute) iter.next();
-          URI printerUri = ((URISyntax) attribute).getURI();
-          IppPrintService service = new IppPrintService(printerUri);
-          service.setRequestingUserName(user);
-          service.setRequestingUserPassword(passwd);
-          services.add(service);
-        }
+      Set<URISyntax> uriAttributes = response.getAttributes().get(IppAttributeName.PRINTER_URI_SUPPORTED.getCategory());
+      for (URISyntax element : uriAttributes) {
+        URI printerUri = element.getURI();
+        IppPrintService service = new IppPrintService(printerUri);
+        service.setRequestingUserName(user);
+        service.setRequestingUserPassword(passwd);
+        services.add(service);
       }
     }
     return services;
