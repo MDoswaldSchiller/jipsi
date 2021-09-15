@@ -2,26 +2,22 @@ package jipsi.de.lohndirekt.print.exception;
 
 /**
  *
- * Exception used to signal that the EndAttributes tag has been
- * reached while parsing an IppResponse
+ * Exception used to signal that the EndAttributes tag has been reached while
+ * parsing an IppResponse
  *
  * @author bpusch
  *
  */
-public class EndOfAttributesException extends Exception {
+public class EndOfAttributesException extends Exception
+{
 
-
-
-
-
-
-
-	/* (Kein Javadoc)
+  /* (Kein Javadoc)
 	 * @see java.lang.Throwable#fillInStackTrace()
-	 */
+   */
   @Override
-	public synchronized Throwable fillInStackTrace() {
-		return this;
-	}
+  public synchronized Throwable fillInStackTrace()
+  {
+    return this;
+  }
 
 }

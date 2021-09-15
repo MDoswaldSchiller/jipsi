@@ -6,7 +6,6 @@
 package jipsi.de.lohndirekt.print.attribute.ipp.jobdesc;
 
 import java.util.Locale;
-
 import javax.print.attribute.standard.JobStateReason;
 
 /**
@@ -14,29 +13,31 @@ import javax.print.attribute.standard.JobStateReason;
  *
  *
  */
-public class LdJobStateReason extends JobStateReason {
+public class LdJobStateReason extends JobStateReason
+{
 
-    private String stringValue;
+  private String stringValue;
 
-    public static LdJobStateReason NONE = new LdJobStateReason("none", Locale.getDefault(), -1);
+  public static LdJobStateReason NONE = new LdJobStateReason("none", Locale.getDefault(), -1);
 
-    /**
-     * @param value
-     */
-    private LdJobStateReason(String stringValue, Locale locale, int value) {
-        super(value);
-        this.stringValue = stringValue;
+  /**
+   * @param value
+   */
+  private LdJobStateReason(String stringValue, Locale locale, int value)
+  {
+    super(value);
+    this.stringValue = stringValue;
+  }
+
+  @Override
+  public String toString()
+  {
+    if (this.stringValue != null) {
+      return this.stringValue;
     }
-
-    @Override
-   public String toString(){
-       if (this.stringValue != null){
-           return this.stringValue;
-       } else {
-           return super.toString();
-       }
-   }
-
-
+    else {
+      return super.toString();
+    }
+  }
 
 }

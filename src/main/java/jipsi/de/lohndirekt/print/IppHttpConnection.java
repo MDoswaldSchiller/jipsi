@@ -1,19 +1,19 @@
 /**
  * Copyright (C) 2003 <a href="http://www.lohndirekt.de/">lohndirekt.de</a>
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  */
 package jipsi.de.lohndirekt.print;
@@ -39,96 +39,105 @@ import org.slf4j.LoggerFactory;
  * @author sefftinge
  *
  */
-class IppHttpConnection implements IppConnection {
+class IppHttpConnection implements IppConnection
+{
 
-    private static final Logger LOG = LoggerFactory.getLogger(IppHttpConnection.class);
+  private static final Logger LOG = LoggerFactory.getLogger(IppHttpConnection.class);
 
-    private HttpClient httpConn;
+  private HttpClient httpConn;
 
-    private PostMethod method;
+  private PostMethod method;
 
-    /**
-     * @param uri
-     * @param user
-     * @param passwd
-     * @param useStream
-     */
-    public IppHttpConnection(URI uri, String user, String passwd) {
-        try {
-            httpConn = new HttpClient();
-            method = new PostMethod(toHttpURI(uri).toString());
-            method.addRequestHeader("Content-type", "application/ipp");
-            method.addRequestHeader("Accept", "text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2");
-            method.setRequestContentLength(EntityEnclosingMethod.CONTENT_LENGTH_AUTO);
-            // authentication
-            if (user != null && user.trim().length() > 0) {
-                LOG.debug("Using username: {}, passwd.length: {}", user, passwd.length());
-                method.setDoAuthentication(true);
-                Credentials creds = new UsernamePasswordCredentials(user,
-                        passwd);
-                httpConn.getState().setCredentials(null,
-                        toHttpURI(uri).getHost(), creds);
+  /**
+   * @param uri
+   * @param user
+   * @param passwd
+   * @param useStream
+   */
+  public IppHttpConnection(URI uri, String user, String passwd)
+  {
+    try {
+      httpConn = new HttpClient();
+      method = new PostMethod(toHttpURI(uri).toString());
+      method.addRequestHeader("Content-type", "application/ipp");
+      method.addRequestHeader("Accept", "text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2");
+      method.setRequestContentLength(EntityEnclosingMethod.CONTENT_LENGTH_AUTO);
+      // authentication
+      if (user != null && user.trim().length() > 0) {
+        LOG.debug("Using username: {}, passwd.length: {}", user, passwd.length());
+        method.setDoAuthentication(true);
+        Credentials creds = new UsernamePasswordCredentials(user,
+                                                            passwd);
+        httpConn.getState().setCredentials(null,
+                                           toHttpURI(uri).getHost(), creds);
 
-            }
+      }
 
-        } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
-        }
     }
-
-
-    /**
-     * @return content of the response
-     * @throws IOException
-     */
-    @Override
-    public InputStream getIppResponse() throws IOException {
-        return method.getResponseBodyAsStream();
+    catch (Exception e) {
+      LOG.error(e.getMessage(), e);
     }
+  }
 
-    /**
-     * @return the statuscode of last request
-     * @throws IOException
-     */
-    @Override
-    public int getStatusCode() throws IOException {
-        return method.getStatusCode();
-    }
+  /**
+   * @return content of the response
+   * @throws IOException
+   */
+  @Override
+  public InputStream getIppResponse() throws IOException
+  {
+    return method.getResponseBodyAsStream();
+  }
 
-    private static URI toHttpURI(URI uri) {
-        if (uri.getScheme().equals("ipp")) {
-            String uriString = uri.toString().replaceFirst("ipp", "http");
-            // TODO remove this hack!
+  /**
+   * @return the statuscode of last request
+   * @throws IOException
+   */
+  @Override
+  public int getStatusCode() throws IOException
+  {
+    return method.getStatusCode();
+  }
+
+  private static URI toHttpURI(URI uri)
+  {
+    if (uri.getScheme().equals("ipp")) {
+      String uriString = uri.toString().replaceFirst("ipp", "http");
+      // TODO remove this hack!
 //            uriString = uriString.replaceAll("(\\d{1,3}\\.){3}\\d{1,3}:\\d{1,}", "127.0.0.1:631");
-            // endof hack
-            try {
-                uri = new URI(uriString);
-            } catch (URISyntaxException e) {
-                throw new RuntimeException("toHttpURI buggy? : uri was " + uri);
-            }
-        }
-        return uri;
+      // endof hack
+      try {
+        uri = new URI(uriString);
+      }
+      catch (URISyntaxException e) {
+        throw new RuntimeException("toHttpURI buggy? : uri was " + uri);
+      }
     }
+    return uri;
+  }
 
-    /**
-     * @param stream
-     */
-    @Override
-    public void setIppRequest(InputStream stream) {
-        method.setRequestBody(stream);
-    }
+  /**
+   * @param stream
+   */
+  @Override
+  public void setIppRequest(InputStream stream)
+  {
+    method.setRequestBody(stream);
+  }
 
-    @Override
-    public boolean execute() throws HttpException, IOException {
-        if (this.method.validate()) {
-            httpConn.executeMethod(method);
-            if (this.getStatusCode()==HttpURLConnection.HTTP_UNAUTHORIZED) {
-                throw new AuthenticationException(method.getStatusText());
-            }
-            return true;
-        } else {
-            return false;
-        }
+  @Override
+  public boolean execute() throws HttpException, IOException
+  {
+    if (this.method.validate()) {
+      httpConn.executeMethod(method);
+      if (this.getStatusCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
+        throw new AuthenticationException(method.getStatusText());
+      }
+      return true;
     }
+    else {
+      return false;
+    }
+  }
 
 }
