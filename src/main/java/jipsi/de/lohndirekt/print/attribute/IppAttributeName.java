@@ -155,183 +155,158 @@ import org.slf4j.LoggerFactory;
  * @author bpusch
  *
  */
-public final class IppAttributeName
+public enum IppAttributeName
 {
-
-  private final static Logger LOG = LoggerFactory.getLogger(IppAttributeName.class);
-
   /*
 	 * Attributes defined in javax.print.attribute.standard
    */
-  public static final IppAttributeName COLOR_SUPPORTED = new IppAttributeName(ColorSupported.SUPPORTED);
-  public static final IppAttributeName COMPRESSION = new IppAttributeName(Compression.NONE);
-  public static final IppAttributeName COPIES = new IppAttributeName(new Copies(1));
-  public static final IppAttributeName COPIES_SUPPORTED = new IppAttributeName(new CopiesSupported(1));
-  public static final IppAttributeName DATE_TIME_AT_COMPLETION = new IppAttributeName(new DateTimeAtCompleted(new Date()));
-  public static final IppAttributeName DATE_TIME_AT_CREATION = new IppAttributeName(new DateTimeAtCreation(new Date()));
-  public static final IppAttributeName DATE_TIME_AT_PROCESSING = new IppAttributeName(new DateTimeAtProcessing(new Date()));
-  public static final IppAttributeName DOCUMENT_NAME = new IppAttributeName(new DocumentName("", Locale.CANADA));
-  public static final IppAttributeName FIDELITY = new IppAttributeName(Fidelity.FIDELITY_TRUE);
-  public static final IppAttributeName FINISHINGS = new IppAttributeName(Finishings.BIND);
-  public static final IppAttributeName JOB_IMPRESSIONS = new IppAttributeName(new JobImpressions(1));
-  public static final IppAttributeName JOB_IMPRESSIONS_COMPLETED = new IppAttributeName(new JobImpressionsCompleted(1));
-  public static final IppAttributeName JOB_IMPRESSIONS_SUPPORTED = new IppAttributeName(new JobImpressionsSupported(1, 1));
-  public static final IppAttributeName JOB_K_OCTETS = new IppAttributeName(new JobKOctets(1));
-  public static final IppAttributeName JOB_K_OCTETS_PROCESSED = new IppAttributeName(new JobKOctetsProcessed(1));
-  public static final IppAttributeName JOB_K_OCTETS_SUPPORTED = new IppAttributeName(new JobKOctetsSupported(1, 1));
-  public static final IppAttributeName JOB_MEDIA_SHEETS = new IppAttributeName(new JobMediaSheets(1));
-  public static final IppAttributeName JOB_MEDIA_SHEETS_COMPLETED = new IppAttributeName(new JobMediaSheetsCompleted(1));
-  public static final IppAttributeName JOB_MEDIA_SHEETS_SUPPORTED = new IppAttributeName(new JobMediaSheetsSupported(1, 1));
-  public static final IppAttributeName JOB_MESSAGE_FROM_OPERATOR = new IppAttributeName(new JobMessageFromOperator("", Locale.CANADA));
-  public static final IppAttributeName JOB_NAME = new IppAttributeName(new JobName("", Locale.CANADA));
-  public static final IppAttributeName JOB_ORIGINATING_USER_NAME = new IppAttributeName(new JobOriginatingUserName("", Locale.CANADA));
-  public static final IppAttributeName JOB_PRIORIY = new IppAttributeName(new JobPriority(1));
-  public static final IppAttributeName JOB_PRIORIY_SUPPORTED = new IppAttributeName(new JobPrioritySupported(1));
-  public static final IppAttributeName JOB_SHEETS = new IppAttributeName(JobSheets.NONE);
-  public static final IppAttributeName JOB_STATE = new IppAttributeName(JobState.ABORTED);
-  public static final IppAttributeName JOB_STATE_REASON = new IppAttributeName(JobStateReason.ABORTED_BY_SYSTEM);
-  public static final IppAttributeName JOB_STATE_REASONS = new IppAttributeName(new JobStateReasons());
+  COLOR_SUPPORTED(ColorSupported.SUPPORTED),
+  COMPRESSION(Compression.NONE),
+  COPIES(new Copies(1)),
+  COPIES_SUPPORTED(new CopiesSupported(1)),
+  DATE_TIME_AT_COMPLETION(new DateTimeAtCompleted(new Date())),
+  DATE_TIME_AT_CREATION(new DateTimeAtCreation(new Date())),
+  DATE_TIME_AT_PROCESSING(new DateTimeAtProcessing(new Date())),
+  DOCUMENT_NAME(new DocumentName("", Locale.CANADA)),
+  FIDELITY(Fidelity.FIDELITY_TRUE),
+  FINISHINGS(Finishings.BIND),
+  JOB_IMPRESSIONS(new JobImpressions(1)),
+  JOB_IMPRESSIONS_COMPLETED(new JobImpressionsCompleted(1)),
+  JOB_IMPRESSIONS_SUPPORTED(new JobImpressionsSupported(1, 1)),
+  JOB_K_OCTETS(new JobKOctets(1)),
+  JOB_K_OCTETS_PROCESSED(new JobKOctetsProcessed(1)),
+  JOB_K_OCTETS_SUPPORTED(new JobKOctetsSupported(1, 1)),
+  JOB_MEDIA_SHEETS(new JobMediaSheets(1)),
+  JOB_MEDIA_SHEETS_COMPLETED(new JobMediaSheetsCompleted(1)),
+  JOB_MEDIA_SHEETS_SUPPORTED(new JobMediaSheetsSupported(1, 1)),
+  JOB_MESSAGE_FROM_OPERATOR(new JobMessageFromOperator("", Locale.CANADA)),
+  JOB_NAME(new JobName("", Locale.CANADA)),
+  JOB_ORIGINATING_USER_NAME(new JobOriginatingUserName("", Locale.CANADA)),
+  JOB_PRIORIY(new JobPriority(1)),
+  JOB_PRIORIY_SUPPORTED(new JobPrioritySupported(1)),
+  JOB_SHEETS(JobSheets.NONE),
+  JOB_STATE(JobState.ABORTED),
+  JOB_STATE_REASON(JobStateReason.ABORTED_BY_SYSTEM),
+  JOB_STATE_REASONS(new JobStateReasons()),
+  
   //Could be MediaName,MediaSizeName or MediaTray
-  public static final IppAttributeName MEDIA = new IppAttributeName(MediaSizeName.A);
-  public static final IppAttributeName MULTIPLE_DOCUMENT_HANDLING
-      = new IppAttributeName(MultipleDocumentHandling.SEPARATE_DOCUMENTS_COLLATED_COPIES);
-  public static final IppAttributeName NUMBER_OF_DOCUMENTS = new IppAttributeName(new NumberOfDocuments(1));
-  public static final IppAttributeName NUMBER_OF_INTERVENING_JOBS = new IppAttributeName(new NumberOfInterveningJobs(1));
-  public static final IppAttributeName NUMBER_UP = new IppAttributeName(new NumberUp(1));
-  public static final IppAttributeName NUMBER_UP_SUPPORTED = new IppAttributeName(new NumberUpSupported(1));
-  public static final IppAttributeName ORIENTATION_REQUESTED = new IppAttributeName(OrientationRequested.LANDSCAPE);
-  public static final IppAttributeName OUTPUT_DEVICE_ASSIGNED
-      = new IppAttributeName(new OutputDeviceAssigned("", Locale.CANADA));
-  public static final IppAttributeName PAGE_RANGES = new IppAttributeName(new PageRanges(1));
-  public static final IppAttributeName PAGES_PER_MINUTE = new IppAttributeName(new PagesPerMinute(1));
-  public static final IppAttributeName PAGES_PER_MINUTE_COLOR = new IppAttributeName(new PagesPerMinuteColor(1));
-  public static final IppAttributeName PDL_OVERRIDE_SUPPORTED = new IppAttributeName(PDLOverrideSupported.ATTEMPTED);
-  public static final IppAttributeName PRESENTATION_DIRECTION = new IppAttributeName(PresentationDirection.TOBOTTOM_TOLEFT);
-  public static final IppAttributeName PRINTER_INFO = new IppAttributeName(new PrinterInfo("", Locale.CANADA));
-  public static final IppAttributeName PRINTER_IS_ACCEPTING_JOBS = new IppAttributeName(PrinterIsAcceptingJobs.ACCEPTING_JOBS);
-  public static final IppAttributeName PRINTER_LOCATION = new IppAttributeName(new PrinterLocation("", Locale.CANADA));
-  public static final IppAttributeName PRINTER_MAKE_AND_MODEL
-      = new IppAttributeName(new PrinterMakeAndModel("", Locale.CANADA));
-  public static final IppAttributeName PRINTER_MESSAGE_FROM_OPERATOR
-      = new IppAttributeName(new PrinterMessageFromOperator("", Locale.CANADA));
-  public static final IppAttributeName PRINTER_MORE_INFO = new IppAttributeName(new PrinterMoreInfo(IppAttributeName.getURI()));
-  public static final IppAttributeName PRINTER_MORE_INFO_MANUFACTURER
-      = new IppAttributeName(new PrinterMoreInfoManufacturer(IppAttributeName.getURI()));
-  public static final IppAttributeName PRINTER_NAME = new IppAttributeName(new PrinterName("", Locale.CANADA));
-  public static final IppAttributeName PRINTER_RESOLUTION = new IppAttributeName(new PrinterResolution(1, 1, 1));
-  public static final IppAttributeName PRINTER_STATE = new IppAttributeName(PrinterState.IDLE);
-  public static final IppAttributeName PRINTER_STATE_REASON = new IppAttributeName(PrinterStateReason.CONNECTING_TO_DEVICE);
-  public static final IppAttributeName PRINTER_STATE_REASONS = new IppAttributeName(new PrinterStateReasons());
-  public static final IppAttributeName PRINTER_URI = new IppAttributeName(new PrinterURI(IppAttributeName.getURI()));
-  public static final IppAttributeName PRINT_QUALITY = new IppAttributeName(PrintQuality.DRAFT);
-  public static final IppAttributeName QUEUED_JOB_COUNT = new IppAttributeName(new QueuedJobCount(1));
-  public static final IppAttributeName REFERENCE_URI_SCHEMES_SUPPORTED
-      = new IppAttributeName(ReferenceUriSchemesSupported.FILE);
-  public static final IppAttributeName REQUESTING_USER_NAME = new IppAttributeName(new RequestingUserName("", Locale.CANADA));
-  public static final IppAttributeName REQUESTING_USER_PASSWD = new IppAttributeName(new RequestingUserPassword("", Locale.CANADA));
-  public static final IppAttributeName SEVERITY = new IppAttributeName(Severity.ERROR);
-  public static final IppAttributeName SHEET_COLLATE = new IppAttributeName(SheetCollate.COLLATED);
-  public static final IppAttributeName SIDES = new IppAttributeName(Sides.DUPLEX);
+  MEDIA(MediaSizeName.A),
+  MULTIPLE_DOCUMENT_HANDLING(MultipleDocumentHandling.SEPARATE_DOCUMENTS_COLLATED_COPIES),
+  NUMBER_OF_DOCUMENTS(new NumberOfDocuments(1)),
+  NUMBER_OF_INTERVENING_JOBS(new NumberOfInterveningJobs(1)),
+  NUMBER_UP(new NumberUp(1)),
+  NUMBER_UP_SUPPORTED(new NumberUpSupported(1)),
+  ORIENTATION_REQUESTED(OrientationRequested.LANDSCAPE),
+  OUTPUT_DEVICE_ASSIGNED(new OutputDeviceAssigned("", Locale.CANADA)),
+  PAGE_RANGES(new PageRanges(1)),
+  PAGES_PER_MINUTE(new PagesPerMinute(1)),
+  PAGES_PER_MINUTE_COLOR(new PagesPerMinuteColor(1)),
+  PDL_OVERRIDE_SUPPORTED(PDLOverrideSupported.ATTEMPTED),
+  PRESENTATION_DIRECTION(PresentationDirection.TOBOTTOM_TOLEFT),
+  PRINTER_INFO(new PrinterInfo("", Locale.CANADA)),
+  PRINTER_IS_ACCEPTING_JOBS(PrinterIsAcceptingJobs.ACCEPTING_JOBS),
+  PRINTER_LOCATION(new PrinterLocation("", Locale.CANADA)),
+  PRINTER_MAKE_AND_MODEL(new PrinterMakeAndModel("", Locale.CANADA)),
+  PRINTER_MESSAGE_FROM_OPERATOR(new PrinterMessageFromOperator("", Locale.CANADA)),
+  PRINTER_MORE_INFO(new PrinterMoreInfo(IppAttributeName.getURI())),
+  PRINTER_MORE_INFO_MANUFACTURER(new PrinterMoreInfoManufacturer(IppAttributeName.getURI())),
+  PRINTER_NAME(new PrinterName("", Locale.CANADA)),
+  PRINTER_RESOLUTION(new PrinterResolution(1, 1, 1)),
+  PRINTER_STATE(PrinterState.IDLE),
+  PRINTER_STATE_REASON(PrinterStateReason.CONNECTING_TO_DEVICE),
+  PRINTER_STATE_REASONS(new PrinterStateReasons()),
+  PRINTER_URI(new PrinterURI(IppAttributeName.getURI())),
+  PRINT_QUALITY(PrintQuality.DRAFT),
+  QUEUED_JOB_COUNT(new QueuedJobCount(1)),
+  REFERENCE_URI_SCHEMES_SUPPORTED(ReferenceUriSchemesSupported.FILE),
+  REQUESTING_USER_NAME(new RequestingUserName("", Locale.CANADA)),
+  REQUESTING_USER_PASSWD(new RequestingUserPassword("", Locale.CANADA)),
+  SEVERITY(Severity.ERROR),
+  SHEET_COLLATE(SheetCollate.COLLATED),
+  SIDES(Sides.DUPLEX),
 
   /*
 	 * IPP standard attributes defined in de.lohndirekt.attribute.ipp
    */
-  public static final IppAttributeName CHARSET = new IppAttributeName(new Charset("x", Locale.getDefault()));
-  public static final IppAttributeName CHARSET_CONFIGURED
-      = new IppAttributeName(new CharsetConfigured("x", Locale.getDefault()));
-  public static final IppAttributeName CHARSET_SUPORTED = new IppAttributeName(new CharsetSupported("x", Locale.getDefault()));
-  public static final IppAttributeName COMPRESSION_SUPORTED
-      = new IppAttributeName(new CompressionSupported("x", Locale.getDefault()));
-  public static final IppAttributeName COPIES_DEFAULT = new IppAttributeName(new CopiesDefault(1));
-  public static final IppAttributeName DETAILED_STATUS_MESSAGE = new IppAttributeName(new DetailedStatusMessage("x", Locale.getDefault()));
-  public static final IppAttributeName DOCUMENT_FORMAT
-      = new IppAttributeName(new DocumentFormat("x", Locale.getDefault()));
-  public static final IppAttributeName DOCUMENT_FORMAT_SUPORTED
-      = new IppAttributeName(new DocumentFormatSupported("x", Locale.getDefault()));
-  public static final IppAttributeName DOCUMENT_FORMAT_DEFAULT
-      = new IppAttributeName(new DocumentFormatDefault("x", Locale.getDefault()));
-  public static final IppAttributeName FINISHINGS_DEFAULT = new IppAttributeName(new FinishingsDefault(1));
-  public static final IppAttributeName FINISHINGS_SUPPORTED = new IppAttributeName(new FinishingsSupported(1));
-  public static final IppAttributeName IPP_VERSIONS_SUPPORTED
-      = new IppAttributeName(new IppVersionsSupported("x", Locale.getDefault()));
-  public static final IppAttributeName JOB_HOLD_UNTIL = new IppAttributeName(new LdJobHoldUntil("x", Locale.getDefault()));
-  public static final IppAttributeName JOB_HOLD_UNTIL_DEFAULT = new IppAttributeName(new JobHoldUntilDefault("x", Locale.getDefault()));
-  public static final IppAttributeName JOB_HOLD_UNTIL_SUPPORTED = new IppAttributeName(new JobHoldUntilSupported("x", Locale.getDefault()));
-  public static final IppAttributeName JOB_ID = new IppAttributeName(new JobId(1));
-  public static final IppAttributeName JOB_MORE_INFO = new IppAttributeName(new JobMoreInfo(IppAttributeName.getURI()));
-  public static final IppAttributeName JOB_ORIGINATING_HOST_NAME
-      = new IppAttributeName(new JobOriginatingHostName("x", Locale.getDefault()));
-  public static final IppAttributeName JOB_PRINTER_UP_TIME = new IppAttributeName(new JobPrinterUpTime(1));
-  public static final IppAttributeName JOB_PRINTER_URI = new IppAttributeName(new JobPrinterUri(getURI()));
-  public static final IppAttributeName JOB_PRIORITY_DEFAULT = new IppAttributeName(new JobPriorityDefault(1));
-  public static final IppAttributeName JOB_SHEETS_DEFAULT
-      = new IppAttributeName(new JobSheetsDefault("x", Locale.getDefault()));
-  public static final IppAttributeName JOB_SHEETS_SUPORTED
-      = new IppAttributeName(new JobSheetsSupported("x", Locale.getDefault()));
-  public static final IppAttributeName JOB_URI
-      = new IppAttributeName(new JobUri(IppAttributeName.getURI()));
-  public static final IppAttributeName GENERATED_NATURAL_LANGUAGE_SUPPORTED
-      = new IppAttributeName(new GeneratedNaturalLanguageSupported("x", Locale.getDefault()));
-  public static final IppAttributeName MEDIA_DEFAULT = new IppAttributeName(new MediaDefault("x", Locale.getDefault()));
-  public static final IppAttributeName MEDIA_SUPPORTED = new IppAttributeName(new MediaSupported("x", Locale.getDefault()));
-  public static final IppAttributeName MULTIPLE_DOCUMENT_HANDLING_DEFAULT
-      = new IppAttributeName(new MultipleDocumentHandlingDefault("x", Locale.getDefault()));
-  public static final IppAttributeName MULTIPLE_DOCUMENT_HANDLING_SUPPORTED
-      = new IppAttributeName(new MultipleDocumentHandlingSupported("x", Locale.getDefault()));
-  public static final IppAttributeName MULTIPLE_DOCUMENT_JOBS_SUPPORTED
-      = new IppAttributeName(new MultipleDocumentJobsSupported(1));
-  public static final IppAttributeName MULTIPLE_OPERATION_TIMEOUT = new IppAttributeName(new MultipleOperationTimeout(1));
-  public static final IppAttributeName NATURAL_LANGUAGE = new IppAttributeName(new NaturalLanguage("x", Locale.getDefault()));
-  public static final IppAttributeName NATURAL_LANGUAGE_CONFIGURED
-      = new IppAttributeName(new NaturalLanguageConfigured("x", Locale.getDefault()));
-  public static final IppAttributeName NUMBER_UP_DEFAULT = new IppAttributeName(new NumberUpDefault(1));
-  public static final IppAttributeName OPERATIONS_SUPPORTED = new IppAttributeName(new OperationsSupported(1));
-  public static final IppAttributeName ORIENTATION_REQUESTED_DEFAULT = new IppAttributeName(new OrientationRequestedDefault(1));
-  public static final IppAttributeName ORIENTATION_REQUESTED_SUPPORTED
-      = new IppAttributeName(new OrientationRequestedSupported(1));
-  public static final IppAttributeName PAGE_RANGES_SUPPORTED = new IppAttributeName(new PageRangesSupported(1));
-  public static final IppAttributeName PRINTER_CURRENT_TIME = new IppAttributeName(new PrinterCurrentTime(new Date()));
-  public static final IppAttributeName PRINTER_DRIVER_INSTALLER
-      = new IppAttributeName(new PrinterDriverInstaller(IppAttributeName.getURI()));
-  public static final IppAttributeName PRINTER_STATE_MESSAGE
-      = new IppAttributeName(new PrinterStateMessage("x", Locale.getDefault()));
-  public static final IppAttributeName PRINTER_TYPE = new IppAttributeName(new PrinterType(1));
-  public static final IppAttributeName PRINTER_UP_TIME = new IppAttributeName(new PrinterUpTime(1));
-  public static final IppAttributeName PRINTER_URI_SUPPORTED
-      = new IppAttributeName(new PrinterUriSupported(IppAttributeName.getURI()));
-  public static final IppAttributeName SIDES_DEFAULT = new IppAttributeName(new SidesDefault("x", Locale.getDefault()));
-  public static final IppAttributeName SIDES_SUPPORTED = new IppAttributeName(new SidesSupported("x", Locale.getDefault()));
-  public static final IppAttributeName STATUS_MESSAGE = new IppAttributeName(new StatusMessage("x", Locale.getDefault()));
-  public static final IppAttributeName TIME_AT_COMPLETED = new IppAttributeName(new TimeAtCompleted(1));
-  public static final IppAttributeName TIME_AT_CREATION = new IppAttributeName(new TimeAtCreation(1));
-  public static final IppAttributeName TIME_AT_PROCESSING = new IppAttributeName(new TimeAtProcessing(1));
-  public static final IppAttributeName URI_AUTHENTICATION_SUPPORTED
-      = new IppAttributeName(new UriAuthenticationSupported("x", Locale.getDefault()));
-  public static final IppAttributeName URI_SECURITY_SUPPORTED
-      = new IppAttributeName(new UriSecuritySupported("x", Locale.getDefault()));
-
+  CHARSET(new Charset("x", Locale.getDefault())),
+  CHARSET_CONFIGURED(new CharsetConfigured("x", Locale.getDefault())),
+  CHARSET_SUPORTED(new CharsetSupported("x", Locale.getDefault())),
+  COMPRESSION_SUPORTED(new CompressionSupported("x", Locale.getDefault())),
+  COPIES_DEFAULT(new CopiesDefault(1)),
+  DETAILED_STATUS_MESSAGE(new DetailedStatusMessage("x", Locale.getDefault())),
+  DOCUMENT_FORMAT(new DocumentFormat("x", Locale.getDefault())),
+  DOCUMENT_FORMAT_SUPORTED(new DocumentFormatSupported("x", Locale.getDefault())),
+  DOCUMENT_FORMAT_DEFAULT(new DocumentFormatDefault("x", Locale.getDefault())),
+  FINISHINGS_DEFAULT(new FinishingsDefault(1)),
+  FINISHINGS_SUPPORTED(new FinishingsSupported(1)),
+  IPP_VERSIONS_SUPPORTED(new IppVersionsSupported("x", Locale.getDefault())),
+  JOB_HOLD_UNTIL(new LdJobHoldUntil("x", Locale.getDefault())),
+  JOB_HOLD_UNTIL_DEFAULT(new JobHoldUntilDefault("x", Locale.getDefault())),
+  JOB_HOLD_UNTIL_SUPPORTED(new JobHoldUntilSupported("x", Locale.getDefault())),
+  JOB_ID(new JobId(1)),
+  JOB_MORE_INFO(new JobMoreInfo(IppAttributeName.getURI())),
+  JOB_ORIGINATING_HOST_NAME(new JobOriginatingHostName("x", Locale.getDefault())),
+  JOB_PRINTER_UP_TIME(new JobPrinterUpTime(1)),
+  JOB_PRINTER_URI(new JobPrinterUri(getURI())),
+  JOB_PRIORITY_DEFAULT(new JobPriorityDefault(1)),
+  JOB_SHEETS_DEFAULT(new JobSheetsDefault("x", Locale.getDefault())),
+  JOB_SHEETS_SUPORTED(new JobSheetsSupported("x", Locale.getDefault())),
+  JOB_URI(new JobUri(IppAttributeName.getURI())),
+  GENERATED_NATURAL_LANGUAGE_SUPPORTED(new GeneratedNaturalLanguageSupported("x", Locale.getDefault())),
+  MEDIA_DEFAULT(new MediaDefault("x", Locale.getDefault())),
+  MEDIA_SUPPORTED(new MediaSupported("x", Locale.getDefault())),
+  MULTIPLE_DOCUMENT_HANDLING_DEFAULT(new MultipleDocumentHandlingDefault("x", Locale.getDefault())),
+  MULTIPLE_DOCUMENT_HANDLING_SUPPORTED(new MultipleDocumentHandlingSupported("x", Locale.getDefault())),
+  MULTIPLE_DOCUMENT_JOBS_SUPPORTED(new MultipleDocumentJobsSupported(1)),
+  MULTIPLE_OPERATION_TIMEOUT(new MultipleOperationTimeout(1)),
+  NATURAL_LANGUAGE(new NaturalLanguage("x", Locale.getDefault())),
+  NATURAL_LANGUAGE_CONFIGURED(new NaturalLanguageConfigured("x", Locale.getDefault())),
+  NUMBER_UP_DEFAULT(new NumberUpDefault(1)),
+  OPERATIONS_SUPPORTED(new OperationsSupported(1)),
+  ORIENTATION_REQUESTED_DEFAULT(new OrientationRequestedDefault(1)),
+  ORIENTATION_REQUESTED_SUPPORTED(new OrientationRequestedSupported(1)),
+  PAGE_RANGES_SUPPORTED(new PageRangesSupported(1)),
+  PRINTER_CURRENT_TIME(new PrinterCurrentTime(new Date())),
+  PRINTER_DRIVER_INSTALLER(new PrinterDriverInstaller(IppAttributeName.getURI())),
+  PRINTER_STATE_MESSAGE(new PrinterStateMessage("x", Locale.getDefault())),
+  PRINTER_TYPE(new PrinterType(1)),
+  PRINTER_UP_TIME(new PrinterUpTime(1)),
+  PRINTER_URI_SUPPORTED(new PrinterUriSupported(IppAttributeName.getURI())),
+  SIDES_DEFAULT(new SidesDefault("x", Locale.getDefault())),
+  SIDES_SUPPORTED(new SidesSupported("x", Locale.getDefault())),
+  STATUS_MESSAGE(new StatusMessage("x", Locale.getDefault())),
+  TIME_AT_COMPLETED(new TimeAtCompleted(1)),
+  TIME_AT_CREATION(new TimeAtCreation(1)),
+  TIME_AT_PROCESSING(new TimeAtProcessing(1)),
+  URI_AUTHENTICATION_SUPPORTED(new UriAuthenticationSupported("x", Locale.getDefault())),
+  URI_SECURITY_SUPPORTED(new UriSecuritySupported("x", Locale.getDefault())),
 
   /*
 	 * CUPS IPP extension attributes defined in de.lohndirekt.attribute.cups
    */
-  public static final IppAttributeName DEVICE_CLASS = new IppAttributeName(new DeviceClass("x", Locale.getDefault()));
-  public static final IppAttributeName DEVICE_URI = new IppAttributeName(new DeviceUri(IppAttributeName.getURI()));
-  public static final IppAttributeName Job_K_LIMIT = new IppAttributeName(new JobKLimit(1));
-  public static final IppAttributeName JOB_PAGE_LIMIT = new IppAttributeName(new JobPageLimit(1));
-  public static final IppAttributeName JOB_QUOTA_PERIOD = new IppAttributeName(new JobQuotaPeriod(1));
-  public static final IppAttributeName MEMBER_NAMES = new IppAttributeName(new MemberNames("x", Locale.getDefault()));
-  public static final IppAttributeName MEMBER_URIS = new IppAttributeName(new MemberUris(IppAttributeName.getURI()));
-  public static final IppAttributeName PRINTER_STATE_TIME = new IppAttributeName(new PrinterStateTime(1));
+  DEVICE_CLASS(new DeviceClass("x", Locale.getDefault())),
+  DEVICE_URI(new DeviceUri(IppAttributeName.getURI())),
+  Job_K_LIMIT(new JobKLimit(1)),
+  JOB_PAGE_LIMIT(new JobPageLimit(1)),
+  JOB_QUOTA_PERIOD(new JobQuotaPeriod(1)),
+  MEMBER_NAMES(new MemberNames("x", Locale.getDefault())),
+  MEMBER_URIS(new MemberUris(IppAttributeName.getURI())),
+  PRINTER_STATE_TIME(new PrinterStateTime(1)),
 
   /*
 	 * undocumented IPP attributes used by CUPS
    */
-  public static final IppAttributeName OUTPUT_BIN_SUPPORTED
-      = new IppAttributeName(new OutputBinSupported("x", Locale.getDefault()));
+  OUTPUT_BIN_SUPPORTED(new OutputBinSupported("x", Locale.getDefault()));
 
-  private static final Map attributesByName = new HashMap();
-	private static final Map attributesByCategory = new HashMap();
-
+  private static final Logger LOG = LoggerFactory.getLogger(IppAttributeName.class);
+  private static final Map<String,IppAttributeName> CACHE;
+  static {
+    Map<String,IppAttributeName> cache = new HashMap<>();
+    for (IppAttributeName entry : values()) {
+      cache.put(entry.getName(), entry);
+    }
+    CACHE = Map.copyOf(cache);
+  }
 
 	/**
 		 *
@@ -347,144 +322,9 @@ public final class IppAttributeName
 
   }
 
-  private static void put(IppAttributeName attr)
-  {
-    attributesByName.put(attr.getName(), attr);
-    attributesByCategory.put(attr.getCategory(), attr);
-  }
-
-  /**
-   *
-   */
-  static {
-    put(IppAttributeName.CHARSET);
-    put(IppAttributeName.CHARSET_CONFIGURED);
-    put(IppAttributeName.CHARSET_SUPORTED);
-    put(IppAttributeName.COLOR_SUPPORTED);
-    put(IppAttributeName.COMPRESSION);
-    put(IppAttributeName.COMPRESSION_SUPORTED);
-    put(IppAttributeName.COPIES);
-    put(IppAttributeName.COPIES_DEFAULT);
-    put(IppAttributeName.COPIES_SUPPORTED);
-    put(IppAttributeName.DATE_TIME_AT_COMPLETION);
-    put(IppAttributeName.DATE_TIME_AT_CREATION);
-    put(IppAttributeName.DATE_TIME_AT_PROCESSING);
-    put(IppAttributeName.DEVICE_CLASS);
-    put(IppAttributeName.DEVICE_URI);
-    put(IppAttributeName.DETAILED_STATUS_MESSAGE);
-    put(IppAttributeName.DOCUMENT_NAME);
-    put(IppAttributeName.DOCUMENT_FORMAT);
-    put(IppAttributeName.DOCUMENT_FORMAT_DEFAULT);
-    put(IppAttributeName.DOCUMENT_FORMAT_SUPORTED);
-    put(IppAttributeName.FIDELITY);
-    put(IppAttributeName.FINISHINGS);
-    put(IppAttributeName.FINISHINGS_DEFAULT);
-    put(IppAttributeName.FINISHINGS_SUPPORTED);
-    put(IppAttributeName.GENERATED_NATURAL_LANGUAGE_SUPPORTED);
-    put(IppAttributeName.IPP_VERSIONS_SUPPORTED);
-    put(IppAttributeName.JOB_HOLD_UNTIL);
-    put(IppAttributeName.JOB_HOLD_UNTIL_DEFAULT);
-    put(IppAttributeName.JOB_HOLD_UNTIL_SUPPORTED);
-    put(IppAttributeName.JOB_ID);
-    put(IppAttributeName.JOB_IMPRESSIONS);
-    put(IppAttributeName.JOB_IMPRESSIONS_COMPLETED);
-    put(IppAttributeName.JOB_IMPRESSIONS_SUPPORTED);
-    put(IppAttributeName.Job_K_LIMIT);
-    put(IppAttributeName.JOB_K_OCTETS);
-    put(IppAttributeName.JOB_K_OCTETS_PROCESSED);
-    put(IppAttributeName.JOB_K_OCTETS_SUPPORTED);
-    put(IppAttributeName.JOB_MEDIA_SHEETS);
-    put(IppAttributeName.JOB_MEDIA_SHEETS_COMPLETED);
-    put(IppAttributeName.JOB_MEDIA_SHEETS_SUPPORTED);
-    put(IppAttributeName.JOB_MESSAGE_FROM_OPERATOR);
-    put(IppAttributeName.JOB_MORE_INFO);
-    put(IppAttributeName.JOB_NAME);
-    put(IppAttributeName.JOB_ORIGINATING_HOST_NAME);
-    put(IppAttributeName.JOB_ORIGINATING_USER_NAME);
-    put(IppAttributeName.JOB_PAGE_LIMIT);
-    put(IppAttributeName.JOB_PRINTER_UP_TIME);
-    put(IppAttributeName.JOB_PRINTER_URI);
-    put(IppAttributeName.JOB_PRIORIY);
-    put(IppAttributeName.JOB_PRIORITY_DEFAULT);
-    put(IppAttributeName.JOB_PRIORIY_SUPPORTED);
-    put(IppAttributeName.JOB_QUOTA_PERIOD);
-    put(IppAttributeName.JOB_SHEETS);
-    put(IppAttributeName.JOB_SHEETS_DEFAULT);
-    put(IppAttributeName.JOB_SHEETS_SUPORTED);
-    put(IppAttributeName.JOB_STATE);
-    put(IppAttributeName.JOB_STATE_REASON);
-    put(IppAttributeName.JOB_STATE_REASONS);
-    put(IppAttributeName.JOB_URI);
-    put(IppAttributeName.MEDIA);
-    put(IppAttributeName.MEDIA_DEFAULT);
-    put(IppAttributeName.MEDIA_SUPPORTED);
-    put(IppAttributeName.MEMBER_NAMES);
-    put(IppAttributeName.MEMBER_URIS);
-    put(IppAttributeName.MULTIPLE_DOCUMENT_HANDLING);
-    put(IppAttributeName.MULTIPLE_DOCUMENT_HANDLING_DEFAULT);
-    put(IppAttributeName.MULTIPLE_DOCUMENT_HANDLING_SUPPORTED);
-    put(IppAttributeName.MULTIPLE_DOCUMENT_JOBS_SUPPORTED);
-    put(IppAttributeName.MULTIPLE_OPERATION_TIMEOUT);
-    put(IppAttributeName.NATURAL_LANGUAGE);
-    put(IppAttributeName.NATURAL_LANGUAGE_CONFIGURED);
-    put(IppAttributeName.NUMBER_OF_DOCUMENTS);
-    put(IppAttributeName.NUMBER_OF_INTERVENING_JOBS);
-    put(IppAttributeName.NUMBER_UP);
-    put(IppAttributeName.NUMBER_UP_DEFAULT);
-    put(IppAttributeName.NUMBER_UP_SUPPORTED);
-    put(IppAttributeName.OPERATIONS_SUPPORTED);
-    put(IppAttributeName.ORIENTATION_REQUESTED);
-    put(IppAttributeName.ORIENTATION_REQUESTED_DEFAULT);
-    put(IppAttributeName.ORIENTATION_REQUESTED_SUPPORTED);
-    put(IppAttributeName.OUTPUT_BIN_SUPPORTED);
-    put(IppAttributeName.OUTPUT_DEVICE_ASSIGNED);
-    put(IppAttributeName.PAGE_RANGES);
-    put(IppAttributeName.PAGE_RANGES_SUPPORTED);
-    put(IppAttributeName.PAGES_PER_MINUTE);
-    put(IppAttributeName.PAGES_PER_MINUTE_COLOR);
-    put(IppAttributeName.PDL_OVERRIDE_SUPPORTED);
-    put(IppAttributeName.PRESENTATION_DIRECTION);
-    put(IppAttributeName.PRINT_QUALITY);
-    put(IppAttributeName.PRINTER_CURRENT_TIME);
-    put(IppAttributeName.PRINTER_DRIVER_INSTALLER);
-    put(IppAttributeName.PRINTER_INFO);
-    put(IppAttributeName.PRINTER_IS_ACCEPTING_JOBS);
-    put(IppAttributeName.PRINTER_LOCATION);
-    put(IppAttributeName.PRINTER_MAKE_AND_MODEL);
-    put(IppAttributeName.PRINTER_MESSAGE_FROM_OPERATOR);
-    put(IppAttributeName.PRINTER_MORE_INFO);
-    put(IppAttributeName.PRINTER_MORE_INFO_MANUFACTURER);
-    put(IppAttributeName.PRINTER_NAME);
-    put(IppAttributeName.PRINTER_RESOLUTION);
-    put(IppAttributeName.PRINTER_STATE);
-    put(IppAttributeName.PRINTER_STATE_MESSAGE);
-    put(IppAttributeName.PRINTER_STATE_REASON);
-    put(IppAttributeName.PRINTER_STATE_REASONS);
-    put(IppAttributeName.PRINTER_STATE_TIME);
-    put(IppAttributeName.PRINTER_TYPE);
-    put(IppAttributeName.PRINTER_UP_TIME);
-    put(IppAttributeName.PRINTER_URI);
-    put(IppAttributeName.PRINTER_URI_SUPPORTED);
-    put(IppAttributeName.QUEUED_JOB_COUNT);
-    put(IppAttributeName.REFERENCE_URI_SCHEMES_SUPPORTED);
-    put(IppAttributeName.REQUESTING_USER_NAME);
-    put(IppAttributeName.REQUESTING_USER_PASSWD);
-    put(IppAttributeName.SEVERITY);
-    put(IppAttributeName.SHEET_COLLATE);
-    put(IppAttributeName.SIDES);
-    put(IppAttributeName.SIDES_DEFAULT);
-    put(IppAttributeName.SIDES_SUPPORTED);
-    put(IppAttributeName.STATUS_MESSAGE);
-    put(IppAttributeName.TIME_AT_COMPLETED);
-    put(IppAttributeName.TIME_AT_CREATION);
-    put(IppAttributeName.TIME_AT_PROCESSING);
-    put(IppAttributeName.URI_AUTHENTICATION_SUPPORTED);
-    put(IppAttributeName.URI_SECURITY_SUPPORTED);
-  }
-
   public static IppAttributeName get(String attributeName)
   {
-    return (IppAttributeName) attributesByName.get(attributeName);
+    return CACHE.get(attributeName);
   }
 
   // End of static part
@@ -513,12 +353,8 @@ public final class IppAttributeName
     return this.methodName;
   }
 
-  /**
-   *
-   */
   public Class getCategory()
   {
     return this.category;
   }
-
 }
