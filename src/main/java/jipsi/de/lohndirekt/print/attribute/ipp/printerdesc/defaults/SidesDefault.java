@@ -37,6 +37,7 @@ public class SidesDefault extends TextSyntax implements DefaultAttribute {
 	 *
 	 */
 
+  @Override
 	public Class getCategory() {
 		return SidesDefault.class;
 	}
@@ -49,6 +50,7 @@ public class SidesDefault extends TextSyntax implements DefaultAttribute {
 		return "sides-default";
 	}
 
+  @Override
 	public String getName() {
 		return SidesDefault.getIppName();
 	}

@@ -36,6 +36,7 @@ public class DocumentFormat extends TextSyntax implements DocAttribute {
 	 *
 	 */
 
+  @Override
 	public Class getCategory() {
 		return DocumentFormat.class;
 	}
@@ -48,6 +49,7 @@ public class DocumentFormat extends TextSyntax implements DocAttribute {
 		return "document-format";
 	}
 
+  @Override
 	public String getName() {
 		return DocumentFormat.getIppName();
 	}

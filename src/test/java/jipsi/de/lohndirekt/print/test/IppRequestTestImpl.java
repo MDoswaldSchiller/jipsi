@@ -82,6 +82,7 @@ public class IppRequestTestImpl implements IppRequest {
         /**
          * @return
          */
+        @Override
         public Map getAttributes() {
             return attributes;
         }
@@ -89,6 +90,7 @@ public class IppRequestTestImpl implements IppRequest {
         /**
          * @return
          */
+        @Override
         public IppStatus getStatus() {
             return status;
         }
@@ -106,6 +108,7 @@ public class IppRequestTestImpl implements IppRequest {
     /**
      * @param attrs
      */
+    @Override
     public void setPrinterAttributes(AttributeSet attrs) {
         this.printerAttributes = attrs;
     }
@@ -136,6 +139,7 @@ public class IppRequestTestImpl implements IppRequest {
     /**
      * @param attributes
      */
+    @Override
     public void addOperationAttributes(AttributeSet attributes) {
         this.operationAttributes.addAll(attributes);
     }
@@ -143,12 +147,14 @@ public class IppRequestTestImpl implements IppRequest {
     /**
      * @param data the data as input stream
      */
+    @Override
     public void setData(InputStream data) {
         this.data = data;
     }
     /**
      * @param data
      */
+    @Override
     public void setData(byte[] data) {
         this.data = data;
     }
@@ -156,10 +162,12 @@ public class IppRequestTestImpl implements IppRequest {
     /**
      * @param attributes
      */
+    @Override
     public void setJobAttributes(PrintJobAttributeSet attributes) {
         this.jobAttributes = attributes;
     }
 
+    @Override
     public IppResponse send() throws IOException {
         try {
             this.response = new IppResponseTestImpl();

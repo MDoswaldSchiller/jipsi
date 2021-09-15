@@ -36,6 +36,7 @@ public class RequestedAttributes extends TextSyntax implements PrintRequestAttri
 	 *
 	 */
 
+  @Override
 	public Class getCategory() {
 		return RequestedAttributes.class;
 	}
@@ -48,6 +49,7 @@ public class RequestedAttributes extends TextSyntax implements PrintRequestAttri
 		return "requested-attributes";
 	}
 
+  @Override
 	public String getName() {
 		return RequestedAttributes.getIppName();
 	}

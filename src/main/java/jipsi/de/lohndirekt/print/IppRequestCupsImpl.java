@@ -85,6 +85,7 @@ class IppRequestCupsImpl implements IppRequest {
         /**
          * @return
          */
+        @Override
         public Map getAttributes() {
             return attributes;
         }
@@ -92,6 +93,7 @@ class IppRequestCupsImpl implements IppRequest {
         /**
          * @return
          */
+        @Override
         public IppStatus getStatus() {
             return status;
         }
@@ -141,6 +143,7 @@ class IppRequestCupsImpl implements IppRequest {
     /**
      * @param printerAttributes
      */
+    @Override
     public void setPrinterAttributes(AttributeSet attrs) {
         this.printerAttributes = attrs;
     }
@@ -249,6 +252,7 @@ class IppRequestCupsImpl implements IppRequest {
     /**
      * @param attributes
      */
+    @Override
     public void addOperationAttributes(AttributeSet attributes) {
         this.operationAttributes.addAll(attributes);
     }
@@ -256,10 +260,12 @@ class IppRequestCupsImpl implements IppRequest {
     /**
      * @param stream
      */
+    @Override
     public void setData(InputStream data) {
         this.data = data;
     }
 
+    @Override
     public void setData(byte[] data) {
         this.data = data;
     }
@@ -267,6 +273,7 @@ class IppRequestCupsImpl implements IppRequest {
     /**
      * @param attributes
      */
+    @Override
     public void setJobAttributes(PrintJobAttributeSet attributes) {
         this.jobAttributes = attributes;
     }
@@ -276,6 +283,7 @@ class IppRequestCupsImpl implements IppRequest {
      * @throws IllegalArgumentException
      *             when called twice
      */
+    @Override
     public IppResponse send() throws IOException {
         if (sent) {
             throw new IllegalStateException("Send must not be called twice");

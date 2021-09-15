@@ -119,6 +119,7 @@ public class PrinterType extends IntegerSyntax implements PrintServiceAttribute 
      *
      */
 
+    @Override
     public Class getCategory() {
         return this.getClass();
     }
@@ -127,6 +128,7 @@ public class PrinterType extends IntegerSyntax implements PrintServiceAttribute 
      *
      */
 
+    @Override
     public String getName() {
         return PrinterType.getIppName();
     }

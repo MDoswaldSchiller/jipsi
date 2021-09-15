@@ -38,6 +38,7 @@ public class LdMediaTray extends Media implements PrintRequestAttribute, PrintJo
 		this.name = trayName;
 	}
 
+  @Override
 	public String toString() {
 		return this.name;
 	}

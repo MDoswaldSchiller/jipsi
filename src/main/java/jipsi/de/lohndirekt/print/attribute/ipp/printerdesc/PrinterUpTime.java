@@ -31,6 +31,7 @@ public class PrinterUpTime extends IntegerSyntax implements PrintServiceAttribut
 		super(value);
 	}
 
+  @Override
 	public Class getCategory() {
 		return this.getClass();
 	}
@@ -39,6 +40,7 @@ public class PrinterUpTime extends IntegerSyntax implements PrintServiceAttribut
 	 *
 	 */
 
+  @Override
 	public String getName() {
 		return PrinterUpTime.getIppName();
 	}

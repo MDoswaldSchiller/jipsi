@@ -37,6 +37,7 @@ public class PrinterUriSupported extends URISyntax implements SupportedValuesAtt
 	 *
 	 */
 
+  @Override
 	public Class getCategory() {
 		return this.getClass();
 	}
@@ -45,6 +46,7 @@ public class PrinterUriSupported extends URISyntax implements SupportedValuesAtt
 	 *
 	 */
 
+  @Override
 	public String getName() {
 		return PrinterUriSupported.getIppName();
 	}

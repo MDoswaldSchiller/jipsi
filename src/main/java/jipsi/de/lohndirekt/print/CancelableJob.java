@@ -42,6 +42,7 @@ class CancelableJob extends Job implements CancelablePrintJob{
 		super(service);
 	}
 
+  @Override
     public void cancel() throws PrintException {
             if (!ok) {
                 throw new PrintException("Job has not been sent. Cannot be canceled");

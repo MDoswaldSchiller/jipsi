@@ -79,6 +79,7 @@ public class IppPrintService implements PrintService {
 	/* (non-Javadoc)
 	 * @see javax.print.PrintService#getName()
 	 */
+  @Override
 	public String getName() {
 		return uri.getPath().substring(uri.getPath().lastIndexOf("/") + 1);
 	}
@@ -94,6 +95,7 @@ public class IppPrintService implements PrintService {
 	/* (non-Javadoc)
 	 * @see javax.print.PrintService#createPrintJob()
 	 */
+  @Override
 	public DocPrintJob createPrintJob() {
 		return new CancelableJob(this);
 	}
@@ -101,6 +103,7 @@ public class IppPrintService implements PrintService {
 	/* (non-Javadoc)
 	 * @see javax.print.PrintService#getAttributes()
 	 */
+  @Override
 	public PrintServiceAttributeSet getAttributes() {
 		PrintServiceAttributeSet set = new HashPrintServiceAttributeSet();
 		for (Iterator mapIter = getAllAttributes().values().iterator(); mapIter.hasNext();) {
@@ -118,6 +121,7 @@ public class IppPrintService implements PrintService {
 	/* (non-Javadoc)
 	 * @see javax.print.PrintService#getAttribute(java.lang.Class)
 	 */
+  @Override
 	public PrintServiceAttribute getAttribute(Class category) {
 		if (category == null) {
 			throw new NullPointerException("category must not be null");
@@ -137,6 +141,7 @@ public class IppPrintService implements PrintService {
 	/* (non-Javadoc)
 	 * @see javax.print.PrintService#getSupportedDocFlavors()
 	 */
+  @Override
 	public DocFlavor[] getSupportedDocFlavors() {
 		if (supportedFlavors == null) {
 			List flavors = new ArrayList();
@@ -177,6 +182,7 @@ public class IppPrintService implements PrintService {
 	/* (non-Javadoc)
 	 * @see javax.print.PrintService#isDocFlavorSupported(javax.print.DocFlavor)
 	 */
+  @Override
 	public boolean isDocFlavorSupported(DocFlavor flavor) {
 		List supportedFlavors = Arrays.asList(getSupportedDocFlavors());
 		return supportedFlavors.contains(flavor);
@@ -185,6 +191,7 @@ public class IppPrintService implements PrintService {
 	/* (non-Javadoc)
 	 * @see javax.print.PrintService#getSupportedAttributeCategories()
 	 */
+  @Override
 	public Class[] getSupportedAttributeCategories() {
 		Set supportedCategories = new HashSet();
 		//Attributes named in 4.2 of rfc2911 are optional
@@ -246,6 +253,7 @@ public class IppPrintService implements PrintService {
 	/* (non-Javadoc)
 	 * @see javax.print.PrintService#isAttributeCategorySupported(java.lang.Class)
 	 */
+  @Override
 	public boolean isAttributeCategorySupported(Class category) {
 		return Arrays.asList(this.getSupportedAttributeCategories()).contains(category);
 	}
@@ -253,6 +261,7 @@ public class IppPrintService implements PrintService {
 	/* (non-Javadoc)
 	 * @see javax.print.PrintService#getDefaultAttributeValue(java.lang.Class)
 	 */
+  @Override
 	public Object getDefaultAttributeValue(Class category) {
 		//Only the attributes listed in rfc2911 4.2(Job Template Attributes) make sense here
 		Object value = null;
@@ -317,6 +326,7 @@ public class IppPrintService implements PrintService {
 	/* (non-Javadoc)
 	 * @see javax.print.PrintService#getSupportedAttributeValues(java.lang.Class, javax.print.DocFlavor, javax.print.attribute.AttributeSet)
 	 */
+  @Override
 	public Object getSupportedAttributeValues(Class category, DocFlavor flavor, AttributeSet attributes) {
 		Set supportedAttributes = new HashSet();
 		// Only the attributes listed in rfc2911 4.2(Job Template Attributes) do make sense here
@@ -371,6 +381,7 @@ public class IppPrintService implements PrintService {
 	/* (non-Javadoc)
 	 * @see javax.print.PrintService#isAttributeValueSupported(javax.print.attribute.Attribute, javax.print.DocFlavor, javax.print.attribute.AttributeSet)
 	 */
+  @Override
 	public boolean isAttributeValueSupported(Attribute attrVal, DocFlavor flavor, AttributeSet attributes) {
 		AttributeSet operationAttributes = new HashAttributeSet();
 		if (flavor != null) {
@@ -424,6 +435,7 @@ public class IppPrintService implements PrintService {
 	/* (non-Javadoc)
 	 * @see javax.print.PrintService#getUnsupportedAttributes(javax.print.DocFlavor, javax.print.attribute.AttributeSet)
 	 */
+  @Override
 	public AttributeSet getUnsupportedAttributes(DocFlavor flavor, AttributeSet attributes) {
 		return null;
 	}
@@ -431,6 +443,7 @@ public class IppPrintService implements PrintService {
 	/* (non-Javadoc)
 	 * @see javax.print.PrintService#getServiceUIFactory()
 	 */
+  @Override
 	public ServiceUIFactory getServiceUIFactory() {
 		return null;
 	}
@@ -438,12 +451,14 @@ public class IppPrintService implements PrintService {
 	/* (non-Javadoc)
 	 * @see javax.print.PrintService#addPrintServiceAttributeListener(javax.print.event.PrintServiceAttributeListener)
 	 */
+  @Override
 	public void addPrintServiceAttributeListener(PrintServiceAttributeListener listener) {
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.print.PrintService#removePrintServiceAttributeListener(javax.print.event.PrintServiceAttributeListener)
 	 */
+  @Override
 	public void removePrintServiceAttributeListener(PrintServiceAttributeListener listener) {
 	}
 
@@ -466,6 +481,7 @@ public class IppPrintService implements PrintService {
 		return this.attributes;
 	}
 
+  @Override
 	public String toString() {
 		return this.getName();
 	}

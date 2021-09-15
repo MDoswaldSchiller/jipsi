@@ -31,6 +31,7 @@ public class FinishingsSupported extends IntegerSyntax implements SupportedValue
 		super(value);
 	}
 
+  @Override
 	public Class getCategory() {
 		return this.getClass();
 	}
@@ -39,6 +40,7 @@ public class FinishingsSupported extends IntegerSyntax implements SupportedValue
 	 *
 	 */
 
+  @Override
 	public String getName() {
 		return FinishingsSupported.getIppName();
 	}

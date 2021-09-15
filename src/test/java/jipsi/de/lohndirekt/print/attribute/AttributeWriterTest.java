@@ -49,6 +49,7 @@ public class AttributeWriterTest extends TestCase {
 
     ByteArrayOutputStream out;
 
+    @Override
     protected void setUp() throws Exception {
             super.setUp();
             out = new ByteArrayOutputStream();

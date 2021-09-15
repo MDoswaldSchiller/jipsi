@@ -36,10 +36,12 @@ public class DocumentFormatSupported extends TextSyntax implements SupportedValu
 	 *
 	 */
 
+  @Override
 	public Class getCategory() {
 		return DocumentFormatSupported.class;
 	}
 
+  @Override
 	public String getName() {
 		return DocumentFormatSupported.getIppName();
 	}

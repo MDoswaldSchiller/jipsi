@@ -37,6 +37,7 @@ public class StatusMessage extends TextSyntax implements Attribute{
 	 *
 	 */
 
+  @Override
 	public Class getCategory() {
 		return StatusMessage.class;
 	}
@@ -49,6 +50,7 @@ public class StatusMessage extends TextSyntax implements Attribute{
 		return "status-message";
 	}
 
+  @Override
 	public String getName() {
 		return StatusMessage.getIppName();
 	}

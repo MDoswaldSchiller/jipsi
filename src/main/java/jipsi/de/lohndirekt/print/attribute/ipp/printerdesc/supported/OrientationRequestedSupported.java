@@ -31,6 +31,7 @@ public class OrientationRequestedSupported extends IntegerSyntax implements Supp
 		super(value);
 	}
 
+  @Override
 	public Class getCategory() {
 		return this.getClass();
 	}
@@ -39,6 +40,7 @@ public class OrientationRequestedSupported extends IntegerSyntax implements Supp
 	 *
 	 */
 
+  @Override
 	public String getName() {
 		return OrientationRequestedSupported.getIppName();
 	}

@@ -36,6 +36,7 @@ public class SidesSupported extends TextSyntax implements SupportedValuesAttribu
 	 *
 	 */
 
+  @Override
 	public Class getCategory() {
 		return SidesSupported.class;
 	}
@@ -48,6 +49,7 @@ public class SidesSupported extends TextSyntax implements SupportedValuesAttribu
 		return "sides-supported";
 	}
 
+  @Override
 	public String getName() {
 		return SidesSupported.getIppName();
 	}

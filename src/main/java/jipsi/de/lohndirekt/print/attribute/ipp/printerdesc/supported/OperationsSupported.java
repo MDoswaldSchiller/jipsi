@@ -106,6 +106,7 @@ public class OperationsSupported extends EnumSyntax implements SupportedValuesAt
 	 *
 	 */
 
+  @Override
 	public Class getCategory() {
 		return this.getClass();
 	}
@@ -114,6 +115,7 @@ public class OperationsSupported extends EnumSyntax implements SupportedValuesAt
 	 *
 	 */
 
+  @Override
 	public String getName() {
 		return OperationsSupported.getIppName();
 	}

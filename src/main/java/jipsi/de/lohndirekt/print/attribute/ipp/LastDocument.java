@@ -29,6 +29,7 @@ public class LastDocument extends EnumSyntax implements DocAttribute {
 	/**
 	 *
 	 */
+  @Override
 	protected EnumSyntax[] getEnumValueTable() {
 		return new EnumSyntax[] { FALSE, TRUE};
 	}
@@ -36,6 +37,7 @@ public class LastDocument extends EnumSyntax implements DocAttribute {
 	/**
 	 *
 	 */
+  @Override
 	protected int getOffset() {
 		return 0;
 	}
@@ -43,6 +45,7 @@ public class LastDocument extends EnumSyntax implements DocAttribute {
 	/**
 	 *
 	 */
+  @Override
 	protected String[] getStringTable() {
 		return new String[] { "false", "true" };
 	}
@@ -57,6 +60,7 @@ public class LastDocument extends EnumSyntax implements DocAttribute {
 	/**
 	 *
 	 */
+  @Override
 	public Class getCategory() {
 		return this.getClass();
 	}
@@ -64,6 +68,7 @@ public class LastDocument extends EnumSyntax implements DocAttribute {
 	/**
 	 *
 	 */
+  @Override
 	public String getName() {
 		return LastDocument.getIppName();
 	}

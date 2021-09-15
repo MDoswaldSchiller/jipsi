@@ -73,6 +73,7 @@ class Job implements DocPrintJob {
 	/**
 	 *
 	 */
+  @Override
 	public PrintService getPrintService() {
 		return this.printService;
 	}
@@ -80,6 +81,7 @@ class Job implements DocPrintJob {
 	/**
 	 *
 	 */
+  @Override
 	public PrintJobAttributeSet getAttributes() {
 		return this.jobAttributes;
 	}
@@ -87,6 +89,7 @@ class Job implements DocPrintJob {
 	/**
 	 *
 	 */
+  @Override
 	public void print(Doc doc, PrintRequestAttributeSet attributes) throws PrintException {
 		IppRequest request = null;
 		request = this.printService.request(OperationsSupported.PRINT_JOB);
@@ -143,6 +146,7 @@ class Job implements DocPrintJob {
 
 
 
+  @Override
 	public void addPrintJobListener(PrintJobListener listener) {
 		if (listener != null) {
 			if (jobListeners == null) {
@@ -152,12 +156,14 @@ class Job implements DocPrintJob {
 		}
 	}
 
+  @Override
 	public void removePrintJobListener(PrintJobListener listener) {
 		if (listener != null) {
 			jobListeners.remove(listener);
 		}
 	}
 
+  @Override
 	public void addPrintJobAttributeListener(PrintJobAttributeListener listener, PrintJobAttributeSet attributes) {
 		if (listener != null) {
 			if (attributeListeners == null) {
@@ -167,6 +173,7 @@ class Job implements DocPrintJob {
 		}
 	}
 
+  @Override
 	public void removePrintJobAttributeListener(PrintJobAttributeListener listener) {
 		if (listener != null) {
 			attributeListeners.remove(listener);

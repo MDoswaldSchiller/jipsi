@@ -32,6 +32,7 @@ public class JobPriorityDefault extends IntegerSyntax implements DefaultAttribut
 		super(value);
 	}
 
+  @Override
 	public Class getCategory() {
 		return this.getClass();
 	}
@@ -40,6 +41,7 @@ public class JobPriorityDefault extends IntegerSyntax implements DefaultAttribut
 	 *
 	 */
 
+  @Override
 	public String getName() {
 		return JobPriorityDefault.getIppName();
 	}

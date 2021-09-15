@@ -37,6 +37,7 @@ public class IppVersionsSupported extends TextSyntax implements SupportedValuesA
 	 *
 	 */
 
+  @Override
 	public Class getCategory() {
 		return this.getClass();
 	}
@@ -45,6 +46,7 @@ public class IppVersionsSupported extends TextSyntax implements SupportedValuesA
 	 *
 	 */
 
+  @Override
 	public String getName() {
 		return IppVersionsSupported.getIppName();
 	}

@@ -35,6 +35,7 @@ public class NaturalLanguageConfigured extends TextSyntax implements PrintServic
 	/**
 	 *
 	 */
+  @Override
 	public Class getCategory() {
 		return NaturalLanguageConfigured.class;
 	}
@@ -46,6 +47,7 @@ public class NaturalLanguageConfigured extends TextSyntax implements PrintServic
 		return "natural-language-configured";
 	}
 
+  @Override
 	public String getName() {
 		return NaturalLanguageConfigured.getIppName();
 	}

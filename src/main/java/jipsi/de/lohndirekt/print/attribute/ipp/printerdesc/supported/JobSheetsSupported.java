@@ -38,6 +38,7 @@ public class JobSheetsSupported extends TextSyntax implements SupportedValuesAtt
 	 *
 	 */
 
+  @Override
 	public Class getCategory() {
 		return this.getClass();
 	}
@@ -46,6 +47,7 @@ public class JobSheetsSupported extends TextSyntax implements SupportedValuesAtt
 	 *
 	 */
 
+  @Override
 	public String getName() {
 		return JobSheetsSupported.getIppName();
 	}

@@ -42,10 +42,12 @@ public class NaturalLanguage extends TextSyntax implements PrintRequestAttribute
 	 *
 	 */
 
+  @Override
 	public Class getCategory() {
 		return NaturalLanguage.class;
 	}
 
+  @Override
 	public String getName() {
 		return NaturalLanguage.getIppName();
 	}

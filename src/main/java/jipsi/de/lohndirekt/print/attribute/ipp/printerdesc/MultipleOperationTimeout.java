@@ -31,6 +31,7 @@ public class MultipleOperationTimeout extends IntegerSyntax implements PrintServ
 		super(value);
 	}
 
+  @Override
 	public Class getCategory() {
 		return this.getClass();
 	}
@@ -38,6 +39,7 @@ public class MultipleOperationTimeout extends IntegerSyntax implements PrintServ
 	/**
 	 *
 	 */
+  @Override
 	public String getName() {
 		return MultipleOperationTimeout.getIppName();
 	}

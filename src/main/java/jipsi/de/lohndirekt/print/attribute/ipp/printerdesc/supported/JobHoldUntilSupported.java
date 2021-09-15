@@ -36,10 +36,12 @@ public class JobHoldUntilSupported extends TextSyntax implements SupportedValues
 	 *
 	 */
 
+  @Override
 	public Class getCategory() {
 		return JobHoldUntilSupported.class;
 	}
 
+  @Override
 	public String getName() {
 		return JobHoldUntilSupported.getIppName();
 	}

@@ -108,6 +108,7 @@ public class IppPrintServiceLookup extends PrintServiceLookup {
     /* (non-Javadoc)
      * @see javax.print.PrintServiceLookup#getPrintServices(javax.print.DocFlavor, javax.print.attribute.AttributeSet)
      */
+    @Override
     public PrintService[] getPrintServices(DocFlavor flavor, AttributeSet attributes) {
         PrintService[] services = getPrintServices();
         List fittingServices = new ArrayList();
@@ -124,6 +125,7 @@ public class IppPrintServiceLookup extends PrintServiceLookup {
     /* (non-Javadoc)
      * @see javax.print.PrintServiceLookup#getPrintServices()
      */
+    @Override
     public PrintService[] getPrintServices() {
         List services = new ArrayList();
         try {
@@ -164,6 +166,7 @@ public class IppPrintServiceLookup extends PrintServiceLookup {
     /* (non-Javadoc)
      * @see javax.print.PrintServiceLookup#getMultiDocPrintServices(javax.print.DocFlavor[], javax.print.attribute.AttributeSet)
      */
+    @Override
     public MultiDocPrintService[] getMultiDocPrintServices(DocFlavor[] flavors, AttributeSet attributes) {
         Set multiDocServices = new HashSet();
         PrintService[] services = getPrintServices(null, attributes);
@@ -186,6 +189,7 @@ public class IppPrintServiceLookup extends PrintServiceLookup {
     /* (non-Javadoc)
      * @see javax.print.PrintServiceLookup#getDefaultPrintService()
      */
+    @Override
     public PrintService getDefaultPrintService() {
         PrintService[] services = this.getPrintServices();
         if (services.length > 0) {

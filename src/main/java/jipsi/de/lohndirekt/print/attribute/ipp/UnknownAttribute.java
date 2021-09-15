@@ -40,6 +40,7 @@ public class UnknownAttribute extends TextSyntax implements SupportedValuesAttri
 	 *
 	 */
 
+  @Override
 	public Class getCategory() {
 		return UnknownAttribute.class;
 	}
@@ -52,6 +53,7 @@ public class UnknownAttribute extends TextSyntax implements SupportedValuesAttri
 		return "unknown-attribute";
 	}
 
+  @Override
 	public String getName() {
 		return getIppName();
 	}

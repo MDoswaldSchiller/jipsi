@@ -19,6 +19,7 @@ public class EndOfAttributesException extends Exception {
 	/* (Kein Javadoc)
 	 * @see java.lang.Throwable#fillInStackTrace()
 	 */
+  @Override
 	public synchronized Throwable fillInStackTrace() {
 		return this;
 	}

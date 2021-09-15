@@ -36,6 +36,7 @@ public class CharsetSupported extends TextSyntax implements SupportedValuesAttri
 	 *
 	 */
 
+  @Override
 	public Class getCategory() {
 		return CharsetSupported.class;
 	}
@@ -48,6 +49,7 @@ public class CharsetSupported extends TextSyntax implements SupportedValuesAttri
 		return "charset-supported";
 	}
 
+  @Override
 	public String getName() {
 		return CharsetSupported.getIppName();
 	}

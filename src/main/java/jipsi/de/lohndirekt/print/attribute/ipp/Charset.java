@@ -41,6 +41,7 @@ public class Charset extends TextSyntax implements PrintRequestAttribute {
 	 *
 	 */
 
+  @Override
 	public Class getCategory() {
 		return Charset.class;
 	}
@@ -53,6 +54,7 @@ public class Charset extends TextSyntax implements PrintRequestAttribute {
 		return "attributes-charset";
 	}
 
+  @Override
 	public String getName() {
 		return Charset.getIppName();
 	}

@@ -38,6 +38,7 @@ public class MediaSupported extends TextSyntax implements SupportedValuesAttribu
 	 *
 	 */
 
+  @Override
 	public Class getCategory() {
 		return this.getClass();
 	}
@@ -46,6 +47,7 @@ public class MediaSupported extends TextSyntax implements SupportedValuesAttribu
 	 *
 	 */
 
+  @Override
 	public String getName() {
 		return MediaSupported.getIppName();
 	}

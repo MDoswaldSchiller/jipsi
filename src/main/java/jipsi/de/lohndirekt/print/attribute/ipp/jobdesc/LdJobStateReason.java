@@ -28,6 +28,7 @@ public class LdJobStateReason extends JobStateReason {
         this.stringValue = stringValue;
     }
 
+    @Override
    public String toString(){
        if (this.stringValue != null){
            return this.stringValue;

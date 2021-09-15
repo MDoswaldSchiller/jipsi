@@ -40,6 +40,7 @@ public class PrinterStateMessage extends TextSyntax implements PrintServiceAttri
 	 *
 	 */
 
+  @Override
 	public Class getCategory() {
 		return this.getClass();
 	}
@@ -48,6 +49,7 @@ public class PrinterStateMessage extends TextSyntax implements PrintServiceAttri
 	 *
 	 */
 
+  @Override
 	public String getName() {
 		return PrinterStateMessage.getIppName();
 	}

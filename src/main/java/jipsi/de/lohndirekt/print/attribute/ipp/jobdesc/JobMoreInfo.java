@@ -37,6 +37,7 @@ public class JobMoreInfo extends URISyntax implements PrintJobAttribute {
 	 *
 	 */
 
+  @Override
 	public Class getCategory() {
 		return this.getClass();
 	}
@@ -45,6 +46,7 @@ public class JobMoreInfo extends URISyntax implements PrintJobAttribute {
 	 *
 	 */
 
+  @Override
 	public String getName() {
 		return JobMoreInfo.getIppName();
 	}

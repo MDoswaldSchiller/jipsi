@@ -32,6 +32,7 @@ public class TimeAtCompleted extends IntegerSyntax implements PrintJobAttribute 
 		super(value);
 	}
 
+  @Override
 	public Class getCategory() {
 		return this.getClass();
 	}
@@ -40,6 +41,7 @@ public class TimeAtCompleted extends IntegerSyntax implements PrintJobAttribute 
 	 *
 	 */
 
+  @Override
 	public String getName() {
 		return TimeAtCompleted.getIppName();
 	}

@@ -39,6 +39,7 @@ public class MemberNames extends TextSyntax implements Attribute {
 	 *
 	 */
 
+  @Override
 	public Class getCategory() {
 		return this.getClass();
 	}
@@ -47,6 +48,7 @@ public class MemberNames extends TextSyntax implements Attribute {
 	 *
 	 */
 
+  @Override
 	public String getName() {
 		return MemberNames.getIppName();
 	}

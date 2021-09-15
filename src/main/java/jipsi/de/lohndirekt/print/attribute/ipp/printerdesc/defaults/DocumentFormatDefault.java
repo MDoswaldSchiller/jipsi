@@ -37,10 +37,12 @@ public class DocumentFormatDefault extends TextSyntax implements DefaultAttribut
 	 *
 	 */
 
+  @Override
 	public Class getCategory() {
 		return DocumentFormatDefault.class;
 	}
 
+  @Override
 	public String getName() {
 		return DocumentFormatDefault.getIppName();
 	}

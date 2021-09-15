@@ -37,6 +37,7 @@ public class RequestingUserPassword extends TextSyntax implements PrintRequestAt
 	 *
 	 */
 
+  @Override
 	public Class getCategory() {
 		return RequestingUserPassword.class;
 	}
@@ -49,6 +50,7 @@ public class RequestingUserPassword extends TextSyntax implements PrintRequestAt
 		return "requesting-user-password";
 	}
 
+  @Override
 	public String getName() {
 		return RequestingUserPassword.getIppName();
 	}

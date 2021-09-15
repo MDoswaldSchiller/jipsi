@@ -87,6 +87,7 @@ public class SimpleMultiDoc implements MultiDoc {
      *
      */
 
+    @Override
     public Doc getDoc() throws IOException {
         return this.doc;
     }
@@ -94,6 +95,7 @@ public class SimpleMultiDoc implements MultiDoc {
     /**
      *
      */
+    @Override
     public MultiDoc next() throws IOException {
         if (!this.available()) {
             throw new IllegalStateException("Next MultiDoc is not yet available");
@@ -109,6 +111,7 @@ public class SimpleMultiDoc implements MultiDoc {
         return lastDoc;
     }
 
+    @Override
     public String toString() {
         return this.getClass() + " - " + this.doc.toString();
     }

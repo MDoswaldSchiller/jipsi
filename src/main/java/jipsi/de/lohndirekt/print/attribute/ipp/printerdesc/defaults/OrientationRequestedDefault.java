@@ -32,6 +32,7 @@ public class OrientationRequestedDefault extends IntegerSyntax implements Defaul
 		super(value);
 	}
 
+  @Override
 	public Class getCategory() {
 		return this.getClass();
 	}
@@ -40,6 +41,7 @@ public class OrientationRequestedDefault extends IntegerSyntax implements Defaul
 	 *
 	 */
 
+  @Override
 	public String getName() {
 		return OrientationRequestedDefault.getIppName();
 	}

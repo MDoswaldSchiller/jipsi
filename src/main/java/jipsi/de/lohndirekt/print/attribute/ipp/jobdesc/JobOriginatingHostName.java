@@ -36,6 +36,7 @@ public class JobOriginatingHostName extends TextSyntax implements PrintJobAttrib
 	 *
 	 */
 
+  @Override
 	public Class getCategory() {
 		return JobOriginatingHostName.class;
 	}
@@ -48,6 +49,7 @@ public class JobOriginatingHostName extends TextSyntax implements PrintJobAttrib
 		return "job-originating-host-name";
 	}
 
+  @Override
 	public String getName() {
 		return JobOriginatingHostName.getIppName();
 	}

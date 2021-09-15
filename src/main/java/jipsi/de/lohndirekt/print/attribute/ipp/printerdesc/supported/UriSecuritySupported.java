@@ -42,6 +42,7 @@ public class UriSecuritySupported extends TextSyntax implements SupportedValuesA
 	 *
 	 */
 
+  @Override
 	public Class getCategory() {
 		return this.getClass();
 	}
@@ -50,6 +51,7 @@ public class UriSecuritySupported extends TextSyntax implements SupportedValuesA
 	 *
 	 */
 
+  @Override
 	public String getName() {
 		return UriSecuritySupported.getIppName();
 	}

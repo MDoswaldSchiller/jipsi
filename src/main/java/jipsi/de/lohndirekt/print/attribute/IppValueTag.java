@@ -67,6 +67,7 @@ public class IppValueTag {
 	}
 
 
+  @Override
 	public String toString() {
 		return this.description;
 	}

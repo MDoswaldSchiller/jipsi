@@ -37,6 +37,7 @@ public class JobUri extends URISyntax implements PrintRequestAttribute, PrintJob
 	/**
 	 *
 	 */
+  @Override
 	public Class getCategory() {
 		return this.getClass();
 	}
@@ -44,6 +45,7 @@ public class JobUri extends URISyntax implements PrintRequestAttribute, PrintJob
 	/**
 	 *
 	 */
+  @Override
 	public String getName() {
 		return JobUri.getIppName();
 	}

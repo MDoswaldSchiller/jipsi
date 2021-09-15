@@ -37,6 +37,7 @@ public class CharsetConfigured extends TextSyntax implements DefaultAttribute {
 	 *
 	 */
 
+  @Override
 	public Class getCategory() {
 		return CharsetConfigured.class;
 	}
@@ -49,6 +50,7 @@ public class CharsetConfigured extends TextSyntax implements DefaultAttribute {
 		return "charset-configured";
 	}
 
+  @Override
 	public String getName() {
 		return CharsetConfigured.getIppName();
 	}

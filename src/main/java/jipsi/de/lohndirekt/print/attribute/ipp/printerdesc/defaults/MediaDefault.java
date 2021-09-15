@@ -39,6 +39,7 @@ public class MediaDefault extends TextSyntax implements DefaultAttribute {
 	 *
 	 */
 
+  @Override
 	public Class getCategory() {
 		return this.getClass();
 	}
@@ -47,6 +48,7 @@ public class MediaDefault extends TextSyntax implements DefaultAttribute {
 	 *
 	 */
 
+  @Override
 	public String getName() {
 		return MediaDefault.getIppName();
 	}

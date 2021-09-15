@@ -43,6 +43,7 @@ public final static DeviceClass FILE = new DeviceClass("file", Locale.getDefault
 	 *
 	 */
 
+@Override
 	public Class getCategory() {
 		return this.getClass();
 	}
@@ -51,6 +52,7 @@ public final static DeviceClass FILE = new DeviceClass("file", Locale.getDefault
 	 *
 	 */
 
+@Override
 	public String getName() {
 		return DeviceClass.getIppName();
 	}

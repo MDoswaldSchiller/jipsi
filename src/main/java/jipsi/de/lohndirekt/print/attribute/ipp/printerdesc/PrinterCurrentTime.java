@@ -37,6 +37,7 @@ public class PrinterCurrentTime extends DateTimeSyntax implements PrintServiceAt
 	 *
 	 */
 
+  @Override
 	public Class getCategory() {
 		return this.getClass();
 	}
@@ -45,6 +46,7 @@ public class PrinterCurrentTime extends DateTimeSyntax implements PrintServiceAt
 	 *
 	 */
 
+  @Override
 	public String getName() {
 		return PrinterCurrentTime.getIppName();
 	}

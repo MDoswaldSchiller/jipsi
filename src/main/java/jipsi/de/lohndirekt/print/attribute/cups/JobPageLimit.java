@@ -44,10 +44,12 @@ public class JobPageLimit extends IntegerSyntax implements PrintServiceAttribute
 	 *
 	 */
 
+  @Override
 	public Class getCategory() {
 		return this.getClass();
 	}
 
+  @Override
 	public String getName() {
 		return JobPageLimit.getIppName();
 	}

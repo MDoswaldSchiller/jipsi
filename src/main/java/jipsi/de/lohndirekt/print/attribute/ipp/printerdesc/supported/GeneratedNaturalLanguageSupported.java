@@ -36,6 +36,7 @@ public class GeneratedNaturalLanguageSupported extends TextSyntax implements Sup
 	 *
 	 */
 
+  @Override
 	public Class getCategory() {
 		return GeneratedNaturalLanguageSupported.class;
 	}
@@ -48,6 +49,7 @@ public class GeneratedNaturalLanguageSupported extends TextSyntax implements Sup
 		return "generated-natural-language-supported";
 	}
 
+  @Override
 	public String getName() {
 		return GeneratedNaturalLanguageSupported.getIppName();
 	}

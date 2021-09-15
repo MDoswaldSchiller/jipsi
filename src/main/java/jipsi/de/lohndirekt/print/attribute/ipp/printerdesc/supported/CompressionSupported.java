@@ -37,10 +37,12 @@ public class CompressionSupported extends TextSyntax implements SupportedValuesA
 	 *
 	 */
 
+  @Override
 	public Class getCategory() {
 		return CompressionSupported.class;
 	}
 
+  @Override
 	public String getName() {
 		return CompressionSupported.getIppName();
 	}

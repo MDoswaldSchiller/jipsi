@@ -31,6 +31,7 @@ public class PrinterStateTime extends IntegerSyntax implements PrintServiceAttri
 		super(value);
 	}
 
+  @Override
 	public Class getCategory() {
 		return this.getClass();
 	}
@@ -39,6 +40,7 @@ public class PrinterStateTime extends IntegerSyntax implements PrintServiceAttri
 	 *
 	 */
 
+  @Override
 	public String getName() {
 		return PrinterStateTime.getIppName();
 	}

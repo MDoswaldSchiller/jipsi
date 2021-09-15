@@ -31,6 +31,7 @@ public class TimeAtCreation extends IntegerSyntax implements PrintJobAttribute {
 		super(value);
 	}
 
+  @Override
 	public Class getCategory() {
 		return this.getClass();
 	}
@@ -39,6 +40,7 @@ public class TimeAtCreation extends IntegerSyntax implements PrintJobAttribute {
 	 *
 	 */
 
+  @Override
 	public String getName() {
 		return TimeAtCreation.getIppName();
 	}

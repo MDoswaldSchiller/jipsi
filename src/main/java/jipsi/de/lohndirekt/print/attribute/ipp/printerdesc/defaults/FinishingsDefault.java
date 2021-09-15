@@ -32,6 +32,7 @@ public class FinishingsDefault extends IntegerSyntax implements DefaultAttribute
 		super(value);
 	}
 
+  @Override
 	public Class getCategory() {
 		return this.getClass();
 	}
@@ -40,6 +41,7 @@ public class FinishingsDefault extends IntegerSyntax implements DefaultAttribute
 	 *
 	 */
 
+  @Override
 	public String getName() {
 		return FinishingsDefault.getIppName();
 	}

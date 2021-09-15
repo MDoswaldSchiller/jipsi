@@ -32,6 +32,7 @@ public class JobId extends IntegerSyntax implements PrintRequestAttribute, Print
 		super(value);
 	}
 
+  @Override
 	public Class getCategory() {
 		return this.getClass();
 	}
@@ -39,6 +40,7 @@ public class JobId extends IntegerSyntax implements PrintRequestAttribute, Print
 	/**
 	 *
 	 */
+  @Override
 	public String getName() {
 		return JobId.getIppName();
 	}

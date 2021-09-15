@@ -30,6 +30,7 @@ public class PageRangesSupported extends EnumSyntax implements SupportedValuesAt
 	 *
 	 */
 
+  @Override
 	protected EnumSyntax[] getEnumValueTable() {
 		return new EnumSyntax[]{
 			NOT_SUPPORTED,
@@ -42,6 +43,7 @@ public class PageRangesSupported extends EnumSyntax implements SupportedValuesAt
 	 *
 	 */
 
+  @Override
 	protected int getOffset() {
 		return 0;
 	}
@@ -50,6 +52,7 @@ public class PageRangesSupported extends EnumSyntax implements SupportedValuesAt
 	 *
 	 */
 
+  @Override
 	protected String[] getStringTable() {
 		return new String[]{
 			"supported" ,
@@ -68,6 +71,7 @@ public class PageRangesSupported extends EnumSyntax implements SupportedValuesAt
 	 *
 	 */
 
+  @Override
 	public Class getCategory() {
 		return this.getClass();
 	}
@@ -76,6 +80,7 @@ public class PageRangesSupported extends EnumSyntax implements SupportedValuesAt
 	 *
 	 */
 
+  @Override
 	public String getName() {
 		return PageRangesSupported.getIppName();
 	}

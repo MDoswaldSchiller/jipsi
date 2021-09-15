@@ -37,6 +37,7 @@ public class MemberUris extends URISyntax implements Attribute {
 	 *
 	 */
 
+  @Override
 	public Class getCategory() {
 		return this.getClass();
 	}
@@ -45,6 +46,7 @@ public class MemberUris extends URISyntax implements Attribute {
 	 *
 	 */
 
+  @Override
 	public String getName() {
 		return MemberUris.getIppName();
 	}

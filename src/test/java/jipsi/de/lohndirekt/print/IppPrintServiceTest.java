@@ -46,6 +46,7 @@ public class IppPrintServiceTest extends TestCase {
     /*
      * @see TestCase#setUp()
      */
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
         System.setProperty(IppRequestFactory.IPP_REQUEST_IMPL_KEY, IppRequestTestImpl.class.getName());

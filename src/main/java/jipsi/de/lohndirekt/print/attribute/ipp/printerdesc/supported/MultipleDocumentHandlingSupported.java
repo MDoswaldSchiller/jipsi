@@ -36,10 +36,12 @@ public class MultipleDocumentHandlingSupported extends TextSyntax implements Sup
 	 *
 	 */
 
+  @Override
 	public Class getCategory() {
 		return MultipleDocumentHandlingSupported.class;
 	}
 
+  @Override
 	public String getName() {
 		return MultipleDocumentHandlingSupported.getIppName();
 	}

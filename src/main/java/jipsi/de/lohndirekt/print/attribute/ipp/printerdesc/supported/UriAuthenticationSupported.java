@@ -44,6 +44,7 @@ public class UriAuthenticationSupported extends TextSyntax implements SupportedV
 	 *
 	 */
 
+  @Override
 	public Class getCategory() {
 		return this.getClass();
 	}
@@ -52,6 +53,7 @@ public class UriAuthenticationSupported extends TextSyntax implements SupportedV
 	 *
 	 */
 
+  @Override
 	public String getName() {
 		return UriAuthenticationSupported.getIppName();
 	}

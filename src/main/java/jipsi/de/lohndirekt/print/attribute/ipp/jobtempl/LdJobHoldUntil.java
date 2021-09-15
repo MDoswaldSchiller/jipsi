@@ -54,10 +54,12 @@ public class LdJobHoldUntil extends TextSyntax implements PrintRequestAttribute,
 		super(value, locale);
 	}
 
+    @Override
 	public Class getCategory() {
 		return LdJobHoldUntil.class;
 	}
 
+    @Override
 	public String getName() {
 		return LdJobHoldUntil.getIppName();
 	}

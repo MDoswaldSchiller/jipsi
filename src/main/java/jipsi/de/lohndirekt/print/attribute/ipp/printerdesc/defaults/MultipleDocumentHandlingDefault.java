@@ -37,10 +37,12 @@ public class MultipleDocumentHandlingDefault extends TextSyntax implements Defau
 	 *
 	 */
 
+  @Override
 	public Class getCategory() {
 		return MultipleDocumentHandlingDefault.class;
 	}
 
+  @Override
 	public String getName() {
 		return MultipleDocumentHandlingDefault.getIppName();
 	}

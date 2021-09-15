@@ -44,6 +44,7 @@ public class JobQuotaPeriod extends IntegerSyntax implements PrintServiceAttribu
 	 *
 	 */
 
+  @Override
 	public Class getCategory() {
 		return this.getClass();
 	}
@@ -52,6 +53,7 @@ public class JobQuotaPeriod extends IntegerSyntax implements PrintServiceAttribu
 	 *
 	 */
 
+  @Override
 	public String getName() {
 		return JobQuotaPeriod.getIppName();
 	}

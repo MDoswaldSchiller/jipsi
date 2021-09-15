@@ -37,6 +37,7 @@ SupportedValuesAttribute {
 	 *
 	 */
 
+  @Override
 	public Class getCategory() {
 		return OutputBinSupported.class;
 	}
@@ -49,6 +50,7 @@ SupportedValuesAttribute {
 		return "output-bin-supported";
 	}
 
+  @Override
 	public String getName() {
 		return OutputBinSupported.getIppName();
 	}

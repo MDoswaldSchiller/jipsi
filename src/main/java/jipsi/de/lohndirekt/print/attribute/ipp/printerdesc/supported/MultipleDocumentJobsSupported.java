@@ -32,6 +32,7 @@ public class MultipleDocumentJobsSupported extends EnumSyntax implements Support
 	 *
 	 */
 
+  @Override
 	protected EnumSyntax[] getEnumValueTable() {
 		return new EnumSyntax[]{
 			NOT_SUPPORTED,
@@ -43,6 +44,7 @@ public class MultipleDocumentJobsSupported extends EnumSyntax implements Support
 	 *
 	 */
 
+  @Override
 	protected int getOffset() {
 		return 0;
 	}
@@ -51,6 +53,7 @@ public class MultipleDocumentJobsSupported extends EnumSyntax implements Support
 	 *
 	 */
 
+  @Override
 	protected String[] getStringTable() {
 		return new String[]{
 			"not supported",
@@ -69,6 +72,7 @@ public class MultipleDocumentJobsSupported extends EnumSyntax implements Support
 	 *
 	 */
 
+  @Override
 	public Class getCategory() {
 		return this.getClass();
 	}
@@ -77,6 +81,7 @@ public class MultipleDocumentJobsSupported extends EnumSyntax implements Support
 	 *
 	 */
 
+  @Override
 	public String getName() {
 		return MultipleDocumentJobsSupported.getIppName();
 	}

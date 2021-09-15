@@ -81,6 +81,7 @@ class IppHttpConnection implements IppConnection {
      * @return content of the response
      * @throws IOException
      */
+    @Override
     public InputStream getIppResponse() throws IOException {
         return method.getResponseBodyAsStream();
     }
@@ -89,6 +90,7 @@ class IppHttpConnection implements IppConnection {
      * @return the statuscode of last request
      * @throws IOException
      */
+    @Override
     public int getStatusCode() throws IOException {
         return method.getStatusCode();
     }
@@ -111,10 +113,12 @@ class IppHttpConnection implements IppConnection {
     /**
      * @param stream
      */
+    @Override
     public void setIppRequest(InputStream stream) {
         method.setRequestBody(stream);
     }
 
+    @Override
     public boolean execute() throws HttpException, IOException {
         if (this.method.validate()) {
             httpConn.executeMethod(method);

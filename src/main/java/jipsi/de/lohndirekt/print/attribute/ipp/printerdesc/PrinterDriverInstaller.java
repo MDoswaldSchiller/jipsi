@@ -29,14 +29,17 @@ public final class PrinterDriverInstaller extends URISyntax implements PrintServ
 		super(uri);
 	}
 
+  @Override
 	public boolean equals(Object object) {
 		return (super.equals(object) && object instanceof PrinterDriverInstaller);
 	}
 
+  @Override
 	public final Class getCategory() {
 		return PrinterDriverInstaller.class;
 	}
 
+  @Override
 	public final String getName() {
 		return PrinterDriverInstaller.getIppName();
 	}
