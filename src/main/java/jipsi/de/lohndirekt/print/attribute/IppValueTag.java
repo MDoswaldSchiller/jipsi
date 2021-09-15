@@ -18,6 +18,9 @@
  */
 package jipsi.de.lohndirekt.print.attribute;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 /**
@@ -56,6 +59,19 @@ public enum IppValueTag
   MASK(0x7FFFFFFF, ""),
   COPY(0x80000001, "");
   
+  /**
+   * Build map for faster lookup of status ids
+   */
+  private static final Map<Integer,IppValueTag> CACHE;
+  static
+  {
+    Map<Integer,IppValueTag> cache = new HashMap<>();
+    for (IppValueTag tag : values()) {
+      cache.put(tag.getId(), tag);
+    }
+    CACHE = Map.copyOf(cache);
+  }  
+  
   private final String description;
   private final int id;
   
@@ -79,5 +95,14 @@ public enum IppValueTag
   public String toString()
   {
     return this.description;
+  }
+  
+  public static IppValueTag fromId(int valueTagId)
+  {
+    IppValueTag tag = CACHE.get(valueTagId);
+    if (tag == null) {
+      throw new NoSuchElementException(String.format("No value tag with id 0x%X supported", valueTagId));
+    }
+    return tag;
   }
 }
