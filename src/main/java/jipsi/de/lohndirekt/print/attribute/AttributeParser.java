@@ -79,7 +79,7 @@ public final class AttributeParser
                 }
               }
               else {
-                if (attr.getValue() == ((Integer) values[0]).intValue()) {
+                if (attr.getValue() == ((Integer) values[0])) {
                   attribute = (Attribute) attr;
                   break;
                 }
@@ -104,23 +104,8 @@ public final class AttributeParser
           Constructor constructor = attrClass.getDeclaredConstructor(parameters);
           attribute = (Attribute) constructor.newInstance(values);
         }
-        catch (SecurityException e) {
-          LOG.error(e.getMessage(), e);
-        }
-        catch (NoSuchMethodException e) {
-          LOG.error(e.getMessage(), e);
-        }
-        catch (IllegalArgumentException e) {
-          LOG.error(e.getMessage(), e);
-        }
-        catch (InstantiationException e) {
-          LOG.error(e.getMessage(), e);
-        }
-        catch (IllegalAccessException e) {
-          LOG.error(e.getMessage(), e);
-        }
-        catch (InvocationTargetException e) {
-          LOG.error(e.getMessage(), e);
+        catch (IllegalAccessException | IllegalArgumentException | InstantiationException | NoSuchMethodException | SecurityException | InvocationTargetException e) {
+          LOG.error("Error constructing attribute object for " + name, e);
         }
       }
     }
@@ -155,7 +140,7 @@ public final class AttributeParser
       name = parseString(in, nameLength);
     }
 
-    Object[] values = parseValues(valueTag, in);
+    Object[] values = parseValues(IppValueTag.fromId(valueTag), in);
 
     if (name.equals(IppAttributeName.PRINTER_STATE_REASONS.getName())) {
       return parsePrinterStateReasons((String) values[0], lastAttribute);
@@ -422,53 +407,66 @@ public final class AttributeParser
    * @param valueLength
    * @return
    */
-  private static Object[] parseValues(int valueTag, InputStream in) throws IOException
+  private static Object[] parseValues(IppValueTag valueTag, InputStream in) throws IOException
   {
     int valueLength = parseInt2(in);
     Object[] values = null;
-    if (valueTag == IppValueTag.INTEGER.getId() || valueTag == IppValueTag.ENUM.getId()) {
-      Integer number = new Integer(parseInt4(in));
-      values = new Object[]{number};
-    }
-    else if (valueTag == IppValueTag.STRING.getId()
-             || valueTag == IppValueTag.TEXT.getId()
-             || valueTag == IppValueTag.NAME.getId()) {
-      String word = parseNameAndTextString(in, valueLength);
-      values = new Object[]{word, Locale.getDefault()};
-    }
-    else if (valueTag == IppValueTag.CHARSET.getId()
-             || valueTag == IppValueTag.LANGUAGE.getId()
-             || valueTag == IppValueTag.MIMETYPE.getId()) {
-      String word = parseString(in, valueLength);
-      values = new Object[]{word, Locale.getDefault()};
-    }
-    else if (valueTag == IppValueTag.URI.getId()) {
-      URI uri = parseUri(in, valueLength);
-      values = new Object[]{uri};
-    }
-    else if (valueTag == IppValueTag.KEYWORD.getId()) {
-      String word = parseString(in, valueLength);
-      values = new Object[]{word, Locale.getDefault()};
-    }
-    else if (valueTag == IppValueTag.BOOLEAN.getId()) {
-      Integer bool = new Integer(in.read());
-      values = new Object[]{bool};
-    }
-    else if (valueTag == IppValueTag.RANGE.getId()) {
-      Integer lowerBound = new Integer(parseInt4(in));
-      Integer upperBound = new Integer(parseInt4(in));
-      values = new Object[]{lowerBound, upperBound};
-    }
-    else if (valueTag == IppValueTag.DATE.getId()) {
-
-      Date date = parseDate(in);
-      values = new Object[]{date};
-    }
-    else if (valueTag == IppValueTag.NOVALUE.getId()) {
-      values = new Object[]{};
-    }
-    else {
-      throw new IllegalArgumentException("\"" + Integer.toHexString(valueTag) + "\" is not a valid value-tag");
+    
+    switch (valueTag) {
+      case INTEGER:
+      case ENUM:
+        values = new Object[]{ parseInt4(in) };
+        break;
+        
+      case STRING:
+      case TEXT:
+      case NAME:
+        values = new Object[]{parseNameAndTextString(in, valueLength), Locale.getDefault()};
+        break;
+        
+      case CHARSET:
+      case LANGUAGE:
+      case MIMETYPE:
+      case KEYWORD:
+        values = new Object[]{parseString(in, valueLength), Locale.getDefault()};
+        break;
+        
+      case URI:
+        values = new Object[]{ parseUri(in, valueLength) };
+        break;
+        
+      case BOOLEAN:
+        values = new Object[]{ in.read() };
+        break;
+        
+      case RANGE: {
+        Integer lowerBound = parseInt4(in);
+        Integer upperBound = parseInt4(in);
+        values = new Object[]{lowerBound, upperBound};
+        } break;
+      
+      case DATE:
+        values = new Object[]{ parseDate(in) };
+        break;
+        
+      case RESOLUTION:
+        int crossFeedDirectionResolution = parseInt4(in);
+        int feedDirectionResolution = parseInt4(in);
+        byte units = (byte)in.read();
+        values = new Object[]{ crossFeedDirectionResolution, feedDirectionResolution, units };
+        break;
+        
+      case NOVALUE:
+        values = new Object[]{};
+        break;
+        
+      case BEGIN_COLLECTION:
+      case END_COLLECTION:
+        values = new Object[]{};
+        break;
+        
+      default:
+        throw new UnsupportedOperationException(String.format("Unsupported value type: %s", valueTag));
     }
     return values;
   }
