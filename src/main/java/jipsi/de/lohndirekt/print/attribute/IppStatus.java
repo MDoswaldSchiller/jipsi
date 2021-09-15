@@ -20,6 +20,7 @@ package jipsi.de.lohndirekt.print.attribute;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public final class IppStatus
 {
@@ -117,7 +118,7 @@ public final class IppStatus
    */
   private static void put(IppStatus status)
   {
-    stati.put(new Integer(status.getStatus()), status);
+    stati.put(status.getStatus(), status);
   }
 
   public static IppStatus get(int statusCode)
@@ -125,19 +126,19 @@ public final class IppStatus
     if (stati == null) {
       init();
     }
-    return (IppStatus) stati.get(new Integer(statusCode));
+    return (IppStatus) stati.get(statusCode);
   }
 
   /*
 	 * End of static part
    */
-  private String text;
-  private int status;
+  private final String text;
+  private final int status;
 
   private IppStatus(String statusText, int statusCode)
   {
     this.status = statusCode;
-    this.text = statusText;
+    this.text = Objects.requireNonNull(statusText);
   }
 
   public String getText()
@@ -149,5 +150,4 @@ public final class IppStatus
   {
     return this.status;
   }
-
 }

@@ -18,6 +18,8 @@
  */
 package jipsi.de.lohndirekt.print.attribute;
 
+import java.util.Objects;
+
 /**
  * Bezeichnungen �bernommen aus <link>www.ietf.org/rfc/rfc2910.txt</link>
  * Tags ohne Bezeichnung sind dort nicht aufgef�hrt, werden aber in der Cups-API
@@ -25,10 +27,6 @@ package jipsi.de.lohndirekt.print.attribute;
  */
 public class IppValueTag
 {
-
-  private String description;
-  private int value = 0;
-
   public static final IppValueTag UNSUPPORTED_VALUE = new IppValueTag(0x10, "unsupported");
   public static final IppValueTag DEFAULT = new IppValueTag(0x11, "'default' ");
   public static final IppValueTag UNKNOWN = new IppValueTag(0x12, "unknown");
@@ -59,10 +57,14 @@ public class IppValueTag
   public static final IppValueTag MASK = new IppValueTag(0x7FFFFFFF, "");
   public static final IppValueTag COPY = new IppValueTag(0x80000001, "");
 
+  
+  private final String description;
+  private final int value;
+  
   private IppValueTag(int value, String description)
   {
     this.value = value;
-    this.description = description;
+    this.description = Objects.requireNonNull(description);
   }
 
   public int getValue()

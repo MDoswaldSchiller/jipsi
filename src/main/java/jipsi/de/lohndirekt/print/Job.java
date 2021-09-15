@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import javax.print.Doc;
 import javax.print.DocPrintJob;
@@ -56,12 +57,12 @@ import org.slf4j.LoggerFactory;
  */
 class Job implements DocPrintJob
 {
-
   protected static final Logger LOG = LoggerFactory.getLogger(Job.class);
-  protected boolean ok = false;
-  protected IppPrintService printService;
-  private PrintJobAttributeSet jobAttributes;
+
+  protected final IppPrintService printService;
+  protected boolean ok;
   protected JobUri jobUri;
+  private PrintJobAttributeSet jobAttributes;
   private List jobListeners;
   private Map attributeListeners;
 
@@ -70,7 +71,7 @@ class Job implements DocPrintJob
    */
   public Job(IppPrintService service)
   {
-    this.printService = service;
+    this.printService = Objects.requireNonNull(service);
   }
 
   /**
@@ -256,7 +257,7 @@ class Job implements DocPrintJob
   static Job getJob(IppPrintService service, JobId id) throws PrintException
   {
     Job job = new Job(service);
-    job.printService = service;
+    
     URI jobUri;
     try {
       jobUri

@@ -18,14 +18,14 @@
  */
 package jipsi.de.lohndirekt.print.attribute.ipp.jobtempl;
 
+import java.util.Objects;
 import javax.print.attribute.PrintJobAttribute;
 import javax.print.attribute.PrintRequestAttribute;
 import javax.print.attribute.standard.Media;
 
 public class LdMediaTray extends Media implements PrintRequestAttribute, PrintJobAttribute
 {
-
-  private String name;
+  private final String name;
 
   /**
    * @param trayName
@@ -34,10 +34,7 @@ public class LdMediaTray extends Media implements PrintRequestAttribute, PrintJo
   public LdMediaTray(String trayName)
   {
     super(0);
-    if (trayName == null) {
-      throw new NullPointerException("TrayName must not be null");
-    }
-    this.name = trayName;
+    this.name = Objects.requireNonNull(trayName);
   }
 
   @Override

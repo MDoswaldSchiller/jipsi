@@ -62,12 +62,13 @@ import org.slf4j.LoggerFactory;
  */
 public class IppPrintServiceLookup extends PrintServiceLookup
 {
-
   public final static String URI_KEY = "de.lohndirekt.print.IppPrintService.uri";
   public final static String USERNAME_KEY = "de.lohndirekt.print.IppPrintService.username";
   public final static String PASSWORD_KEY = "de.lohndirekt.print.IppPrintService.password";
-  private List cupsServers = new ArrayList();
+  
   private static final Logger LOG = LoggerFactory.getLogger(IppPrintServiceLookup.class);
+
+  private final List cupsServers = new ArrayList();
 
   /**
    * <p>

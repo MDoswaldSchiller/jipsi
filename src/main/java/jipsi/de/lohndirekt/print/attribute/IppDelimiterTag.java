@@ -18,6 +18,8 @@
  */
 package jipsi.de.lohndirekt.print.attribute;
 
+import java.util.Objects;
+
 /**
  * Bezeichnungen �bernommen aus <link>www.ietf.org/rfc/rfc2910.txt</link>
  * Tags ohne Bezeichnung sind dort nicht aufgef�hrt, werden aber in der Cups-API
@@ -25,10 +27,6 @@ package jipsi.de.lohndirekt.print.attribute;
  */
 public class IppDelimiterTag
 {
-
-  private String description = "";
-  private int value = 0;
-
   public static final IppDelimiterTag ZERO = new IppDelimiterTag(0x00, "");
   public static final IppDelimiterTag BEGIN_OPERATION_ATTRIBUTES = new IppDelimiterTag(0x01, "operation-attributes-tag");
   public static final IppDelimiterTag BEGIN_JOB_ATTRIBUTES = new IppDelimiterTag(0x02, "job-attributes-tag");
@@ -38,10 +36,13 @@ public class IppDelimiterTag
   public static final IppDelimiterTag SUBSCRIPTION = new IppDelimiterTag(0x06, "");
   public static final IppDelimiterTag EVENT_NOTIFICATION = new IppDelimiterTag(0x07, "");
 
+  private final String description;
+  private final int value;
+  
   private IppDelimiterTag(int value, String description)
   {
     this.value = value;
-    this.description = description;
+    this.description = Objects.requireNonNull(description);
   }
 
   public int getValue()
@@ -54,5 +55,4 @@ public class IppDelimiterTag
   {
     return this.description;
   }
-
 }

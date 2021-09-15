@@ -54,13 +54,13 @@ import org.slf4j.LoggerFactory;
  */
 public class IppPrintService implements PrintService
 {
-
   private static final Logger LOG = LoggerFactory.getLogger(IppPrintService.class);
-  private DocFlavor[] supportedFlavors = null;
-  private URI uri;
-  private RequestingUserName requestingUserName = null;
-  private RequestingUserPassword requestingUserPassword = null;
-  private Map attributes = null;
+  
+  private final URI uri;
+  private DocFlavor[] supportedFlavors;
+  private RequestingUserName requestingUserName;
+  private RequestingUserPassword requestingUserPassword;
+  private Map attributes;
 
   /**
    * @param uri

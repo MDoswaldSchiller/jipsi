@@ -23,6 +23,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import javax.print.attribute.Attribute;
 import javax.print.attribute.URISyntax;
@@ -39,15 +40,15 @@ import org.slf4j.LoggerFactory;
  */
 class IppServer
 {
-
   private static final Logger LOG = LoggerFactory.getLogger(IppServer.class);
-  private URI uri;
-  private RequestingUserName user;
-  private RequestingUserPassword passwd;
+
+  private final URI uri;
+  private final RequestingUserName user;
+  private final RequestingUserPassword passwd;
 
   IppServer(URI uri, RequestingUserName user, RequestingUserPassword passwd)
   {
-    this.uri = uri;
+    this.uri = Objects.requireNonNull(uri);
     this.user = user;
     this.passwd = passwd;
   }

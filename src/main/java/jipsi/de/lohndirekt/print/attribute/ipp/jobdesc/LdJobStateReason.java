@@ -15,11 +15,10 @@ import javax.print.attribute.standard.JobStateReason;
  */
 public class LdJobStateReason extends JobStateReason
 {
-
-  private String stringValue;
-
   public static LdJobStateReason NONE = new LdJobStateReason("none", Locale.getDefault(), -1);
 
+  private final String stringValue;
+  
   /**
    * @param value
    */

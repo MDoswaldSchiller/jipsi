@@ -40,9 +40,9 @@ import jipsi.de.lohndirekt.print.attribute.ipp.NaturalLanguage;
 public final class AttributeWriter
 {
 
-  private final static int MILIS_IN_MINUTE = 1000 * 60;
-  private final static int MILIS_IN_HOUR = MILIS_IN_MINUTE * 60;
-  private static Map encodings = new HashMap();
+  private static final int MILIS_IN_MINUTE = 1000 * 60;
+  private static final int MILIS_IN_HOUR = MILIS_IN_MINUTE * 60;
+  private static final Map ENCODINGS = new HashMap();
 
   public final static Charset DEFAULT_CHARSET = Charset.ISO_8859_1;
 

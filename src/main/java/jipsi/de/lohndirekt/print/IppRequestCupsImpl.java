@@ -28,6 +28,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Vector;
 import javax.print.attribute.Attribute;
 import javax.print.attribute.AttributeSet;
@@ -111,41 +112,31 @@ class IppRequestCupsImpl implements IppRequest
   }
 
   private static final Logger LOG = LoggerFactory.getLogger(IppRequestCupsImpl.class);
+  private static final int SEND_REQUEST_COUNT = 3;
+  private static final int SEND_REQUEST_TIMEOUT = 50;
+  private static final NaturalLanguage NATURAL_LANGUAGE_DEFAULT = NaturalLanguage.EN;
+  private static final Charset CHARSET_DEFAULT = Charset.UTF_8;
 
   private IppConnection conn;
-
-  private boolean sent = false;
-
+  private boolean sent;
   private Object data;
-
-  private URI path;
-
-  private OperationsSupported operation;
 
   //Id wird in der Cups-API zwar �bergeben, ist aber auch immer 1.
   private int id = 1;
-
   private PrintJobAttributeSet jobAttributes = new HashPrintJobAttributeSet();
-
   private AttributeSet operationAttributes = new HashAttributeSet();
-
   private AttributeSet printerAttributes = new HashAttributeSet();
 
-  private static final int SEND_REQUEST_COUNT = 3;
-
-  private static final int SEND_REQUEST_TIMEOUT = 50;
-
-  private static final NaturalLanguage NATURAL_LANGUAGE_DEFAULT = NaturalLanguage.EN;
-
-  private static final Charset CHARSET_DEFAULT = Charset.UTF_8;
+  private final URI path;
+  private final OperationsSupported operation;
 
   /**
    * @param operation
    */
   IppRequestCupsImpl(URI path, OperationsSupported operation)
   {
-    this.path = path;
-    this.operation = operation;
+    this.path = Objects.requireNonNull(path);
+    this.operation = Objects.requireNonNull(operation);
     init();
   }
 

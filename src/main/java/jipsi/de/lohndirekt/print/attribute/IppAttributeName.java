@@ -183,11 +183,9 @@ public final class IppAttributeName
   public static final IppAttributeName JOB_MEDIA_SHEETS = new IppAttributeName(new JobMediaSheets(1));
   public static final IppAttributeName JOB_MEDIA_SHEETS_COMPLETED = new IppAttributeName(new JobMediaSheetsCompleted(1));
   public static final IppAttributeName JOB_MEDIA_SHEETS_SUPPORTED = new IppAttributeName(new JobMediaSheetsSupported(1, 1));
-  public static final IppAttributeName JOB_MESSAGE_FROM_OPERATOR
-      = new IppAttributeName(new JobMessageFromOperator("", Locale.CANADA));
+  public static final IppAttributeName JOB_MESSAGE_FROM_OPERATOR = new IppAttributeName(new JobMessageFromOperator("", Locale.CANADA));
   public static final IppAttributeName JOB_NAME = new IppAttributeName(new JobName("", Locale.CANADA));
-  public static final IppAttributeName JOB_ORIGINATING_USER_NAME
-      = new IppAttributeName(new JobOriginatingUserName("", Locale.CANADA));
+  public static final IppAttributeName JOB_ORIGINATING_USER_NAME = new IppAttributeName(new JobOriginatingUserName("", Locale.CANADA));
   public static final IppAttributeName JOB_PRIORIY = new IppAttributeName(new JobPriority(1));
   public static final IppAttributeName JOB_PRIORIY_SUPPORTED = new IppAttributeName(new JobPrioritySupported(1));
   public static final IppAttributeName JOB_SHEETS = new IppAttributeName(JobSheets.NONE);
@@ -332,11 +330,9 @@ public final class IppAttributeName
   public static final IppAttributeName OUTPUT_BIN_SUPPORTED
       = new IppAttributeName(new OutputBinSupported("x", Locale.getDefault()));
 
-  private static Map attributesByName = new HashMap();
-  ;
-	private static Map attributesByCategory = new HashMap();
+  private static final Map attributesByName = new HashMap();
+	private static final Map attributesByCategory = new HashMap();
 
-  ;
 
 	/**
 		 *

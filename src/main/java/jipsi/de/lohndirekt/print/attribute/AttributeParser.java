@@ -54,10 +54,8 @@ import org.slf4j.LoggerFactory;
  */
 public final class AttributeParser
 {
-
-  private final static EndOfAttributesException END_OF_ATTRIBUTES_EXCEPTION = new EndOfAttributesException();
-
   private final static Logger LOG = LoggerFactory.getLogger(AttributeParser.class);
+  private final static EndOfAttributesException END_OF_ATTRIBUTES_EXCEPTION = new EndOfAttributesException();
 
   /**
    * @param name

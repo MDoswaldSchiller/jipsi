@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import javax.print.Doc;
 import javax.print.MultiDoc;
 
@@ -33,9 +34,19 @@ public class SimpleMultiDoc implements MultiDoc
 {
 
   private List listeners;
-  Doc doc = null;
-  boolean lastDoc = false;
-  SimpleMultiDoc next = null;
+  final Doc doc;
+  final boolean lastDoc;
+  SimpleMultiDoc next;
+
+
+  /**
+   *
+   */
+  protected SimpleMultiDoc(Doc doc, boolean lastDoc)
+  {
+    this.doc = Objects.requireNonNull(doc);
+    this.lastDoc = lastDoc;
+  }
 
   public static SimpleMultiDoc create(Doc doc)
   {
@@ -46,19 +57,7 @@ public class SimpleMultiDoc implements MultiDoc
   {
     return new SimpleMultiDoc(doc, lastDoc);
   }
-
-  /**
-   *
-   */
-  protected SimpleMultiDoc(Doc doc, boolean lastDoc)
-  {
-    if (doc == null) {
-      throw new NullPointerException("Doc must not be null");
-    }
-    this.doc = doc;
-    this.lastDoc = lastDoc;
-  }
-
+  
   /**
    * Adds a new MultiDoc. If the next MultiDoc has already been set, it tries to
    * add it there

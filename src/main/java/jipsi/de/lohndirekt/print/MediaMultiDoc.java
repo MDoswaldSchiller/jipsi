@@ -18,6 +18,7 @@
  */
 package jipsi.de.lohndirekt.print;
 
+import java.util.Objects;
 import javax.print.Doc;
 import javax.print.attribute.standard.Media;
 
@@ -27,8 +28,16 @@ import javax.print.attribute.standard.Media;
  */
 class MediaMultiDoc extends SimpleMultiDoc
 {
+  final Media media;
 
-  Media media = null;
+  /**
+   *
+   */
+  private MediaMultiDoc(Doc doc, Media media, boolean lastDoc)
+  {
+    super(doc, lastDoc);
+    this.media = Objects.requireNonNull(media);
+  }
 
   public static MediaMultiDoc create(Doc doc, Media media)
   {
@@ -40,14 +49,4 @@ class MediaMultiDoc extends SimpleMultiDoc
   {
     return new MediaMultiDoc(doc, media, lastDoc);
   }
-
-  /**
-   *
-   */
-  private MediaMultiDoc(Doc doc, Media media, boolean lastDoc)
-  {
-    super(doc, lastDoc);
-    this.media = media;
-  }
-
 }
