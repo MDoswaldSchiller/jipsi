@@ -25,16 +25,16 @@ import java.util.Objects;
  * Tags ohne Bezeichnung sind dort nicht aufgef�hrt, werden aber in der Cups-API
  * verwendet
  */
-public class IppDelimiterTag
+public enum IppDelimiterTag
 {
-  public static final IppDelimiterTag ZERO = new IppDelimiterTag(0x00, "");
-  public static final IppDelimiterTag BEGIN_OPERATION_ATTRIBUTES = new IppDelimiterTag(0x01, "operation-attributes-tag");
-  public static final IppDelimiterTag BEGIN_JOB_ATTRIBUTES = new IppDelimiterTag(0x02, "job-attributes-tag");
-  public static final IppDelimiterTag END_ATTRIBUTES = new IppDelimiterTag(0x03, "end-of-attributes-tag");
-  public static final IppDelimiterTag BEGIN_PRINTER_ATTRIBUTES = new IppDelimiterTag(0x04, "printer-attributes-tag");
-  public static final IppDelimiterTag UNSUPPORTED_GROUP = new IppDelimiterTag(0x05, "unsupported-attributes-tag");
-  public static final IppDelimiterTag SUBSCRIPTION = new IppDelimiterTag(0x06, "");
-  public static final IppDelimiterTag EVENT_NOTIFICATION = new IppDelimiterTag(0x07, "");
+  ZERO(0x00, ""),
+  BEGIN_OPERATION_ATTRIBUTES(0x01, "operation-attributes-tag"),
+  BEGIN_JOB_ATTRIBUTES(0x02, "job-attributes-tag"),
+  END_ATTRIBUTES(0x03, "end-of-attributes-tag"),
+  BEGIN_PRINTER_ATTRIBUTES(0x04, "printer-attributes-tag"),
+  UNSUPPORTED_GROUP(0x05, "unsupported-attributes-tag"),
+  SUBSCRIPTION(0x06, ""),
+  EVENT_NOTIFICATION(0x07, "");
 
   private final String description;
   private final int value;
@@ -50,6 +50,11 @@ public class IppDelimiterTag
     return this.value;
   }
 
+  public String getDescription()
+  {
+    return description;
+  }
+  
   @Override
   public String toString()
   {

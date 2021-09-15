@@ -21,55 +21,58 @@ package jipsi.de.lohndirekt.print.attribute;
 import java.util.Objects;
 
 /**
- * Bezeichnungen �bernommen aus <link>www.ietf.org/rfc/rfc2910.txt</link>
- * Tags ohne Bezeichnung sind dort nicht aufgef�hrt, werden aber in der Cups-API
- * verwendet
+ * Descriptions taken from <link>www.ietf.org/rfc/rfc2910.txt</link>. Tags without
+ * description are not mentioned there, but are used by the CUPS-API
  */
-public class IppValueTag
+public enum IppValueTag
 {
-  public static final IppValueTag UNSUPPORTED_VALUE = new IppValueTag(0x10, "unsupported");
-  public static final IppValueTag DEFAULT = new IppValueTag(0x11, "'default' ");
-  public static final IppValueTag UNKNOWN = new IppValueTag(0x12, "unknown");
-  public static final IppValueTag NOVALUE = new IppValueTag(0x13, "no-value");
-  public static final IppValueTag NOTSETTABLE = new IppValueTag(0x15, "");
-  public static final IppValueTag DELETEATTR = new IppValueTag(0x16, "");
-  public static final IppValueTag ADMINDEFINE = new IppValueTag(0x17, "");
-  public static final IppValueTag INTEGER = new IppValueTag(0x21, "integer");
-  public static final IppValueTag BOOLEAN = new IppValueTag(0x22, "boolean");
-  public static final IppValueTag ENUM = new IppValueTag(0x23, "enum");
-  public static final IppValueTag STRING = new IppValueTag(0x30, "octetString");
-  public static final IppValueTag DATE = new IppValueTag(0x31, "dateTime");
-  public static final IppValueTag RESOLUTION = new IppValueTag(0x32, "resolution");
-  public static final IppValueTag RANGE = new IppValueTag(0x33, "rangeOfInteger");
-  public static final IppValueTag BEGIN_COLLECTION = new IppValueTag(0x34, "");
-  public static final IppValueTag TEXTLANG = new IppValueTag(0x35, "resolution");
-  public static final IppValueTag NAMELANG = new IppValueTag(0x36, "nameWithLanguage");
-  public static final IppValueTag END_COLLECTION = new IppValueTag(0x37, "");
-  public static final IppValueTag TEXT = new IppValueTag(0x41, "textWithoutLanguage");
-  public static final IppValueTag NAME = new IppValueTag(0x42, "nameWithoutLanguage");
-  public static final IppValueTag KEYWORD = new IppValueTag(0x44, "keyword");
-  public static final IppValueTag URI = new IppValueTag(0x45, "uri");
-  public static final IppValueTag URISCHEME = new IppValueTag(0x46, "uriScheme");
-  public static final IppValueTag CHARSET = new IppValueTag(0x47, "charset");
-  public static final IppValueTag LANGUAGE = new IppValueTag(0x48, "naturalLanguage");
-  public static final IppValueTag MIMETYPE = new IppValueTag(0x49, "mimeMediaType");
-  public static final IppValueTag MEMBERNAME = new IppValueTag(0x4A, "");
-  public static final IppValueTag MASK = new IppValueTag(0x7FFFFFFF, "");
-  public static final IppValueTag COPY = new IppValueTag(0x80000001, "");
-
+  UNSUPPORTED_VALUE(0x10, "unsupported"),
+  DEFAULT(0x11, "'default' "),
+  UNKNOWN(0x12, "unknown"),
+  NOVALUE(0x13, "no-value"),
+  NOTSETTABLE(0x15, ""),
+  DELETEATTR(0x16, ""),
+  ADMINDEFINE(0x17, ""),
+  INTEGER(0x21, "integer"),
+  BOOLEAN(0x22, "boolean"),
+  ENUM(0x23, "enum"),
+  STRING(0x30, "octetString"),
+  DATE(0x31, "dateTime"),
+  RESOLUTION(0x32, "resolution"),
+  RANGE(0x33, "rangeOfInteger"),
+  BEGIN_COLLECTION(0x34, ""),
+  TEXTLANG(0x35, "resolution"),
+  NAMELANG(0x36, "nameWithLanguage"),
+  END_COLLECTION(0x37, ""),
+  TEXT(0x41, "textWithoutLanguage"),
+  NAME(0x42, "nameWithoutLanguage"),
+  KEYWORD(0x44, "keyword"),
+  URI(0x45, "uri"),
+  URISCHEME(0x46, "uriScheme"),
+  CHARSET(0x47, "charset"),
+  LANGUAGE(0x48, "naturalLanguage"),
+  MIMETYPE(0x49, "mimeMediaType"),
+  MEMBERNAME(0x4A, ""),
+  MASK(0x7FFFFFFF, ""),
+  COPY(0x80000001, "");
   
   private final String description;
-  private final int value;
+  private final int id;
   
-  private IppValueTag(int value, String description)
+  private IppValueTag(int id, String description)
   {
-    this.value = value;
+    this.id = id;
     this.description = Objects.requireNonNull(description);
   }
 
-  public int getValue()
+  public int getId()
   {
-    return this.value;
+    return this.id;
+  }
+
+  public String getDescription()
+  {
+    return description;
   }
 
   @Override
@@ -77,5 +80,4 @@ public class IppValueTag
   {
     return this.description;
   }
-
 }

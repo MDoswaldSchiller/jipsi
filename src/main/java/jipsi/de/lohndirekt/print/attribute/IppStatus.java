@@ -22,122 +22,61 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public final class IppStatus
+public enum IppStatus
 {
+  SUCCESSFUL_OK("successful-ok", 0x0000),
+  SUCCESSFUL_OK_IGNORED_OR_SUBSTITUTED_ATTRIBUTES("successful-ok-ignored-or-substituted-attributes", 0x0001),
+  SUCCESSFUL_OK_CONFLICTING_ATTRIBUTES("successful-ok-conflicting-attributes", 0x0002),
+  CLIENT_ERROR_BAD_REQUEST("client-error-bad-request", 0x0400),
+  CLIENT_ERROR_FORBIDDEN("client-error-forbidden", 0x0401),
+  CLIENT_ERROR_NOT_AUTHENTICATED("client-error-not-authenticated", 0x0402),
+  CLIENT_ERROR_NOT_AUTHORIZED("client-error-not-authorized", 0x0403),
+  CLIENT_ERROR_NOT_POSSIBLE("client-error-not-possible", 0x0404),
+  CLIENT_ERROR_TIMEOUT("client-error-timeout", 0x0405),
+  CLIENT_ERROR_NOT_FOUND("client-error-not-found", 0x0406),
+  CLIENT_ERROR_GONE("client-error-gone", 0x0407),
+  CLIENT_ERROR_REQUEST_ENTITY_TOO_LARGE("client-error-request-entity-too-large", 0x0408),
+  CLIENT_ERROR_REQUEST_VALUE_TOO_LONG("client-error-request-value-too-long", 0x0409),
+  CLIENT_ERROR_DOCUMENT_FORMAT_NOT_SUPPORTED("client-error-document-format-not-supported", 0x040A),
+  CLIENT_ERROR_ATTRIBUTES_OR_VALUES_NOT_SUPPORTED("client-error-attributes-or-values-not-supported", 0x040B),
+  CLIENT_ERROR_URI_SCHEME_NOT_SUPPORTED("client-error-uri-scheme-not-supported", 0x040C),
+  CLIENT_ERROR_CHARSET_NOT_SUPPORTED("client-error-charset-not-supported", 0x040D),
+  CLIENT_ERROR_CONFLICTING_ATTRIBUTES("client-error-conflicting-attributes", 0x040E),
+  CLIENT_ERROR_COMPRESSION_NOT_SUPPORTED("client-error-compression-not-supported", 0x040F),
+  CLIENT_ERROR_COMPRESSION_ERROR("client-error-compression-error", 0x0410),
+  CLIENT_ERROR_DOCUMENT_FORMAT_ERROR("client-error-document-format-error", 0x0411),
+  CLIENT_ERROR_DOCUMENT_ACCESS_ERROR("client-error-document-access-error", 0x0412),
+  SERVER_ERROR_INTERNAL_ERROR("server-error-internal-error", 0x0500),
+  SERVER_ERROR_OPERATION_NOT_SUPPORTED("server-error-operation-not-supported", 0x0501),
+  SERVER_ERROR_SERVICE_UNAVAILABLE("server-error-service-unavailable", 0x0502),
+  SERVER_ERROR_VERSION_NOT_SUPPORTED("server-error-version-not-supported", 0x0503),
+  SERVER_ERROR_DEVICE_ERROR("server-error-device-error", 0x0504),
+  SERVER_ERROR_TEMPORARY_ERROR("server-error-temporary-error", 0x0505),
+  SERVER_ERROR_NOT_ACCEPTING_JOBS("server-error-not-accepting-jobs", 0x0506),
+  SERVER_ERROR_BUSY("server-error-busy", 0x0507),
+  SERVER_ERROR_JOB_CANCELED("server-error-job-canceled", 0x0508),
+  SERVER_ERROR_MULTIPLE_DOCUMENT_JOBS_NOT_SUPPORTED("server-error-multiple-document-jobs-not-supported", 0x0509);
 
-  public static final IppStatus SUCCESSFUL_OK = new IppStatus("successful-ok", 0x0000);
-  public static final IppStatus SUCCESSFUL_OK_IGNORED_OR_SUBSTITUTED_ATTRIBUTES
-      = new IppStatus("successful-ok-ignored-or-substituted-attributes", 0x0001);
-  public static final IppStatus SUCCESSFUL_OK_CONFLICTING_ATTRIBUTES
-      = new IppStatus("successful-ok-conflicting-attributes", 0x0002);
-  public static final IppStatus CLIENT_ERROR_BAD_REQUEST = new IppStatus("client-error-bad-request", 0x0400);
-  public static final IppStatus CLIENT_ERROR_FORBIDDEN = new IppStatus("client-error-forbidden", 0x0401);
-  public static final IppStatus CLIENT_ERROR_NOT_AUTHENTICATED = new IppStatus("client-error-not-authenticated", 0x0402);
-  public static final IppStatus CLIENT_ERROR_NOT_AUTHORIZED = new IppStatus("client-error-not-authorized", 0x0403);
-  public static final IppStatus CLIENT_ERROR_NOT_POSSIBLE = new IppStatus("client-error-not-possible", 0x0404);
-  public static final IppStatus CLIENT_ERROR_TIMEOUT = new IppStatus("client-error-timeout", 0x0405);
-  public static final IppStatus CLIENT_ERROR_NOT_FOUND = new IppStatus("client-error-not-found", 0x0406);
-  public static final IppStatus CLIENT_ERROR_GONE = new IppStatus("client-error-gone", 0x0407);
-  public static final IppStatus CLIENT_ERROR_REQUEST_ENTITY_TOO_LARGE
-      = new IppStatus("client-error-request-entity-too-large", 0x0408);
-  public static final IppStatus CLIENT_ERROR_REQUEST_VALUE_TOO_LONG
-      = new IppStatus("client-error-request-value-too-long", 0x0409);
-  public static final IppStatus CLIENT_ERROR_DOCUMENT_FORMAT_NOT_SUPPORTED
-      = new IppStatus("client-error-document-format-not-supported", 0x040A);
-  public static final IppStatus CLIENT_ERROR_ATTRIBUTES_OR_VALUES_NOT_SUPPORTED
-      = new IppStatus("client-error-attributes-or-values-not-supported", 0x040B);
-  public static final IppStatus CLIENT_ERROR_URI_SCHEME_NOT_SUPPORTED
-      = new IppStatus("client-error-uri-scheme-not-supported", 0x040C);
-  public static final IppStatus CLIENT_ERROR_CHARSET_NOT_SUPPORTED
-      = new IppStatus("client-error-charset-not-supported", 0x040D);
-  public static final IppStatus CLIENT_ERROR_CONFLICTING_ATTRIBUTES
-      = new IppStatus("client-error-conflicting-attributes", 0x040E);
-  public static final IppStatus CLIENT_ERROR_COMPRESSION_NOT_SUPPORTED
-      = new IppStatus("client-error-compression-not-supported", 0x040F);
-  public static final IppStatus CLIENT_ERROR_COMPRESSION_ERROR = new IppStatus("client-error-compression-error", 0x0410);
-  public static final IppStatus CLIENT_ERROR_DOCUMENT_FORMAT_ERROR
-      = new IppStatus("client-error-document-format-error", 0x0411);
-  public static final IppStatus CLIENT_ERROR_DOCUMENT_ACCESS_ERROR
-      = new IppStatus("client-error-document-access-error", 0x0412);
-  public static final IppStatus SERVER_ERROR_INTERNAL_ERROR = new IppStatus("server-error-internal-error", 0x0500);
-  public static final IppStatus SERVER_ERROR_OPERATION_NOT_SUPPORTED
-      = new IppStatus("server-error-operation-not-supported", 0x0501);
-  public static final IppStatus SERVER_ERROR_SERVICE_UNAVAILABLE = new IppStatus("server-error-service-unavailable", 0x0502);
-  public static final IppStatus SERVER_ERROR_VERSION_NOT_SUPPORTED
-      = new IppStatus("server-error-version-not-supported", 0x0503);
-  public static final IppStatus SERVER_ERROR_DEVICE_ERROR = new IppStatus("server-error-device-error", 0x0504);
-  public static final IppStatus SERVER_ERROR_TEMPORARY_ERROR = new IppStatus("server-error-temporary-error", 0x0505);
-  public static final IppStatus SERVER_ERROR_NOT_ACCEPTING_JOBS = new IppStatus("server-error-not-accepting-jobs", 0x0506);
-  public static final IppStatus SERVER_ERROR_BUSY = new IppStatus("server-error-busy", 0x0507);
-  public static final IppStatus SERVER_ERROR_JOB_CANCELED = new IppStatus("server-error-job-canceled", 0x0508);
-  public static final IppStatus SERVER_ERROR_MULTIPLE_DOCUMENT_JOBS_NOT_SUPPORTED
-      = new IppStatus("server-error-multiple-document-jobs-not-supported", 0x0509);
-
-  private static Map stati;
-
-  private static void init()
-  {
-    stati = new HashMap();
-    put(SUCCESSFUL_OK);
-    put(SUCCESSFUL_OK_IGNORED_OR_SUBSTITUTED_ATTRIBUTES);
-    put(SUCCESSFUL_OK_CONFLICTING_ATTRIBUTES);
-    put(CLIENT_ERROR_BAD_REQUEST);
-    put(CLIENT_ERROR_FORBIDDEN);
-    put(CLIENT_ERROR_NOT_AUTHENTICATED);
-    put(CLIENT_ERROR_NOT_AUTHORIZED);
-    put(CLIENT_ERROR_NOT_POSSIBLE);
-    put(CLIENT_ERROR_TIMEOUT);
-    put(CLIENT_ERROR_NOT_FOUND);
-    put(CLIENT_ERROR_GONE);
-    put(CLIENT_ERROR_REQUEST_ENTITY_TOO_LARGE);
-    put(CLIENT_ERROR_REQUEST_VALUE_TOO_LONG);
-    put(CLIENT_ERROR_DOCUMENT_FORMAT_NOT_SUPPORTED);
-    put(CLIENT_ERROR_ATTRIBUTES_OR_VALUES_NOT_SUPPORTED);
-    put(CLIENT_ERROR_URI_SCHEME_NOT_SUPPORTED);
-    put(CLIENT_ERROR_CHARSET_NOT_SUPPORTED);
-    put(CLIENT_ERROR_CONFLICTING_ATTRIBUTES);
-    put(CLIENT_ERROR_COMPRESSION_NOT_SUPPORTED);
-    put(CLIENT_ERROR_COMPRESSION_ERROR);
-    put(CLIENT_ERROR_DOCUMENT_FORMAT_ERROR);
-    put(CLIENT_ERROR_DOCUMENT_ACCESS_ERROR);
-    put(SERVER_ERROR_INTERNAL_ERROR);
-    put(SERVER_ERROR_OPERATION_NOT_SUPPORTED);
-    put(SERVER_ERROR_SERVICE_UNAVAILABLE);
-    put(SERVER_ERROR_VERSION_NOT_SUPPORTED);
-    put(SERVER_ERROR_DEVICE_ERROR);
-    put(SERVER_ERROR_TEMPORARY_ERROR);
-    put(SERVER_ERROR_NOT_ACCEPTING_JOBS);
-    put(SERVER_ERROR_BUSY);
-    put(SERVER_ERROR_JOB_CANCELED);
-    put(SERVER_ERROR_MULTIPLE_DOCUMENT_JOBS_NOT_SUPPORTED);
-
-  }
 
   /**
-   * @param status2
+   * Build map for faster lookup of status ids
    */
-  private static void put(IppStatus status)
+  private static final Map<Integer,IppStatus> CACHE;
+  static
   {
-    stati.put(status.getStatus(), status);
-  }
-
-  public static IppStatus get(int statusCode)
-  {
-    if (stati == null) {
-      init();
+    Map<Integer,IppStatus> cache = new HashMap<>();
+    for (IppStatus status : values()) {
+      cache.put(status.getId(), status);
     }
-    return (IppStatus) stati.get(statusCode);
+    CACHE = Map.copyOf(cache);
   }
 
-  /*
-	 * End of static part
-   */
   private final String text;
-  private final int status;
+  private final int id;
 
   private IppStatus(String statusText, int statusCode)
   {
-    this.status = statusCode;
+    this.id = statusCode;
     this.text = Objects.requireNonNull(statusText);
   }
 
@@ -146,8 +85,13 @@ public final class IppStatus
     return this.text;
   }
 
-  public int getStatus()
+  public int getId()
   {
-    return this.status;
+    return this.id;
+  }
+  
+  public static IppStatus fromStatusId(int statusId)
+  {
+    return CACHE.get(statusId);
   }
 }

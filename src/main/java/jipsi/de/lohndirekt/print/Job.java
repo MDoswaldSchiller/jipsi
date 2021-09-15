@@ -150,7 +150,7 @@ class Job implements DocPrintJob
     if (!this.ok) {
       String msg = "Printing " + description(attributes) + "  failed";
       if (response != null && response.getStatus() != null) {
-        msg += ": Server status was '" + response.getStatus().getStatus() + " - " + response.getStatus().getText() + "'!";
+        msg += ": Server status was '" + response.getStatus().getId() + " - " + response.getStatus().getText() + "'!";
       }
       throw new PrintException(msg);
     }

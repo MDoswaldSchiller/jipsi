@@ -139,7 +139,7 @@ public final class AttributeParser
   {
 
     int valueTag;
-    while ((valueTag = in.read()) < IppValueTag.UNSUPPORTED_VALUE.getValue()) {
+    while ((valueTag = in.read()) < IppValueTag.UNSUPPORTED_VALUE.getId()) {
       if (valueTag == IppDelimiterTag.END_ATTRIBUTES.getValue()) {
         throw END_OF_ATTRIBUTES_EXCEPTION;
       }
@@ -426,45 +426,45 @@ public final class AttributeParser
   {
     int valueLength = parseInt2(in);
     Object[] values = null;
-    if (valueTag == IppValueTag.INTEGER.getValue() || valueTag == IppValueTag.ENUM.getValue()) {
+    if (valueTag == IppValueTag.INTEGER.getId() || valueTag == IppValueTag.ENUM.getId()) {
       Integer number = new Integer(parseInt4(in));
       values = new Object[]{number};
     }
-    else if (valueTag == IppValueTag.STRING.getValue()
-             || valueTag == IppValueTag.TEXT.getValue()
-             || valueTag == IppValueTag.NAME.getValue()) {
+    else if (valueTag == IppValueTag.STRING.getId()
+             || valueTag == IppValueTag.TEXT.getId()
+             || valueTag == IppValueTag.NAME.getId()) {
       String word = parseNameAndTextString(in, valueLength);
       values = new Object[]{word, Locale.getDefault()};
     }
-    else if (valueTag == IppValueTag.CHARSET.getValue()
-             || valueTag == IppValueTag.LANGUAGE.getValue()
-             || valueTag == IppValueTag.MIMETYPE.getValue()) {
+    else if (valueTag == IppValueTag.CHARSET.getId()
+             || valueTag == IppValueTag.LANGUAGE.getId()
+             || valueTag == IppValueTag.MIMETYPE.getId()) {
       String word = parseString(in, valueLength);
       values = new Object[]{word, Locale.getDefault()};
     }
-    else if (valueTag == IppValueTag.URI.getValue()) {
+    else if (valueTag == IppValueTag.URI.getId()) {
       URI uri = parseUri(in, valueLength);
       values = new Object[]{uri};
     }
-    else if (valueTag == IppValueTag.KEYWORD.getValue()) {
+    else if (valueTag == IppValueTag.KEYWORD.getId()) {
       String word = parseString(in, valueLength);
       values = new Object[]{word, Locale.getDefault()};
     }
-    else if (valueTag == IppValueTag.BOOLEAN.getValue()) {
+    else if (valueTag == IppValueTag.BOOLEAN.getId()) {
       Integer bool = new Integer(in.read());
       values = new Object[]{bool};
     }
-    else if (valueTag == IppValueTag.RANGE.getValue()) {
+    else if (valueTag == IppValueTag.RANGE.getId()) {
       Integer lowerBound = new Integer(parseInt4(in));
       Integer upperBound = new Integer(parseInt4(in));
       values = new Object[]{lowerBound, upperBound};
     }
-    else if (valueTag == IppValueTag.DATE.getValue()) {
+    else if (valueTag == IppValueTag.DATE.getId()) {
 
       Date date = parseDate(in);
       values = new Object[]{date};
     }
-    else if (valueTag == IppValueTag.NOVALUE.getValue()) {
+    else if (valueTag == IppValueTag.NOVALUE.getId()) {
       values = new Object[]{};
     }
     else {

@@ -79,7 +79,7 @@ class IppRequestCupsImpl implements IppRequest
     {
       byte[] header = new byte[8];
       response.read(header);
-      this.status = IppStatus.get((int) (header[2] << 8)
+      this.status = IppStatus.fromStatusId((int) (header[2] << 8)
                                   + (int) header[3]);
       if (response.available() != 0) {
         this.attributes = AttributeParser.parseResponse(response);

@@ -23,8 +23,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.TimeZone;
 import javax.print.attribute.Attribute;
 import javax.print.attribute.DateTimeSyntax;
@@ -39,10 +37,8 @@ import jipsi.de.lohndirekt.print.attribute.ipp.NaturalLanguage;
 
 public final class AttributeWriter
 {
-
   private static final int MILIS_IN_MINUTE = 1000 * 60;
   private static final int MILIS_IN_HOUR = MILIS_IN_MINUTE * 60;
-  private static final Map ENCODINGS = new HashMap();
 
   public final static Charset DEFAULT_CHARSET = Charset.ISO_8859_1;
 
@@ -75,7 +71,7 @@ public final class AttributeWriter
   private static void attributeBytes(IntegerSyntax attribute, ByteArrayOutputStream out)
   {
     //value tag
-    out.write((byte) IppValueTag.INTEGER.getValue());
+    out.write((byte) IppValueTag.INTEGER.getId());
     //name
     fillName(out, (Attribute) attribute);
     //value length (always 4 bytes)
@@ -98,7 +94,7 @@ public final class AttributeWriter
       int upperBound = range[1];
 
       //value tag
-      out.write((byte) IppValueTag.RANGE.getValue());
+      out.write((byte) IppValueTag.RANGE.getId());
       //name
       if (i == 0) {
         fillName(out, (Attribute) attribute);
@@ -125,13 +121,13 @@ public final class AttributeWriter
   {
     // value tag
     if (attribute instanceof Charset) {
-      out.write((byte) IppValueTag.CHARSET.getValue());
+      out.write((byte) IppValueTag.CHARSET.getId());
     }
     else if (attribute instanceof NaturalLanguage) {
-      out.write((byte) IppValueTag.LANGUAGE.getValue());
+      out.write((byte) IppValueTag.LANGUAGE.getId());
     }
     else {
-      out.write((byte) IppValueTag.NAME.getValue());
+      out.write((byte) IppValueTag.NAME.getId());
     }
     //name
     fillName(out, (Attribute) attribute);
@@ -148,7 +144,7 @@ public final class AttributeWriter
   private static void attributeBytes(EnumSyntax attribute, ByteArrayOutputStream out)
   {
     // Value tag
-    out.write((byte) IppValueTag.TEXT.getValue());
+    out.write((byte) IppValueTag.TEXT.getId());
     // Name
     fillName(out, (Attribute) attribute);
     // value length
@@ -168,7 +164,7 @@ public final class AttributeWriter
   {
 
     //Value tag
-    out.write((byte) IppValueTag.DATE.getValue());
+    out.write((byte) IppValueTag.DATE.getId());
     //Name
     fillName(out, (Attribute) attribute);
     //Value length (always 11 bytes)
@@ -214,7 +210,7 @@ public final class AttributeWriter
   private static void attributeBytes(URISyntax attribute, ByteArrayOutputStream out)
   {
     //Value tag
-    out.write((byte) IppValueTag.URI.getValue());
+    out.write((byte) IppValueTag.URI.getId());
     //Name
     fillName(out, (Attribute) attribute);
     //value length
@@ -230,7 +226,7 @@ public final class AttributeWriter
   private static void attributeBytes(ResolutionSyntax attribute, ByteArrayOutputStream out)
   {
     //Value tag
-    out.write((byte) IppValueTag.INTEGER.getValue());
+    out.write((byte) IppValueTag.INTEGER.getId());
     //Name
     fillName(out, (Attribute) attribute);
     //Value length (always 9)
