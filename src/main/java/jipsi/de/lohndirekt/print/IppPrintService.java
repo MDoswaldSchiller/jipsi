@@ -26,7 +26,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 import javax.print.DocFlavor;
 import javax.print.DocPrintJob;
@@ -37,6 +36,7 @@ import javax.print.attribute.*;
 import javax.print.attribute.standard.PrinterURI;
 import javax.print.attribute.standard.RequestingUserName;
 import javax.print.event.PrintServiceAttributeListener;
+import jipsi.de.lohndirekt.print.attribute.AttributeMap;
 import jipsi.de.lohndirekt.print.attribute.IppAttributeName;
 import jipsi.de.lohndirekt.print.attribute.IppStatus;
 import jipsi.de.lohndirekt.print.attribute.auth.RequestingUserPassword;
@@ -60,7 +60,7 @@ public class IppPrintService implements PrintService
   private DocFlavor[] supportedFlavors;
   private RequestingUserName requestingUserName;
   private RequestingUserPassword requestingUserPassword;
-  private Map attributes;
+  private AttributeMap attributes;
 
   /**
    * @param uri
@@ -112,8 +112,8 @@ public class IppPrintService implements PrintService
   public PrintServiceAttributeSet getAttributes()
   {
     PrintServiceAttributeSet set = new HashPrintServiceAttributeSet();
-    for (Iterator mapIter = getAllAttributes().values().iterator(); mapIter.hasNext();) {
-      Set values = (Set) mapIter.next();
+    for (Iterator<Set<Attribute>> valueIter = getAllAttributes().valueIterator(); valueIter.hasNext();) {
+      Set<Attribute> values = valueIter.next();
       for (Iterator listIter = values.iterator(); listIter.hasNext();) {
         Attribute attribute = (Attribute) listIter.next();
         if (attribute instanceof PrintServiceAttribute) {
@@ -214,52 +214,52 @@ public class IppPrintService implements PrintService
   {
     Set supportedCategories = new HashSet();
     //Attributes named in 4.2 of rfc2911 are optional
-    if (getAllAttributes().containsKey(IppAttributeName.JOB_PRIORIY_SUPPORTED.getCategory())) {
+    if (getAllAttributes().containsCategory(IppAttributeName.JOB_PRIORIY_SUPPORTED.getCategory())) {
       supportedCategories.add(IppAttributeName.JOB_PRIORIY.getCategory());
     }
-    if (getAllAttributes().containsKey(IppAttributeName.JOB_HOLD_UNTIL_SUPPORTED.getCategory())) {
+    if (getAllAttributes().containsCategory(IppAttributeName.JOB_HOLD_UNTIL_SUPPORTED.getCategory())) {
       supportedCategories.add(IppAttributeName.JOB_HOLD_UNTIL.getCategory());
     }
-    if (getAllAttributes().containsKey(IppAttributeName.JOB_SHEETS_SUPORTED.getCategory())) {
+    if (getAllAttributes().containsCategory(IppAttributeName.JOB_SHEETS_SUPORTED.getCategory())) {
       supportedCategories.add(IppAttributeName.JOB_SHEETS.getCategory());
     }
-    if (getAllAttributes().containsKey(IppAttributeName.MULTIPLE_DOCUMENT_HANDLING_SUPPORTED.getCategory())) {
+    if (getAllAttributes().containsCategory(IppAttributeName.MULTIPLE_DOCUMENT_HANDLING_SUPPORTED.getCategory())) {
       supportedCategories.add(IppAttributeName.MULTIPLE_DOCUMENT_HANDLING.getCategory());
     }
-    if (getAllAttributes().containsKey(IppAttributeName.COPIES_SUPPORTED.getCategory())) {
+    if (getAllAttributes().containsCategory(IppAttributeName.COPIES_SUPPORTED.getCategory())) {
       supportedCategories.add(IppAttributeName.COPIES.getCategory());
     }
-    if (getAllAttributes().containsKey(IppAttributeName.FINISHINGS_SUPPORTED.getCategory())) {
+    if (getAllAttributes().containsCategory(IppAttributeName.FINISHINGS_SUPPORTED.getCategory())) {
       supportedCategories.add(IppAttributeName.FINISHINGS.getCategory());
     }
-    if (getAllAttributes().containsKey(IppAttributeName.PAGE_RANGES_SUPPORTED.getCategory())) {
+    if (getAllAttributes().containsCategory(IppAttributeName.PAGE_RANGES_SUPPORTED.getCategory())) {
       supportedCategories.add(IppAttributeName.PAGE_RANGES.getCategory());
     }
-    if (getAllAttributes().containsKey(IppAttributeName.SIDES_SUPPORTED.getCategory())) {
+    if (getAllAttributes().containsCategory(IppAttributeName.SIDES_SUPPORTED.getCategory())) {
       supportedCategories.add(IppAttributeName.SIDES.getCategory());
     }
-    if (getAllAttributes().containsKey(IppAttributeName.NUMBER_UP_SUPPORTED.getCategory())) {
+    if (getAllAttributes().containsCategory(IppAttributeName.NUMBER_UP_SUPPORTED.getCategory())) {
       supportedCategories.add(IppAttributeName.NUMBER_UP.getCategory());
     }
-    if (getAllAttributes().containsKey(IppAttributeName.ORIENTATION_REQUESTED_SUPPORTED.getCategory())) {
+    if (getAllAttributes().containsCategory(IppAttributeName.ORIENTATION_REQUESTED_SUPPORTED.getCategory())) {
       supportedCategories.add(IppAttributeName.ORIENTATION_REQUESTED.getCategory());
     }
-    if (getAllAttributes().containsKey(IppAttributeName.MEDIA_SUPPORTED.getCategory())) {
+    if (getAllAttributes().containsCategory(IppAttributeName.MEDIA_SUPPORTED.getCategory())) {
       supportedCategories.add(IppAttributeName.MEDIA.getCategory());
     }
-    if (getAllAttributes().containsKey(IppAttributeName.PRINTER_RESOLUTION.getCategory())) {
+    if (getAllAttributes().containsCategory(IppAttributeName.PRINTER_RESOLUTION.getCategory())) {
       //printer-resolution-supported attribute currently not implemented
     }
-    if (getAllAttributes().containsKey(IppAttributeName.PRINT_QUALITY.getCategory())) {
+    if (getAllAttributes().containsCategory(IppAttributeName.PRINT_QUALITY.getCategory())) {
       //print-quality-supported attribute currently not implemented
     }
-    if (getAllAttributes().containsKey(IppAttributeName.JOB_K_OCTETS_SUPPORTED.getCategory())) {
+    if (getAllAttributes().containsCategory(IppAttributeName.JOB_K_OCTETS_SUPPORTED.getCategory())) {
       supportedCategories.add(IppAttributeName.JOB_K_OCTETS.getCategory());
     }
-    if (getAllAttributes().containsKey(IppAttributeName.JOB_IMPRESSIONS_SUPPORTED.getCategory())) {
+    if (getAllAttributes().containsCategory(IppAttributeName.JOB_IMPRESSIONS_SUPPORTED.getCategory())) {
       supportedCategories.add(IppAttributeName.JOB_IMPRESSIONS.getCategory());
     }
-    if (getAllAttributes().containsKey(IppAttributeName.JOB_MEDIA_SHEETS_SUPPORTED.getCategory())) {
+    if (getAllAttributes().containsCategory(IppAttributeName.JOB_MEDIA_SHEETS_SUPPORTED.getCategory())) {
       supportedCategories.add(IppAttributeName.JOB_MEDIA_SHEETS.getCategory());
     }
     //Printer object MUST support compression attribute
@@ -361,40 +361,38 @@ public class IppPrintService implements PrintService
   @Override
   public Object getSupportedAttributeValues(Class category, DocFlavor flavor, AttributeSet attributes)
   {
-    Set supportedAttributes = new HashSet();
+    Set<Attribute> supportedAttributes = new HashSet();
     // Only the attributes listed in rfc2911 4.2(Job Template Attributes) do make sense here
     if (category.equals(IppAttributeName.JOB_PRIORIY.getCategory())) {
-      supportedAttributes = (Set) getAllAttributes().get(IppAttributeName.JOB_PRIORIY_SUPPORTED.getCategory());
+      supportedAttributes = getAllAttributes().get(IppAttributeName.JOB_PRIORIY_SUPPORTED.getCategory());
     }
     else if (category.equals(IppAttributeName.JOB_HOLD_UNTIL.getCategory())) {
-      supportedAttributes = (Set) getAllAttributes().get(IppAttributeName.JOB_HOLD_UNTIL_SUPPORTED.getCategory());
+      supportedAttributes = getAllAttributes().get(IppAttributeName.JOB_HOLD_UNTIL_SUPPORTED.getCategory());
     }
     else if (category.equals(IppAttributeName.JOB_SHEETS.getCategory())) {
-      supportedAttributes = (Set) getAllAttributes().get(IppAttributeName.JOB_SHEETS_SUPORTED.getCategory());
+      supportedAttributes = getAllAttributes().get(IppAttributeName.JOB_SHEETS_SUPORTED.getCategory());
     }
     else if (category.equals(IppAttributeName.MULTIPLE_DOCUMENT_HANDLING.getCategory())) {
-      supportedAttributes
-          = (Set) getAllAttributes().get(IppAttributeName.MULTIPLE_DOCUMENT_HANDLING_SUPPORTED.getCategory());
+      supportedAttributes = getAllAttributes().get(IppAttributeName.MULTIPLE_DOCUMENT_HANDLING_SUPPORTED.getCategory());
     }
     else if (category.equals(IppAttributeName.COPIES.getCategory())) {
-      supportedAttributes = (Set) getAllAttributes().get(IppAttributeName.COPIES_SUPPORTED.getCategory());
+      supportedAttributes = getAllAttributes().get(IppAttributeName.COPIES_SUPPORTED.getCategory());
     }
     else if (category.equals(IppAttributeName.FINISHINGS.getCategory())) {
-      supportedAttributes = (Set) getAllAttributes().get(IppAttributeName.FINISHINGS_SUPPORTED.getCategory());
+      supportedAttributes = getAllAttributes().get(IppAttributeName.FINISHINGS_SUPPORTED.getCategory());
     }
     else if (category.equals(IppAttributeName.SIDES.getCategory())) {
-      supportedAttributes = (Set) getAllAttributes().get(IppAttributeName.SIDES_SUPPORTED.getCategory());
+      supportedAttributes = getAllAttributes().get(IppAttributeName.SIDES_SUPPORTED.getCategory());
     }
     //TODO page-ranges
     else if (category.equals(IppAttributeName.NUMBER_UP.getCategory())) {
-      supportedAttributes = (Set) getAllAttributes().get(IppAttributeName.NUMBER_UP_SUPPORTED.getCategory());
+      supportedAttributes = getAllAttributes().get(IppAttributeName.NUMBER_UP_SUPPORTED.getCategory());
     }
     else if (category.equals(IppAttributeName.ORIENTATION_REQUESTED.getCategory())) {
-      supportedAttributes
-          = (Set) getAllAttributes().get(IppAttributeName.ORIENTATION_REQUESTED_SUPPORTED.getCategory());
+      supportedAttributes = getAllAttributes().get(IppAttributeName.ORIENTATION_REQUESTED_SUPPORTED.getCategory());
     }
     else if (category.equals(IppAttributeName.MEDIA.getCategory())) {
-      supportedAttributes = (Set) getAllAttributes().get(IppAttributeName.MEDIA_SUPPORTED.getCategory());
+      supportedAttributes = getAllAttributes().get(IppAttributeName.MEDIA_SUPPORTED.getCategory());
     }
     else if (category.equals(IppAttributeName.PRINTER_RESOLUTION)) {
       //printer-resolution-supported attribute currently not implemented
@@ -403,27 +401,24 @@ public class IppPrintService implements PrintService
       //printer-quality-supported attribute currently not implemented
     }
     else if (category.equals(IppAttributeName.MULTIPLE_DOCUMENT_HANDLING.getCategory())) {
-      supportedAttributes
-          = (Set) getAllAttributes().get(IppAttributeName.MULTIPLE_DOCUMENT_HANDLING_SUPPORTED.getCategory());
+      supportedAttributes = getAllAttributes().get(IppAttributeName.MULTIPLE_DOCUMENT_HANDLING_SUPPORTED.getCategory());
     }
     else if (category.equals(IppAttributeName.JOB_IMPRESSIONS.getCategory())) {
-      supportedAttributes
-          = (Set) getAllAttributes().get(IppAttributeName.JOB_IMPRESSIONS_SUPPORTED.getCategory());
+      supportedAttributes = getAllAttributes().get(IppAttributeName.JOB_IMPRESSIONS_SUPPORTED.getCategory());
     }
     else if (category.equals(IppAttributeName.JOB_K_OCTETS.getCategory())) {
-      supportedAttributes = (Set) getAllAttributes().get(IppAttributeName.JOB_K_OCTETS_SUPPORTED.getCategory());
+      supportedAttributes = getAllAttributes().get(IppAttributeName.JOB_K_OCTETS_SUPPORTED.getCategory());
     }
     else if (category.equals(IppAttributeName.JOB_MEDIA_SHEETS.getCategory())) {
-      supportedAttributes
-          = (Set) getAllAttributes().get(IppAttributeName.JOB_MEDIA_SHEETS_SUPPORTED.getCategory());
+      supportedAttributes = getAllAttributes().get(IppAttributeName.JOB_MEDIA_SHEETS_SUPPORTED.getCategory());
     }
     else if (category.equals(IppAttributeName.COMPRESSION.getCategory())) {
-      supportedAttributes = (Set) getAllAttributes().get(IppAttributeName.COMPRESSION_SUPORTED.getCategory());
+      supportedAttributes = getAllAttributes().get(IppAttributeName.COMPRESSION_SUPORTED.getCategory());
     }
     if (supportedAttributes == null) {
-      supportedAttributes = new HashSet();
+      supportedAttributes = new HashSet<>();
     }
-    return supportedAttributes.toArray(new Attribute[supportedAttributes.size()]);
+    return supportedAttributes.toArray(new Attribute[0]);
   }
 
   /* (non-Javadoc)
@@ -520,7 +515,7 @@ public class IppPrintService implements PrintService
   /**
    * @return
    */
-  private Map getAllAttributes()
+  private AttributeMap getAllAttributes()
   {
     if (this.attributes == null) {
       IppRequest request = this.request(OperationsSupported.GET_PRINTER_ATTRIBUTES);

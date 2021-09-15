@@ -20,7 +20,6 @@ package jipsi.de.lohndirekt.print;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
 import java.util.Set;
 import javax.print.DocFlavor;
 import javax.print.MultiDoc;
@@ -32,6 +31,7 @@ import javax.print.attribute.HashAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
 import javax.print.event.PrintJobEvent;
 import jipsi.de.lohndirekt.print.attribute.AttributeHelper;
+import jipsi.de.lohndirekt.print.attribute.AttributeMap;
 import jipsi.de.lohndirekt.print.attribute.IppAttributeName;
 import jipsi.de.lohndirekt.print.attribute.IppStatus;
 import jipsi.de.lohndirekt.print.attribute.ipp.jobdesc.JobUri;
@@ -89,8 +89,8 @@ class MultiDocJob extends Job implements MultiDocPrintJob
       LOG.error(e.getMessage(), e);
     }
     if (response != null) {
-      Map responseAttributes = response.getAttributes();
-      if (responseAttributes.containsKey(IppAttributeName.JOB_URI.getCategory())) {
+      AttributeMap responseAttributes = response.getAttributes();
+      if (responseAttributes.containsCategory(IppAttributeName.JOB_URI.getCategory())) {
         Set jobUriSet = (Set) responseAttributes.get(IppAttributeName.JOB_URI.getCategory());
         this.jobUri = (JobUri) jobUriSet.iterator().next();
       }
@@ -126,8 +126,8 @@ class MultiDocJob extends Job implements MultiDocPrintJob
       LOG.error(e.getMessage(), e);
     }
     if (response != null) {
-      Map responseAttributes = response.getAttributes();
-      if (responseAttributes.containsKey(IppAttributeName.JOB_URI.getCategory())) {
+      AttributeMap responseAttributes = response.getAttributes();
+      if (responseAttributes.containsCategory(IppAttributeName.JOB_URI.getCategory())) {
         Set jobUriSet = (Set) responseAttributes.get(IppAttributeName.JOB_URI.getCategory());
         this.jobUri = (JobUri) jobUriSet.iterator().next();
       }

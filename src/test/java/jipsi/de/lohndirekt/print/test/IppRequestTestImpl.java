@@ -22,11 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 import javax.print.attribute.AttributeSet;
 import javax.print.attribute.HashAttributeSet;
 import javax.print.attribute.HashPrintJobAttributeSet;
@@ -47,7 +43,7 @@ import javax.print.attribute.standard.ReferenceUriSchemesSupported;
 import javax.print.attribute.standard.Sides;
 import jipsi.de.lohndirekt.print.IppRequest;
 import jipsi.de.lohndirekt.print.IppResponse;
-import jipsi.de.lohndirekt.print.attribute.IppAttributeName;
+import jipsi.de.lohndirekt.print.attribute.AttributeMap;
 import jipsi.de.lohndirekt.print.attribute.IppStatus;
 import jipsi.de.lohndirekt.print.attribute.ipp.Charset;
 import jipsi.de.lohndirekt.print.attribute.ipp.NaturalLanguage;
@@ -76,7 +72,7 @@ public class IppRequestTestImpl implements IppRequest
   {
 
     IppStatus status;
-    Map attributes;
+    AttributeMap attributes;
 
     IppResponseTestImpl()
     {
@@ -87,7 +83,7 @@ public class IppRequestTestImpl implements IppRequest
      * @return
      */
     @Override
-    public Map getAttributes()
+    public AttributeMap getAttributes()
     {
       return attributes;
     }
@@ -208,7 +204,7 @@ public class IppRequestTestImpl implements IppRequest
     }
     else {
       LOG.warn("Call to request {} not implemented", operation);
-      this.response.attributes = new HashMap();
+      this.response.attributes = new AttributeMap();
     }
     response.status = IppStatus.SUCCESSFUL_OK;
   }
@@ -218,10 +214,8 @@ public class IppRequestTestImpl implements IppRequest
    */
   private void sendCupsGetPrinter() throws URISyntaxException
   {
-    Map attributes = new HashMap();
-    Set printerUris = new HashSet();
-    printerUris.add(new PrinterUriSupported(new URI("http://127.0.0.1")));
-    attributes.put(IppAttributeName.PRINTER_URI_SUPPORTED.getCategory(), printerUris);
+    AttributeMap attributes = new AttributeMap();
+    attributes.put(new PrinterUriSupported(new URI("http://127.0.0.1")));
     this.response.attributes = attributes;
   }
 
@@ -243,90 +237,58 @@ public class IppRequestTestImpl implements IppRequest
     //			  - "color-supported", and
     //			  - "reference-uri-schemes-supported"
 
-    Map attributes = new HashMap();
-    Set pdlOverride = new HashSet();
-    pdlOverride.add(PDLOverrideSupported.ATTEMPTED);
-    pdlOverride.add(PDLOverrideSupported.NOT_ATTEMPTED);
-    attributes.put(IppAttributeName.PDL_OVERRIDE_SUPPORTED.getCategory(), pdlOverride);
-    Set compression = new HashSet();
-    compression.add(new CompressionSupported(Compression.GZIP.toString(), Locale.getDefault()));
-    compression.add(new CompressionSupported(Compression.NONE.toString(), Locale.getDefault()));
-    attributes.put(IppAttributeName.COMPRESSION_SUPORTED.getCategory(), compression);
-    Set jobKOctets = new HashSet();
-    jobKOctets.add(new JobKOctetsSupported(1, 10));
-    attributes.put(IppAttributeName.JOB_K_OCTETS_SUPPORTED.getCategory(), jobKOctets);
-    Set jobImpressions = new HashSet();
-    jobImpressions.add(new JobImpressionsSupported(1, 10));
-    attributes.put(IppAttributeName.JOB_IMPRESSIONS_SUPPORTED.getCategory(), jobImpressions);
-    Set jobMediaSheets = new HashSet();
-    jobMediaSheets.add(new JobMediaSheetsSupported(1, 10));
-    attributes.put(IppAttributeName.JOB_MEDIA_SHEETS_SUPPORTED.getCategory(), jobMediaSheets);
-    Set printerDriverInst = new HashSet();
-    printerDriverInst.add(new PrinterDriverInstaller(new URI("http://127.0.0.1")));
-    attributes.put(IppAttributeName.PRINTER_DRIVER_INSTALLER.getCategory(), printerDriverInst);
-    Set color = new HashSet();
-    color.add(ColorSupported.SUPPORTED);
-    attributes.put(IppAttributeName.COLOR_SUPPORTED.getCategory(), color);
-    Set refUriScheme = new HashSet();
-    refUriScheme.add(ReferenceUriSchemesSupported.HTTP);
-    refUriScheme.add(ReferenceUriSchemesSupported.FTP);
-    attributes.put(IppAttributeName.REFERENCE_URI_SCHEMES_SUPPORTED.getCategory(), refUriScheme);
+    AttributeMap attributes = new AttributeMap();
+    attributes.put(PDLOverrideSupported.ATTEMPTED);
+    attributes.put(PDLOverrideSupported.NOT_ATTEMPTED);
+    attributes.put(new CompressionSupported(Compression.GZIP.toString(), Locale.getDefault()));
+    attributes.put(new CompressionSupported(Compression.NONE.toString(), Locale.getDefault()));
+    attributes.put(new JobKOctetsSupported(1, 10));
+    attributes.put(new JobImpressionsSupported(1, 10));
+    attributes.put(new JobMediaSheetsSupported(1, 10));
+    attributes.put(new PrinterDriverInstaller(new URI("http://127.0.0.1")));
+    attributes.put(ColorSupported.SUPPORTED);
+    attributes.put(ReferenceUriSchemesSupported.HTTP);
+    attributes.put(ReferenceUriSchemesSupported.FTP);
 
     //Attributes named in 4.2 of rfc2911
-    Set jobPrio = new HashSet();
-    jobPrio.add(new JobPrioritySupported(99));
-    attributes.put(IppAttributeName.JOB_PRIORIY_SUPPORTED.getCategory(), jobPrio);
-    Set jobHoldUntil = new HashSet();
-    jobHoldUntil.add(new JobHoldUntilSupported(new LdJobHoldUntil("12:00:00", Locale.getDefault()).toString(), Locale.getDefault()));
-    jobHoldUntil.add(new JobHoldUntilSupported(LdJobHoldUntil.THIRD_SHIFT.toString(), Locale.getDefault()));
-    attributes.put(IppAttributeName.JOB_HOLD_UNTIL_SUPPORTED.getCategory(), jobHoldUntil);
-    Set jobSheets = new HashSet();
-    jobSheets.add(new JobSheetsSupported(JobSheets.NONE.toString(), Locale.getDefault()));
-    jobSheets.add(new JobSheetsSupported(JobSheets.STANDARD.toString(), Locale.getDefault()));
-    attributes.put(IppAttributeName.JOB_SHEETS_SUPORTED.getCategory(), jobSheets);
-    Set multipleDocumentHandling = new HashSet();
-    multipleDocumentHandling.add(
+    attributes.put(new JobPrioritySupported(99));
+    attributes.put(new JobHoldUntilSupported(new LdJobHoldUntil("12:00:00", Locale.getDefault()).toString(), Locale.getDefault()));
+    attributes.put(new JobHoldUntilSupported(LdJobHoldUntil.THIRD_SHIFT.toString(), Locale.getDefault()));
+    attributes.put(new JobSheetsSupported(JobSheets.NONE.toString(), Locale.getDefault()));
+    attributes.put(new JobSheetsSupported(JobSheets.STANDARD.toString(), Locale.getDefault()));
+
+    attributes.put(
         new MultipleDocumentHandlingSupported(
             MultipleDocumentHandling.SEPARATE_DOCUMENTS_COLLATED_COPIES.toString(),
             Locale.getDefault()));
-    multipleDocumentHandling.add(
+    attributes.put(
         new MultipleDocumentHandlingSupported(
             MultipleDocumentHandling.SINGLE_DOCUMENT.toString(),
             Locale.getDefault()));
-    attributes.put(
-        IppAttributeName.MULTIPLE_DOCUMENT_HANDLING_SUPPORTED.getCategory(),
-        multipleDocumentHandling);
-    Set copies = new HashSet();
-    copies.add(new CopiesSupported(1, 100));
-    attributes.put(IppAttributeName.COPIES_SUPPORTED.getCategory(), copies);
-    Set finishings = new HashSet();
-    finishings.add(new FinishingsSupported(1));
-    finishings.add(new FinishingsSupported(2));
-    attributes.put(IppAttributeName.FINISHINGS_SUPPORTED.getCategory(), finishings);
-    Set pageRanges = new HashSet();
-    pageRanges.add(PageRangesSupported.SUPPORTED);
-    attributes.put(IppAttributeName.PAGE_RANGES_SUPPORTED.getCategory(), pageRanges);
-    Set sides = new HashSet();
-    sides.add(new SidesSupported(Sides.DUPLEX.toString(), Locale.getDefault()));
-    sides.add(new SidesSupported(Sides.TWO_SIDED_SHORT_EDGE.toString(), Locale.getDefault()));
-    attributes.put(IppAttributeName.SIDES_SUPPORTED.getCategory(), sides);
-    Set numberUp = new HashSet();
-    numberUp.add(new NumberUpSupported(1, 10));
-    numberUp.add(new NumberUpSupported(100));
-    attributes.put(IppAttributeName.NUMBER_UP_SUPPORTED.getCategory(), numberUp);
-    Set orientationReq = new HashSet();
-    orientationReq.add(new OrientationRequestedSupported(OrientationRequested.LANDSCAPE.getValue()));
-    orientationReq.add(new OrientationRequestedSupported(OrientationRequested.PORTRAIT.getValue()));
-    attributes.put(IppAttributeName.ORIENTATION_REQUESTED_SUPPORTED.getCategory(), orientationReq);
-    Set media = new HashSet();
-    media.add(new MediaSupported("test", Locale.getDefault()));
-    media.add(new MediaSupported("test2", Locale.getDefault()));
-    attributes.put(IppAttributeName.MEDIA_SUPPORTED.getCategory(), media);
+
+    attributes.put(new CopiesSupported(1, 100));
+
+    attributes.put(new FinishingsSupported(1));
+    attributes.put(new FinishingsSupported(2));
+
+    attributes.put(PageRangesSupported.SUPPORTED);
+
+    attributes.put(new SidesSupported(Sides.DUPLEX.toString(), Locale.getDefault()));
+    attributes.put(new SidesSupported(Sides.TWO_SIDED_SHORT_EDGE.toString(), Locale.getDefault()));
+    
+    attributes.put(new NumberUpSupported(1, 10));
+    attributes.put(new NumberUpSupported(100));
+    
+    attributes.put(new OrientationRequestedSupported(OrientationRequested.LANDSCAPE.getValue()));
+    attributes.put(new OrientationRequestedSupported(OrientationRequested.PORTRAIT.getValue()));
+
+    attributes.put(new MediaSupported("test", Locale.getDefault()));
+    attributes.put(new MediaSupported("test2", Locale.getDefault()));
+
     //media-ready not implemented
     //printer-resolution-supported not implemented
     //print-quality-supported not implemented
     response.attributes = attributes;
-
   }
 
   private IppResponse getResponse() throws IOException

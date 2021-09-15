@@ -23,10 +23,10 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 import javax.print.attribute.Attribute;
 import jipsi.de.lohndirekt.print.IppRequest;
+import jipsi.de.lohndirekt.print.attribute.AttributeMap;
 import jipsi.de.lohndirekt.print.attribute.IppAttributeName;
 import jipsi.de.lohndirekt.print.attribute.ipp.UnknownAttribute;
 import jipsi.de.lohndirekt.print.attribute.ipp.printerdesc.supported.OperationsSupported;
@@ -44,8 +44,8 @@ public class IppRequestTestImplTest extends TestCase
   {
     Class unknownAttributeCategory = new UnknownAttribute("x", Locale.getDefault()).getCategory();
     IppRequest request = new IppRequestTestImpl(new URI("http://127.0.0.1"), OperationsSupported.GET_PRINTER_ATTRIBUTES);
-    Map attributes = request.send().getAttributes();
-    for (Iterator iter = attributes.keySet().iterator(); iter.hasNext();) {
+    AttributeMap attributes = request.send().getAttributes();
+    for (Iterator iter = attributes.keyIterator(); iter.hasNext();) {
       Class category = (Class) iter.next();
       //Should not return any unknown Attributes
       assertFalse(category.equals(unknownAttributeCategory));
@@ -61,8 +61,8 @@ public class IppRequestTestImplTest extends TestCase
   public void testSendCupsGetPrinter() throws URISyntaxException, IOException
   {
     IppRequest request = new IppRequestTestImpl(new URI("http://127.0.0.1"), OperationsSupported.CUPS_GET_PRINTERS);
-    Map attributes = request.send().getAttributes();
-    assertTrue("Response must contain an attribute of category printer-uri-spported", attributes.containsKey(IppAttributeName.PRINTER_URI_SUPPORTED.getCategory()));
+    AttributeMap attributes = request.send().getAttributes();
+    assertTrue("Response must contain an attribute of category printer-uri-spported", attributes.containsCategory(IppAttributeName.PRINTER_URI_SUPPORTED.getCategory()));
   }
 
   public void testGetResponse() throws URISyntaxException, IOException

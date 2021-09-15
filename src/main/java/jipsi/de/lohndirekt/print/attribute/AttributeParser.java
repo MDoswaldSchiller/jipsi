@@ -30,11 +30,7 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 import javax.print.attribute.Attribute;
 import javax.print.attribute.EnumSyntax;
 import javax.print.attribute.standard.JobStateReason;
@@ -367,9 +363,9 @@ public final class AttributeParser
    *
    *
    */
-  public static Map parseResponse(InputStream response) throws IOException
+  public static AttributeMap parseResponse(InputStream response) throws IOException
   {
-    Map attributes = new HashMap();
+    AttributeMap attributes = new AttributeMap();
     long start = System.currentTimeMillis();
     Attribute lastAttribute = null;
     boolean finished = false;
@@ -381,7 +377,7 @@ public final class AttributeParser
         attribute = parseAttribute(response, lastAttribute);
         if (attribute != null) {
           lastAttribute = attribute;
-          attributes = put(attributes, attribute);
+          attributes.put(attribute);
           LOG.debug("parsed attribute({}): {}", attribute.getName(), attribute);
 
         }
@@ -475,21 +471,6 @@ public final class AttributeParser
       throw new IllegalArgumentException("\"" + Integer.toHexString(valueTag) + "\" is not a valid value-tag");
     }
     return values;
-  }
-
-  /**
-   * @param attributes
-   * @param attribute
-   */
-  private static Map put(Map attributes, Attribute attribute)
-  {
-    Set values = (Set) attributes.get(attribute.getCategory());
-    if (values == null) {
-      values = new HashSet();
-      attributes.put(attribute.getCategory(), values);
-    }
-    values.add(attribute);
-    return attributes;
   }
 
   /**

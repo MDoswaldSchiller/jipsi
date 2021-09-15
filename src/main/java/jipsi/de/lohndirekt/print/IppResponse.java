@@ -18,7 +18,7 @@
  */
 package jipsi.de.lohndirekt.print;
 
-import java.util.Map;
+import jipsi.de.lohndirekt.print.attribute.AttributeMap;
 import jipsi.de.lohndirekt.print.attribute.IppStatus;
 
 /**
@@ -31,7 +31,7 @@ public interface IppResponse
   /**
    * @return attributes
    */
-  public abstract Map getAttributes();
+  public abstract AttributeMap getAttributes();
 
   /**
    * @return the IppStatus

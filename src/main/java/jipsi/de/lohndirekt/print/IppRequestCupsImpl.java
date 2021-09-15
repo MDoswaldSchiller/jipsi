@@ -26,8 +26,6 @@ import java.io.SequenceInputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Vector;
 import javax.print.attribute.Attribute;
@@ -37,6 +35,7 @@ import javax.print.attribute.HashPrintJobAttributeSet;
 import javax.print.attribute.PrintJobAttributeSet;
 import javax.print.attribute.TextSyntax;
 import jipsi.de.lohndirekt.print.attribute.AttributeHelper;
+import jipsi.de.lohndirekt.print.attribute.AttributeMap;
 import jipsi.de.lohndirekt.print.attribute.AttributeParser;
 import jipsi.de.lohndirekt.print.attribute.AttributeWriter;
 import jipsi.de.lohndirekt.print.attribute.IppAttributeName;
@@ -62,7 +61,7 @@ class IppRequestCupsImpl implements IppRequest
 
     private IppStatus status;
 
-    private Map attributes;
+    private AttributeMap attributes;
 
     IppResponseIppImpl(InputStream response)
     {
@@ -86,7 +85,7 @@ class IppRequestCupsImpl implements IppRequest
         this.attributes = AttributeParser.parseResponse(response);
       }
       else {
-        this.attributes = new HashMap();
+        this.attributes = new AttributeMap();
       }
       LOG.debug("Status: {}", status.getText());
     }
@@ -95,7 +94,7 @@ class IppRequestCupsImpl implements IppRequest
      * @return
      */
     @Override
-    public Map getAttributes()
+    public AttributeMap getAttributes()
     {
       return attributes;
     }

@@ -504,9 +504,9 @@ public final class IppAttributeName
   }
   // End of static part
 
-  private String methodName;
-  private Class attributeClass;
-  private Class category;
+  private final String methodName;
+  private final Class attributeClass;
+  private final Class category;
 
   private IppAttributeName(Attribute attribute)
   {

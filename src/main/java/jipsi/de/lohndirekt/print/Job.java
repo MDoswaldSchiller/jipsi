@@ -43,6 +43,7 @@ import javax.print.event.PrintJobAttributeListener;
 import javax.print.event.PrintJobEvent;
 import javax.print.event.PrintJobListener;
 import jipsi.de.lohndirekt.print.attribute.AttributeHelper;
+import jipsi.de.lohndirekt.print.attribute.AttributeMap;
 import jipsi.de.lohndirekt.print.attribute.IppAttributeName;
 import jipsi.de.lohndirekt.print.attribute.IppStatus;
 import jipsi.de.lohndirekt.print.attribute.ipp.jobdesc.JobId;
@@ -124,12 +125,12 @@ class Job implements DocPrintJob
       throw new PrintException("Error sending " + description(attributes) + " to IPP service: " + e.getMessage());
     }
     if (response != null && response.getStatus() != null) {
-      Map responseAttributes = response.getAttributes();
+      AttributeMap responseAttributes = response.getAttributes();
       updateAttributes(responseAttributes);
       if (response.getStatus().equals(IppStatus.SUCCESSFUL_OK)
           || response.getStatus().equals(IppStatus.SUCCESSFUL_OK_CONFLICTING_ATTRIBUTES)
           || response.getStatus().equals(IppStatus.SUCCESSFUL_OK_IGNORED_OR_SUBSTITUTED_ATTRIBUTES)) {
-        if (responseAttributes.containsKey(IppAttributeName.JOB_URI.getCategory())) {
+        if (responseAttributes.containsCategory(IppAttributeName.JOB_URI.getCategory())) {
           Set jobUriList = (Set) responseAttributes.get(IppAttributeName.JOB_URI.getCategory());
           this.jobUri = (JobUri) jobUriList.iterator().next();
         }
@@ -284,13 +285,13 @@ class Job implements DocPrintJob
   /**
    * @param responseAttributes
    */
-  private void updateAttributes(Map responseAttributes)
+  private void updateAttributes(AttributeMap responseAttributes)
   {
     this.jobAttributes = new HashPrintJobAttributeSet();
-    for (Iterator iter = responseAttributes.values().iterator(); iter.hasNext();) {
-      Set values = (Set) iter.next();
-      for (Iterator listIter = values.iterator(); listIter.hasNext();) {
-        Attribute attribute = (Attribute) listIter.next();
+    for (var iter = responseAttributes.valueIterator(); iter.hasNext();) {
+      Set<Attribute> values = iter.next();
+      for (var listIter = values.iterator(); listIter.hasNext();) {
+        Attribute attribute = listIter.next();
         if (attribute instanceof PrintJobAttribute) {
           this.jobAttributes.add(attribute);
         }
@@ -316,9 +317,8 @@ class Job implements DocPrintJob
         }
         throw new PrintException("Request not successful.");
       }
-      Map attribsMap = response.getAttributes();
+      AttributeMap attribsMap = response.getAttributes();
       updateAttributes(attribsMap);
-
     }
     catch (IOException e) {
       throw new PrintException("Update failed.", e);
