@@ -26,9 +26,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javax.print.DocFlavor;
 import javax.print.MultiDocPrintService;
 import javax.print.PrintService;
@@ -36,8 +33,9 @@ import javax.print.PrintServiceLookup;
 import javax.print.attribute.Attribute;
 import javax.print.attribute.AttributeSet;
 import javax.print.attribute.standard.RequestingUserName;
-
 import jipsi.de.lohndirekt.print.attribute.auth.RequestingUserPassword;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -66,7 +64,7 @@ public class IppPrintServiceLookup extends PrintServiceLookup {
     public final static String USERNAME_KEY = "de.lohndirekt.print.IppPrintService.username";
     public final static String PASSWORD_KEY = "de.lohndirekt.print.IppPrintService.password";
     private List cupsServers = new ArrayList();
-    private Logger log = Logger.getLogger(this.getClass().getName());
+    private static final Logger LOG = LoggerFactory.getLogger(IppPrintServiceLookup.class);
 
     /**
      * <p>
@@ -134,7 +132,7 @@ public class IppPrintServiceLookup extends PrintServiceLookup {
                 services.addAll(server.getPrintServices());
             }
         } catch (RuntimeException e) {
-            log.log(Level.SEVERE, e.getMessage(), e);
+            LOG.error(e.getMessage(), e);
         }
         PrintService[] serviceArray = new PrintService[services.size()];
         return (PrintService[]) services.toArray(serviceArray);

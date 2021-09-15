@@ -21,14 +21,11 @@ package jipsi.de.lohndirekt.print;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Logger;
-
 import javax.print.PrintService;
 import javax.print.attribute.Attribute;
-
+import jipsi.de.lohndirekt.print.attribute.IppAttributeName;
 import jipsi.de.lohndirekt.print.test.IppRequestTestImpl;
 import junit.framework.TestCase;
-import jipsi.de.lohndirekt.print.attribute.IppAttributeName;
 
 /**
  * @author bpusch
@@ -37,7 +34,6 @@ import jipsi.de.lohndirekt.print.attribute.IppAttributeName;
 public class IppPrintServiceTest extends TestCase {
 
     PrintService service;
-    Logger log;
 
     /**
      * Constructor for IppPrintServiceTest.
@@ -56,7 +52,6 @@ public class IppPrintServiceTest extends TestCase {
         IppPrintServiceLookup lookup = new IppPrintServiceLookup(new URI("http://127.0.0.1"), "", "");
         PrintService[] services = lookup.getPrintServices();
         this.service = services[0];
-        this.log = Logger.getLogger(this.getName());
     }
 
     public void testGetSupportedAttributeCategories() {

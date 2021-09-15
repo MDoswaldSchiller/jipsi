@@ -22,9 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javax.print.DocFlavor;
 import javax.print.MultiDoc;
 import javax.print.MultiDocPrintJob;
@@ -34,19 +31,20 @@ import javax.print.attribute.DocAttributeSet;
 import javax.print.attribute.HashAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
 import javax.print.event.PrintJobEvent;
-
 import jipsi.de.lohndirekt.print.attribute.AttributeHelper;
 import jipsi.de.lohndirekt.print.attribute.IppAttributeName;
 import jipsi.de.lohndirekt.print.attribute.IppStatus;
 import jipsi.de.lohndirekt.print.attribute.ipp.jobdesc.JobUri;
 import jipsi.de.lohndirekt.print.attribute.ipp.printerdesc.supported.OperationsSupported;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 /**
  * @author bpusch
  *
  */
 class MultiDocJob extends Job implements MultiDocPrintJob {
 
-	Logger log = Logger.getLogger(this.getClass().getName());
+	private static final Logger LOG = LoggerFactory.getLogger(MultiDocJob.class);
 
 	/**
 	 *
@@ -80,7 +78,7 @@ class MultiDocJob extends Job implements MultiDocPrintJob {
 		try {
 			response = request.send();
 		} catch (IOException e) {
-			log.log(Level.SEVERE, e.getMessage(), e);
+			LOG.error(e.getMessage(), e);
 		}
 		if (response != null) {
 			Map responseAttributes = response.getAttributes();
@@ -113,7 +111,7 @@ class MultiDocJob extends Job implements MultiDocPrintJob {
 			}
 			response = request.send();
 		} catch (IOException e) {
-			log.log(Level.SEVERE, e.getMessage(), e);
+			LOG.error(e.getMessage(), e);
 		}
 		if (response != null) {
 			Map responseAttributes = response.getAttributes();
@@ -145,7 +143,7 @@ class MultiDocJob extends Job implements MultiDocPrintJob {
 			response = request.send();
 
 		} catch (IOException e) {
-			log.log(Level.SEVERE, e.getMessage(), e);
+			LOG.error(e.getMessage(), e);
 		}
 		if (response != null) {
 			if (response.getStatus().equals(IppStatus.SUCCESSFUL_OK)
@@ -170,7 +168,7 @@ class MultiDocJob extends Job implements MultiDocPrintJob {
 
 	private class MDListener implements MultiDocListener {
 		public void processEvent(MultiDocEvent event) throws IOException {
-			log.log(Level.FINEST, "MultiDocevent");
+			LOG.debug("MultiDocevent");
 			processMultiDocEvent(event);
 		}
 	}

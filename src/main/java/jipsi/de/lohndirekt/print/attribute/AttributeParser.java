@@ -35,9 +35,6 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javax.print.attribute.Attribute;
 import javax.print.attribute.EnumSyntax;
 import javax.print.attribute.standard.JobStateReason;
@@ -45,10 +42,11 @@ import javax.print.attribute.standard.JobStateReasons;
 import javax.print.attribute.standard.PrinterStateReason;
 import javax.print.attribute.standard.PrinterStateReasons;
 import javax.print.attribute.standard.Severity;
-
 import jipsi.de.lohndirekt.print.attribute.ipp.Charset;
 import jipsi.de.lohndirekt.print.attribute.ipp.jobdesc.LdJobStateReason;
 import jipsi.de.lohndirekt.print.exception.EndOfAttributesException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author bpusch
@@ -58,7 +56,7 @@ public final class AttributeParser {
 
 	private final static EndOfAttributesException END_OF_ATTRIBUTES_EXCEPTION = new EndOfAttributesException();
 
-	private final static Logger log = Logger.getLogger(AttributeParser.class.getName());
+	private final static Logger LOG = LoggerFactory.getLogger(AttributeParser.class);
 
 
 
@@ -94,11 +92,11 @@ public final class AttributeParser {
 						}
 					}
 				} catch (SecurityException e) {
-					log.log(Level.SEVERE, e.getMessage(), e);
+					LOG.error(e.getMessage(), e);
 				} catch (IllegalArgumentException e) {
-					log.log(Level.SEVERE, e.getMessage(), e);
+					LOG.error(e.getMessage(), e);
 				} catch (IllegalAccessException e) {
-					log.log(Level.SEVERE, e.getMessage(), e);
+					LOG.error(e.getMessage(), e);
 				}
 
 			} else {
@@ -107,17 +105,17 @@ public final class AttributeParser {
 					Constructor constructor = attrClass.getDeclaredConstructor(parameters);
 					attribute = (Attribute) constructor.newInstance(values);
 				} catch (SecurityException e) {
-					log.log(Level.SEVERE, e.getMessage(), e);
+					LOG.error(e.getMessage(), e);
 				} catch (NoSuchMethodException e) {
-					log.log(Level.SEVERE, e.getMessage(), e);
+					LOG.error(e.getMessage(), e);
 				} catch (IllegalArgumentException e) {
-					log.log(Level.SEVERE, e.getMessage(), e);
+					LOG.error(e.getMessage(), e);
 				} catch (InstantiationException e) {
-					log.log(Level.SEVERE, e.getMessage(), e);
+					LOG.error(e.getMessage(), e);
 				} catch (IllegalAccessException e) {
-					log.log(Level.SEVERE, e.getMessage(), e);
+					LOG.error(e.getMessage(), e);
 				} catch (InvocationTargetException e) {
-					log.log(Level.SEVERE, e.getMessage(), e);
+					LOG.error(e.getMessage(), e);
 				}
 			}
 		}
@@ -234,7 +232,7 @@ public final class AttributeParser {
 		try {
 			date = dateFormat.parse(dateString);
 		} catch (ParseException e) {
-			log.log(Level.SEVERE, e.getMessage(), e);
+			LOG.error(e.getMessage(), e);
 		}
 		return date;
 	}
@@ -360,27 +358,19 @@ public final class AttributeParser {
 				if (attribute != null) {
 					lastAttribute = attribute;
 					attributes = put(attributes, attribute);
-					if (log.isLoggable(Level.FINEST)) {
-						log.finest("parsed attribute(" + attribute.getName() + "): " + attribute.toString());
-					}
-				} else {
-					if (log.isLoggable(Level.FINEST)) {
+          LOG.debug("parsed attribute({}): {}", attribute.getName(), attribute);
 
-						log.finest("Attribute was null");
-					}
+				} else {
+          LOG.debug("Attribute was null");
 				}
 			} catch (EndOfAttributesException e) {
 
 				finished = true;
-				if (log.isLoggable(Level.INFO)) {
-					log.info("--- Attribute parsing finished ---");
-				}
+  			LOG.debug("--- Attribute parsing finished ---");
 			}
 		}
 		long end = System.currentTimeMillis();
-		if (log.isLoggable(Level.INFO)) {
-		    log.info("Parsing took " + (end - start) + "ms.");
-		}
+    LOG.debug("Parsing took {} ms", (end - start));
 		return attributes;
 	}
 

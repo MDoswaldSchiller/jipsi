@@ -29,16 +29,12 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javax.print.attribute.Attribute;
 import javax.print.attribute.AttributeSet;
 import javax.print.attribute.HashAttributeSet;
 import javax.print.attribute.HashPrintJobAttributeSet;
 import javax.print.attribute.PrintJobAttributeSet;
 import javax.print.attribute.TextSyntax;
-
 import jipsi.de.lohndirekt.print.attribute.AttributeHelper;
 import jipsi.de.lohndirekt.print.attribute.AttributeParser;
 import jipsi.de.lohndirekt.print.attribute.AttributeWriter;
@@ -48,14 +44,16 @@ import jipsi.de.lohndirekt.print.attribute.IppStatus;
 import jipsi.de.lohndirekt.print.attribute.ipp.Charset;
 import jipsi.de.lohndirekt.print.attribute.ipp.NaturalLanguage;
 import jipsi.de.lohndirekt.print.attribute.ipp.printerdesc.supported.OperationsSupported;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author bpusch, speters, sefftinge
  *
  */
 class IppRequestCupsImpl implements IppRequest {
-    class IppResponseIppImpl implements IppResponse {
-        private Logger log = Logger.getLogger(this.getClass().getName());
+    static class IppResponseIppImpl implements IppResponse {
+        private static final Logger LOG = LoggerFactory.getLogger(IppResponseIppImpl.class);
 
         private IppStatus status;
 
@@ -65,7 +63,7 @@ class IppRequestCupsImpl implements IppRequest {
             try{
                 parseResponse(response);
             } catch (IOException e) {
-                log.log(Level.SEVERE, e.getMessage(), e);
+                LOG.error(e.getMessage(), e);
                 throw new RuntimeException(e);
             }
 
@@ -81,9 +79,7 @@ class IppRequestCupsImpl implements IppRequest {
             } else {
                 this.attributes = new HashMap();
             }
-            if (log.isLoggable(Level.FINEST)) {
-                log.finest("Status: " + status.getText());
-            }
+            LOG.debug("Status: {}", status.getText());
         }
 
         /**
@@ -102,6 +98,8 @@ class IppRequestCupsImpl implements IppRequest {
 
     }
 
+    private static final Logger LOG = LoggerFactory.getLogger(IppRequestCupsImpl.class);
+    
     private IppConnection conn;
 
     private boolean sent = false;
@@ -121,7 +119,6 @@ class IppRequestCupsImpl implements IppRequest {
 
     private AttributeSet printerAttributes = new HashAttributeSet();
 
-    private Logger log = Logger.getLogger(this.getClass().getName());
 
     private static final int SEND_REQUEST_COUNT = 3;
 
@@ -305,20 +302,18 @@ class IppRequestCupsImpl implements IppRequest {
             conn.execute();
 
             if (conn.getStatusCode() != HttpURLConnection.HTTP_OK) {
-                if (log.isLoggable(Level.INFO)) {
+                if (LOG.isInfoEnabled()) {
                     String msg = "Cups seems to be busy - STATUSCODE "+conn.getStatusCode();
                     if (tries < SEND_REQUEST_COUNT) {
                         msg += " - going to retry in " + SEND_REQUEST_TIMEOUT
                                 + " ms";
                     }
-                    log.warning(msg);
+                    LOG.info(msg);
                 }
                 try {
                     Thread.sleep(50);
                 } catch (InterruptedException e) {
-                    if (log.isLoggable(Level.INFO)) {
-                        log.info(e.getMessage());
-                    }
+                  LOG.info("Send interrupted", e);
                 }
             } else {
                 ok = true;

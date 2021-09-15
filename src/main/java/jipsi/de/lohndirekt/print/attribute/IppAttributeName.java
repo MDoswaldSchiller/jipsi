@@ -24,8 +24,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.logging.Logger;
-
 import javax.print.attribute.Attribute;
 import javax.print.attribute.standard.ColorSupported;
 import javax.print.attribute.standard.Compression;
@@ -88,7 +86,6 @@ import javax.print.attribute.standard.RequestingUserName;
 import javax.print.attribute.standard.Severity;
 import javax.print.attribute.standard.SheetCollate;
 import javax.print.attribute.standard.Sides;
-
 import jipsi.de.lohndirekt.print.attribute.auth.RequestingUserPassword;
 import jipsi.de.lohndirekt.print.attribute.cups.DeviceClass;
 import jipsi.de.lohndirekt.print.attribute.cups.DeviceUri;
@@ -152,13 +149,15 @@ import jipsi.de.lohndirekt.print.attribute.ipp.printerdesc.supported.SidesSuppor
 import jipsi.de.lohndirekt.print.attribute.ipp.printerdesc.supported.UriAuthenticationSupported;
 import jipsi.de.lohndirekt.print.attribute.ipp.printerdesc.supported.UriSecuritySupported;
 import jipsi.de.lohndirekt.print.attribute.undocumented.PrinterStateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author bpusch
  *
  */
 public final class IppAttributeName {
-	private final static Logger log = Logger.getLogger(AttributeParser.class.getName());
+	private final static Logger LOG = LoggerFactory.getLogger(IppAttributeName.class);
 
 	/*
 	 * Attributes defined in javax.print.attribute.standard
@@ -484,7 +483,7 @@ public final class IppAttributeName {
 	public static IppAttributeName get(String attributeName) {
 		IppAttributeName attrib =(IppAttributeName)attributesByName.get(attributeName);
 		if (attrib == null) {
-			log.warning("Unknown Attribute " + attributeName + ".");
+			LOG.warn("Unknown Attribute {}", attributeName);
 			attrib = new IppAttributeName(new UnknownAttribute(attributeName, Locale.getDefault()));
 		}
 		return attrib;
@@ -493,7 +492,7 @@ public final class IppAttributeName {
 	public static IppAttributeName get(Class category) {
 	    IppAttributeName attrib =(IppAttributeName)attributesByCategory.get(category);
 		if (attrib == null) {
-			log.warning("Unknown Category " + category + ".");
+			LOG.warn("Unknown Category {}", category);
 			attrib = new IppAttributeName(new UnknownAttribute(category.getName(), Locale.getDefault()));
 		}
 		return attrib;

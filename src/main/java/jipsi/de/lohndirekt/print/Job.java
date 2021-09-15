@@ -27,9 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javax.print.Doc;
 import javax.print.DocPrintJob;
 import javax.print.PrintException;
@@ -44,21 +41,22 @@ import javax.print.attribute.PrintRequestAttributeSet;
 import javax.print.event.PrintJobAttributeListener;
 import javax.print.event.PrintJobEvent;
 import javax.print.event.PrintJobListener;
-
 import jipsi.de.lohndirekt.print.attribute.AttributeHelper;
 import jipsi.de.lohndirekt.print.attribute.IppAttributeName;
 import jipsi.de.lohndirekt.print.attribute.IppStatus;
 import jipsi.de.lohndirekt.print.attribute.ipp.jobdesc.JobId;
 import jipsi.de.lohndirekt.print.attribute.ipp.jobdesc.JobUri;
 import jipsi.de.lohndirekt.print.attribute.ipp.printerdesc.supported.OperationsSupported;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author bpusch
  *
  */
 class Job implements DocPrintJob {
+	protected static final Logger LOG = LoggerFactory.getLogger(Job.class);
 	protected boolean ok = false;
-	protected Logger log = Logger.getLogger(this.getClass().getName());
 	protected IppPrintService printService;
 	private PrintJobAttributeSet jobAttributes;
 	protected JobUri jobUri;
@@ -95,7 +93,7 @@ class Job implements DocPrintJob {
 		try {
 			request.setData(doc.getStreamForBytes());
 		} catch (IOException e) {
-			log.log(Level.SEVERE, e.getMessage(), e);
+			LOG.error(e.getMessage(), e);
 			throw new PrintException("Error getting document data (" + description(attributes) + "): " + e.getMessage());
 		}
 		//add the operation attributes
@@ -110,7 +108,7 @@ class Job implements DocPrintJob {
 			response = request.send();
 			notifyJobListeners(PrintJobEvent.DATA_TRANSFER_COMPLETE);
 		} catch (IOException e) {
-			log.log(Level.SEVERE, e.getMessage(), e);
+			LOG.error(e.getMessage(), e);
 			throw new PrintException("Error sending " + description(attributes) + " to IPP service: " + e.getMessage());
 		}
 		if (response != null && response.getStatus()!=null) {

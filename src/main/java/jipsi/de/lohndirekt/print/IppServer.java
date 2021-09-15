@@ -24,16 +24,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javax.print.attribute.Attribute;
 import javax.print.attribute.URISyntax;
 import javax.print.attribute.standard.RequestingUserName;
-
 import jipsi.de.lohndirekt.print.attribute.IppAttributeName;
 import jipsi.de.lohndirekt.print.attribute.auth.RequestingUserPassword;
 import jipsi.de.lohndirekt.print.attribute.ipp.printerdesc.supported.OperationsSupported;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author bpusch
@@ -41,7 +39,7 @@ import jipsi.de.lohndirekt.print.attribute.ipp.printerdesc.supported.OperationsS
  */
 class IppServer {
 
-	private final Logger log = Logger.getLogger(this.getClass().getName());
+	private static final Logger LOG = LoggerFactory.getLogger(IppServer.class);
 	private URI uri;
 	private RequestingUserName user;
 	private RequestingUserPassword passwd;
@@ -72,7 +70,7 @@ class IppServer {
 		try {
 			response = request.send();
 		} catch (IOException e) {
-			log.log(Level.SEVERE, e.getMessage(),e);
+			LOG.error(e.getMessage(),e);
 		}
 		List services = new ArrayList();
 		if (response != null) {

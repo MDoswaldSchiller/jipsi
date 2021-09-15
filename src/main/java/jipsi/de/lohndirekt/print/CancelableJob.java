@@ -18,7 +18,6 @@
  */package jipsi.de.lohndirekt.print;
 
 import java.io.IOException;
-import java.util.logging.Level;
 
 import javax.print.CancelablePrintJob;
 import javax.print.PrintException;
@@ -62,7 +61,7 @@ class CancelableJob extends Job implements CancelablePrintJob{
                     notifyJobListeners(PrintJobEvent.JOB_CANCELED);
                 }
             } catch (IOException e) {
-                log.log(Level.SEVERE, e.getMessage(), e);
+                LOG.error(e.getMessage(), e);
                 throw new PrintException("Cannot be canceled: IOException", e);
             }
         }

@@ -27,9 +27,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javax.print.DocFlavor;
 import javax.print.DocPrintJob;
 import javax.print.PrintException;
@@ -39,7 +36,6 @@ import javax.print.attribute.*;
 import javax.print.attribute.standard.PrinterURI;
 import javax.print.attribute.standard.RequestingUserName;
 import javax.print.event.PrintServiceAttributeListener;
-
 import jipsi.de.lohndirekt.print.attribute.IppAttributeName;
 import jipsi.de.lohndirekt.print.attribute.IppStatus;
 import jipsi.de.lohndirekt.print.attribute.auth.RequestingUserPassword;
@@ -47,6 +43,8 @@ import jipsi.de.lohndirekt.print.attribute.ipp.DocumentFormat;
 import jipsi.de.lohndirekt.print.attribute.ipp.jobdesc.JobId;
 import jipsi.de.lohndirekt.print.attribute.ipp.printerdesc.supported.DocumentFormatSupported;
 import jipsi.de.lohndirekt.print.attribute.ipp.printerdesc.supported.OperationsSupported;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author bpusch
@@ -55,7 +53,7 @@ import jipsi.de.lohndirekt.print.attribute.ipp.printerdesc.supported.OperationsS
  */
 public class IppPrintService implements PrintService {
 
-	private final Logger log = Logger.getLogger(this.getClass().getName());
+	private static final Logger LOG = LoggerFactory.getLogger(IppPrintService.class);
 	private DocFlavor[] supportedFlavors = null;
 	private URI uri;
 	private RequestingUserName requestingUserName = null;
@@ -410,7 +408,7 @@ public class IppPrintService implements PrintService {
 		try {
 			response = request.send();
 		} catch (IOException e) {
-			log.log(Level.SEVERE, e.getMessage(), e);
+			LOG.error(e.getMessage(), e);
 		}
 		boolean supported = false;
 		if (response != null) {
@@ -459,7 +457,7 @@ public class IppPrintService implements PrintService {
 			try {
 				response = request.send();
 			} catch (IOException e) {
-				log.log(Level.SEVERE, e.getMessage(), e);
+				LOG.error(e.getMessage(), e);
 			}
 			if (response != null) {
 				this.attributes = response.getAttributes();

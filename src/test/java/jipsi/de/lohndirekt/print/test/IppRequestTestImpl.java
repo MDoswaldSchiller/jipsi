@@ -27,8 +27,6 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
-
 import javax.print.attribute.AttributeSet;
 import javax.print.attribute.HashAttributeSet;
 import javax.print.attribute.HashPrintJobAttributeSet;
@@ -47,7 +45,6 @@ import javax.print.attribute.standard.OrientationRequested;
 import javax.print.attribute.standard.PDLOverrideSupported;
 import javax.print.attribute.standard.ReferenceUriSchemesSupported;
 import javax.print.attribute.standard.Sides;
-
 import jipsi.de.lohndirekt.print.IppRequest;
 import jipsi.de.lohndirekt.print.IppResponse;
 import jipsi.de.lohndirekt.print.attribute.IppAttributeName;
@@ -67,9 +64,11 @@ import jipsi.de.lohndirekt.print.attribute.ipp.printerdesc.supported.Orientation
 import jipsi.de.lohndirekt.print.attribute.ipp.printerdesc.supported.PageRangesSupported;
 import jipsi.de.lohndirekt.print.attribute.ipp.printerdesc.supported.PrinterUriSupported;
 import jipsi.de.lohndirekt.print.attribute.ipp.printerdesc.supported.SidesSupported;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class IppRequestTestImpl implements IppRequest {
-    private Logger log = Logger.getLogger(this.getClass().getName());
+    private static final Logger LOG = LoggerFactory.getLogger(IppRequestTestImpl.class);
 
     class IppResponseTestImpl implements IppResponse {
 
@@ -180,7 +179,7 @@ public class IppRequestTestImpl implements IppRequest {
         } else if (operation.equals(OperationsSupported.CUPS_GET_PRINTERS)) {
             sendCupsGetPrinter();
         } else{
-            log.warning("Call to request " + operation.toString() + " not implemented");
+            LOG.warn("Call to request {} not implemented", operation);
             this.response.attributes = new HashMap();
         }
         response.status = IppStatus.SUCCESSFUL_OK;

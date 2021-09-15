@@ -20,9 +20,6 @@ package jipsi.de.lohndirekt.print.attribute;
 
 import java.io.IOException;
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javax.print.Doc;
 import javax.print.attribute.Attribute;
 import javax.print.attribute.AttributeSet;
@@ -32,10 +29,11 @@ import javax.print.attribute.PrintJobAttribute;
 import javax.print.attribute.PrintJobAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
 import javax.print.attribute.standard.DocumentName;
-
 import jipsi.de.lohndirekt.print.SimpleMultiDoc;
 import jipsi.de.lohndirekt.print.attribute.ipp.DocumentFormat;
 import jipsi.de.lohndirekt.print.attribute.ipp.LastDocument;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author ld-development
@@ -44,7 +42,7 @@ import jipsi.de.lohndirekt.print.attribute.ipp.LastDocument;
  */
 public final class AttributeHelper {
 
-    private final static Logger log = Logger.getLogger(AttributeHelper.class.getName());
+    private final static Logger LOG = LoggerFactory.getLogger(AttributeHelper.class);
     /**
      * filters the given attributes
      *
@@ -105,7 +103,7 @@ public final class AttributeHelper {
         try {
             operationAttributes = docOperationAttributes(multiDoc.getDoc());
         } catch (IOException e) {
-            log.log(Level.SEVERE, "Could not get Doc from multiDoc", e);
+            LOG.error("Could not get Doc from multiDoc", e);
         }
         LastDocument lastDocument;
         if (multiDoc.isLast()) {

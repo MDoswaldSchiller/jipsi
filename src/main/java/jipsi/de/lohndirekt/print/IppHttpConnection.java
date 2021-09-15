@@ -23,17 +23,15 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import jipsi.de.lohndirekt.print.exception.AuthenticationException;
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
-
-import jipsi.de.lohndirekt.print.exception.AuthenticationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * simple facade / abstraction layer to "commons httpclient"
@@ -43,7 +41,7 @@ import jipsi.de.lohndirekt.print.exception.AuthenticationException;
  */
 class IppHttpConnection implements IppConnection {
 
-    private Logger log = Logger.getLogger(this.getClass().getName());
+    private static final Logger LOG = LoggerFactory.getLogger(IppHttpConnection.class);
 
     private HttpClient httpConn;
 
@@ -64,9 +62,7 @@ class IppHttpConnection implements IppConnection {
             method.setRequestContentLength(EntityEnclosingMethod.CONTENT_LENGTH_AUTO);
             // authentication
             if (user != null && user.trim().length() > 0) {
-                if (log.isLoggable(Level.FINER)) {
-                    log.log(Level.SEVERE, "Using username: "+user+" , passwd.length "+passwd.length());
-                }
+                LOG.debug("Using username: {}, passwd.length: {}", user, passwd.length());
                 method.setDoAuthentication(true);
                 Credentials creds = new UsernamePasswordCredentials(user,
                         passwd);
@@ -76,7 +72,7 @@ class IppHttpConnection implements IppConnection {
             }
 
         } catch (Exception e) {
-            log.log(Level.SEVERE, e.getMessage(), e);
+            LOG.error(e.getMessage(), e);
         }
     }
 
