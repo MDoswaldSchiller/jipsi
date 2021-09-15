@@ -26,7 +26,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
-
 import javax.print.attribute.standard.CopiesSupported;
 import javax.print.attribute.standard.JobHoldUntil;
 import javax.print.attribute.standard.JobName;
@@ -34,16 +33,12 @@ import javax.print.attribute.standard.JobPriority;
 import javax.print.attribute.standard.JobState;
 import javax.print.attribute.standard.PrinterResolution;
 import javax.print.attribute.standard.PrinterURI;
-
-import sun.util.calendar.ZoneInfo;
-
-import junit.framework.TestCase;
-import jipsi.de.lohndirekt.print.attribute.AttributeWriter;
 import jipsi.de.lohndirekt.print.attribute.cups.JobPageLimit;
 import jipsi.de.lohndirekt.print.attribute.ipp.Charset;
 import jipsi.de.lohndirekt.print.attribute.ipp.jobdesc.JobUri;
 import jipsi.de.lohndirekt.print.attribute.ipp.printerdesc.PrinterCurrentTime;
 import jipsi.de.lohndirekt.print.attribute.ipp.printerdesc.supported.PageRangesSupported;
+import junit.framework.TestCase;
 
 /**
  * @author ld-development
@@ -61,7 +56,7 @@ public class AttributeWriterTest extends TestCase {
 
 
     private Date date(String timeZoneId){
-        TimeZone zone = ZoneInfo.getTimeZone(timeZoneId);
+        TimeZone zone = TimeZone.getTimeZone(timeZoneId);
         Calendar cal = Calendar.getInstance(zone);
 
         cal.set(Calendar.YEAR, 2003);

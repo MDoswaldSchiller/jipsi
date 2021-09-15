@@ -26,7 +26,6 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
-
 import javax.print.attribute.Attribute;
 import javax.print.attribute.DateTimeSyntax;
 import javax.print.attribute.EnumSyntax;
@@ -35,8 +34,6 @@ import javax.print.attribute.ResolutionSyntax;
 import javax.print.attribute.SetOfIntegerSyntax;
 import javax.print.attribute.TextSyntax;
 import javax.print.attribute.URISyntax;
-
-import sun.util.calendar.ZoneInfo;
 import jipsi.de.lohndirekt.print.attribute.ipp.Charset;
 import jipsi.de.lohndirekt.print.attribute.ipp.NaturalLanguage;
 
@@ -167,7 +164,7 @@ public final class AttributeWriter {
         writeInt2(11, out);
 
 		Date date = attribute.getValue();
-        TimeZone zone = ZoneInfo.getTimeZone("UTC");
+        TimeZone zone = TimeZone.getTimeZone("UTC");
         Calendar cal = new GregorianCalendar(zone);
 		cal.setTime(date);
 
