@@ -18,8 +18,6 @@
  */
 package jipsi.de.lohndirekt.print.attribute;
 
-import java.util.Locale;
-import jipsi.de.lohndirekt.print.attribute.ipp.UnknownAttribute;
 import junit.framework.TestCase;
 
 /**
@@ -47,18 +45,6 @@ public class IppAttributeNameTest extends TestCase
   public void testGetString()
   {
     IppAttributeName attributeName = IppAttributeName.get("attribute-does-not-exist");
-    assertNotNull("IppAttributeName is null", attributeName);
-    assertEquals("IppAttributeName should be UNKNOWN_ATTRIBUTE", attributeName.getCategory(), new UnknownAttribute("x", Locale.getDefault()).getCategory());
+    assertNull("IppAttributeName null", attributeName);
   }
-
-  /*
-     * Test for IppAttributeName get(Class)
-   */
-  public void testGetClass()
-  {
-    IppAttributeName attributeName = IppAttributeName.get(String.class);
-    assertNotNull("IppAttributeName is null", attributeName);
-    assertEquals("IppAttributeName should be UNKNOWN_ATTRIBUTE", attributeName.getCategory(), new UnknownAttribute("x", Locale.getDefault()).getCategory());
-  }
-
 }

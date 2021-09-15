@@ -39,6 +39,7 @@ import javax.print.attribute.standard.PrinterStateReason;
 import javax.print.attribute.standard.PrinterStateReasons;
 import javax.print.attribute.standard.Severity;
 import jipsi.de.lohndirekt.print.attribute.ipp.Charset;
+import jipsi.de.lohndirekt.print.attribute.ipp.UnknownAttribute;
 import jipsi.de.lohndirekt.print.attribute.ipp.jobdesc.LdJobStateReason;
 import jipsi.de.lohndirekt.print.exception.EndOfAttributesException;
 import org.slf4j.Logger;
@@ -62,6 +63,11 @@ public final class AttributeParser
   {
     Attribute attribute = null;
     IppAttributeName attrName = IppAttributeName.get(name);
+    
+    if (attrName == null) {
+      return new UnknownAttribute(name, values);
+    }
+    
     Class attrClass = attrName.getAttributeClass();
     Class superClass = attrClass.getSuperclass();
     if (superClass != null) {
@@ -421,6 +427,7 @@ public final class AttributeParser
       case STRING:
       case TEXT:
       case NAME:
+      case MEMBERNAME:
         values = new Object[]{parseNameAndTextString(in, valueLength), Locale.getDefault()};
         break;
         
@@ -457,16 +464,19 @@ public final class AttributeParser
         break;
         
       case NOVALUE:
+      case UNKNOWN:
         values = new Object[]{};
         break;
         
       case BEGIN_COLLECTION:
       case END_COLLECTION:
+        //not supported so skip
+        in.skipNBytes(valueLength);
         values = new Object[]{};
         break;
         
       default:
-        throw new UnsupportedOperationException(String.format("Unsupported value type: %s", valueTag));
+        throw new UnsupportedOperationException(String.format("Unsupported value type: %s", valueTag.name()));
     }
     return values;
   }

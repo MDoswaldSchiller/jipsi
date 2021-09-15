@@ -100,7 +100,6 @@ import jipsi.de.lohndirekt.print.attribute.ipp.DetailedStatusMessage;
 import jipsi.de.lohndirekt.print.attribute.ipp.DocumentFormat;
 import jipsi.de.lohndirekt.print.attribute.ipp.NaturalLanguage;
 import jipsi.de.lohndirekt.print.attribute.ipp.StatusMessage;
-import jipsi.de.lohndirekt.print.attribute.ipp.UnknownAttribute;
 import jipsi.de.lohndirekt.print.attribute.ipp.jobdesc.JobId;
 import jipsi.de.lohndirekt.print.attribute.ipp.jobdesc.JobMoreInfo;
 import jipsi.de.lohndirekt.print.attribute.ipp.jobdesc.JobOriginatingHostName;
@@ -485,23 +484,9 @@ public final class IppAttributeName
 
   public static IppAttributeName get(String attributeName)
   {
-    IppAttributeName attrib = (IppAttributeName) attributesByName.get(attributeName);
-    if (attrib == null) {
-      LOG.warn("Unknown Attribute {}", attributeName);
-      attrib = new IppAttributeName(new UnknownAttribute(attributeName, Locale.getDefault()));
-    }
-    return attrib;
+    return (IppAttributeName) attributesByName.get(attributeName);
   }
 
-  public static IppAttributeName get(Class category)
-  {
-    IppAttributeName attrib = (IppAttributeName) attributesByCategory.get(category);
-    if (attrib == null) {
-      LOG.warn("Unknown Category {}", category);
-      attrib = new IppAttributeName(new UnknownAttribute(category.getName(), Locale.getDefault()));
-    }
-    return attrib;
-  }
   // End of static part
 
   private final String methodName;

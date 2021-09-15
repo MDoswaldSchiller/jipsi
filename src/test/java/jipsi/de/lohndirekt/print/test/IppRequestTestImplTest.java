@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Iterator;
-import java.util.Locale;
 import java.util.Set;
 import javax.print.attribute.Attribute;
 import jipsi.de.lohndirekt.print.IppRequest;
@@ -42,7 +41,7 @@ public class IppRequestTestImplTest extends TestCase
 
   public void testSendGetPrinterAttributes() throws URISyntaxException, IOException
   {
-    Class unknownAttributeCategory = new UnknownAttribute("x", Locale.getDefault()).getCategory();
+    Class unknownAttributeCategory = new UnknownAttribute("x", new Object[0]).getCategory();
     IppRequest request = new IppRequestTestImpl(new URI("http://127.0.0.1"), OperationsSupported.GET_PRINTER_ATTRIBUTES);
     AttributeMap attributes = request.send().getAttributes();
     for (Iterator<Class<? extends Attribute>> iter = attributes.keyIterator(); iter.hasNext();) {

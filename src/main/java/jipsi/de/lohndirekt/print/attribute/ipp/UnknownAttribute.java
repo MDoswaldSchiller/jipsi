@@ -18,24 +18,21 @@
  */
 package jipsi.de.lohndirekt.print.attribute.ipp;
 
-import java.util.Locale;
+import java.util.Arrays;
 import javax.print.attribute.SupportedValuesAttribute;
-import javax.print.attribute.TextSyntax;
 
-public class UnknownAttribute extends TextSyntax implements SupportedValuesAttribute
+public class UnknownAttribute implements SupportedValuesAttribute
 {
+  private final String name;
+  private final Object[] values;
 
   /**
    * @param value
    */
-  public UnknownAttribute(String value, Locale locale)
+  public UnknownAttribute(String name, Object[] values)
   {
-    super(value, locale);
-  }
-
-  public UnknownAttribute(int number)
-  {
-    super(Integer.toString(number), Locale.getDefault());
+    this.name = name;
+    this.values = Arrays.copyOf(values, values.length);
   }
 
   /**
@@ -58,7 +55,7 @@ public class UnknownAttribute extends TextSyntax implements SupportedValuesAttri
   @Override
   public String getName()
   {
-    return getIppName();
+    return getIppName() + "_" + name;
   }
 
 }
