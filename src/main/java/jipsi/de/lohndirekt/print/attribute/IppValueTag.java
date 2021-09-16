@@ -91,12 +91,6 @@ public enum IppValueTag
     return description;
   }
 
-  @Override
-  public String toString()
-  {
-    return this.description;
-  }
-  
   public static IppValueTag fromId(int valueTagId)
   {
     IppValueTag tag = CACHE.get(valueTagId);

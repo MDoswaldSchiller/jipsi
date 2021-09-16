@@ -54,10 +54,4 @@ public enum IppDelimiterTag
   {
     return description;
   }
-  
-  @Override
-  public String toString()
-  {
-    return this.description;
-  }
 }
