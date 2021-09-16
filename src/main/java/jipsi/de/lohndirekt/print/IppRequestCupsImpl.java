@@ -109,7 +109,7 @@ class IppRequestCupsImpl implements IppRequest
 
   private IppConnection conn;
   private boolean sent;
-  private Object data;
+  private InputStream data;
 
   //Id wird in der Cups-API zwar �bergeben, ist aber auch immer 1.
   private int id = 1;
@@ -263,12 +263,6 @@ class IppRequestCupsImpl implements IppRequest
     this.data = data;
   }
 
-  @Override
-  public void setData(byte[] data)
-  {
-    this.data = data;
-  }
-
   /**
    * @param attributes
    */
@@ -298,12 +292,12 @@ class IppRequestCupsImpl implements IppRequest
 
       this.conn = new IppHttpConnection(this.path, username, password);
 
-      Vector v = new Vector();
+      Vector<InputStream> v = new Vector<>();
       v.add(new ByteArrayInputStream(this.ippHeader()));
       v.add(new ByteArrayInputStream(this.ippAttributes()));
       v.add(new ByteArrayInputStream(this.ippFooter()));
-      if (this.data != null) {
-        v.add(this.getDataAsInputStream());
+      if (data != null) {
+        v.add(data);
       }
       SequenceInputStream stream = new SequenceInputStream(v.elements());
       conn.setIppRequest(stream);
@@ -365,38 +359,6 @@ class IppRequestCupsImpl implements IppRequest
     return null;
   }
 
-  /**
-   * @return
-   */
-  private InputStream getDataAsInputStream()
-  {
-    if (data == null) {
-      return null;
-//        } else if (data instanceof FileInputStream) {
-//            FileInputStream in = (FileInputStream) data;
-//            try {
-//				if (in.getFD().valid()){
-//                    //TODO remove this hack
-//				    in=new FileInputStream("./testfiles/test.pdf");
-//				}
-//			} catch (IOException e) {
-//				log.log(Level.WARNING, "", e);
-//			}
-//            return in;
-    }
-    else if (data instanceof InputStream) {
-      InputStream in = (InputStream) data;
-      return in;
-    }
-    else if (data instanceof byte[]) {
-      return new ByteArrayInputStream((byte[]) data);
-    }
-    else {
-      throw new IllegalStateException("unknown data format : "
-                                      + data.getClass());
-    }
-  }
-
   private IppResponse getResponse() throws IOException
   {
     if (this.conn.getStatusCode() == HttpURLConnection.HTTP_OK) {
@@ -406,5 +368,4 @@ class IppRequestCupsImpl implements IppRequest
       return null;
     }
   }
-
 }

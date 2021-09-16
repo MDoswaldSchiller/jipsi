@@ -100,7 +100,7 @@ public class IppRequestTestImpl implements IppRequest
   }
 
   private IppResponseTestImpl response;
-  private Object data;
+  private InputStream data;
   private OperationsSupported operation;
   //Id wird in der Cups-API zwar übergeben, ist aber auch immer 1.
   private PrintJobAttributeSet jobAttributes = new HashPrintJobAttributeSet();
@@ -156,15 +156,6 @@ public class IppRequestTestImpl implements IppRequest
    */
   @Override
   public void setData(InputStream data)
-  {
-    this.data = data;
-  }
-
-  /**
-   * @param data
-   */
-  @Override
-  public void setData(byte[] data)
   {
     this.data = data;
   }

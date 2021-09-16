@@ -32,8 +32,6 @@ public interface IppRequest
 
   IppResponse send() throws IOException;
 
-  void setData(byte[] data);
-
   void setData(InputStream data);
 
   void setJobAttributes(PrintJobAttributeSet attributes);
