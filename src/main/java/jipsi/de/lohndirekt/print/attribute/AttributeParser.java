@@ -30,8 +30,13 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import javax.print.attribute.Attribute;
 import javax.print.attribute.EnumSyntax;
 import javax.print.attribute.standard.JobStateReason;
@@ -160,13 +165,13 @@ public final class AttributeParser
       throws IOException, EndOfAttributesException
   {
 
-    int valueTag;
-    while ((valueTag = in.read()) < IppValueTag.UNSUPPORTED_VALUE.getId()) {
-      if (valueTag == IppDelimiterTag.END_ATTRIBUTES.getValue()) {
+    int valueTagId;
+    while ((valueTagId = in.read()) < IppValueTag.UNSUPPORTED_VALUE.getId()) {
+      if (valueTagId == IppDelimiterTag.END_ATTRIBUTES.getValue()) {
         throw END_OF_ATTRIBUTES_EXCEPTION;
       }
     }
-
+    IppValueTag valueTag = IppValueTag.fromId(valueTagId);
     int nameLength = parseInt2(in);
     //          parse the Attribute-Name
     String name;
@@ -177,8 +182,12 @@ public final class AttributeParser
       name = parseString(in, nameLength);
     }
 
-    Object[] values = parseValue(IppValueTag.fromId(valueTag), in);
+    Object[] values = parseValue(valueTag, in);
 
+    if (valueTag == IppValueTag.BEGIN_COLLECTION) {
+      values = new Object[]{ parseCollection(in) };
+    }
+    
     if (name.equals(IppAttributeName.PRINTER_STATE_REASONS.getName())) {
       return parsePrinterStateReasons((String) values[0], lastAttribute);
     }
@@ -448,10 +457,9 @@ public final class AttributeParser
         values = new Object[]{};
         break;
         
+      //Collection start/end to not have values
       case BEGIN_COLLECTION:
       case END_COLLECTION:
-        //not supported so skip
-        valueIn.skipNBytes(valueLength);
         values = new Object[]{};
         break;
         
@@ -465,7 +473,42 @@ public final class AttributeParser
     
     return values;
   }
-
+  
+  private Map<String,Attribute> parseCollection(InputStream in) throws IOException
+  {
+    Map<String,Attribute> attributes = new HashMap<>();
+    
+    String name = null;
+    List<Object> values = new ArrayList<>();
+    AttributeEntry entry;
+    
+    while ((entry = parseAttributeEntry(in)).getTag() != IppValueTag.END_COLLECTION) {
+      switch (entry.getTag()) {
+        case MEMBERNAME:
+          if (name != null) {
+            attributes.put(name, createAttribute(name, values.toArray()));
+            values.clear();
+          }
+          name = entry.getName() != null ? entry.getName() : entry.getValues().get(0).toString();
+          break;
+          
+        case BEGIN_COLLECTION:
+          values.add(parseCollection(in));
+          break;
+          
+        default:
+          values.addAll(entry.getValues());
+          break;
+      }
+    }
+    
+    if (name != null) {
+      attributes.put(name, createAttribute(name, values.toArray()));
+    }   
+    
+    return attributes;
+  }
+  
   /**
    * @param values
    * @return
@@ -487,4 +530,52 @@ public final class AttributeParser
     return classes;
   }
 
+  private AttributeEntry parseAttributeEntry(InputStream in) throws IOException
+  {
+    IppValueTag valueTag = IppValueTag.fromId(in.read());
+    int nameLength = parseInt2(in);
+    String name = (nameLength > 0 ? parseString(in, nameLength) : null);
+    Object[] values = parseValue(valueTag, in);
+    
+    return new AttributeEntry(valueTag, name, Arrays.asList(values));
+  }
+  
+  /**
+   * Holds the values of a single entry in the attribute map
+   */
+  private static final class AttributeEntry
+  {
+    private final IppValueTag tag;
+    private final String name;
+    private final List<Object> values;
+
+    AttributeEntry(IppValueTag tag, String name, List<Object> values)
+    {
+      this.tag = tag;
+      this.name = name;
+      this.values = List.copyOf(values);
+    }
+
+    public IppValueTag getTag()
+    {
+      return tag;
+    }
+
+    public String getName()
+    {
+      return name;
+    }
+
+    public List<Object> getValues()
+    {
+      return values;
+    }
+
+    @Override
+    public String toString()
+    {
+      return "AttributeEntry{" + "tag=" + tag + ", name=" + name + ", values=" + values + '}';
+    }
+  }
 }
+
