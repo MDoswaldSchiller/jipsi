@@ -313,13 +313,12 @@ class IppRequestCupsImpl implements IppRequest
         if (LOG.isInfoEnabled()) {
           String msg = "Cups seems to be busy - STATUSCODE " + conn.getStatusCode();
           if (tries < SEND_REQUEST_COUNT) {
-            msg += " - going to retry in " + SEND_REQUEST_TIMEOUT
-                   + " ms";
+            msg += " - going to retry in " + SEND_REQUEST_TIMEOUT + " ms";
           }
           LOG.info(msg);
         }
         try {
-          Thread.sleep(50);
+          Thread.sleep(SEND_REQUEST_TIMEOUT);
         }
         catch (InterruptedException e) {
           LOG.info("Send interrupted", e);
