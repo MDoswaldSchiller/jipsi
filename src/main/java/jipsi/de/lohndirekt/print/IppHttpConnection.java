@@ -44,35 +44,44 @@ class IppHttpConnection implements IppConnection
 {
   private static final Logger LOG = LoggerFactory.getLogger(IppHttpConnection.class);
 
-  private HttpClient httpConn;
-  private PostMethod method;
+  private final HttpClient httpConn;
+  private final PostMethod method;
 
   /**
    * @param uri The uri of the IPP endpoint
    * @param user The user for authentication (optional)
    * @param passwd The password for authentication (optional)
    */
-  public IppHttpConnection(URI uri, String user, String passwd)
+  IppHttpConnection(URI uri, String user, String passwd) throws IOException
   {
-    try {
-      httpConn = new HttpClient();
-      URI httpURI = toHttpURI(uri);
-      method = new PostMethod(httpURI.toString());
-      method.addRequestHeader("Content-type", "application/ipp");
-      method.addRequestHeader("Accept", "application/ipp, */*; q=.2");
-     
-      // authentication
-      if (user != null && user.trim().length() > 0) {
-        LOG.debug("Using username: {}, passwd.length: {}", user, passwd.length());
-        method.setDoAuthentication(true);
-        AuthScope authScope = new AuthScope(httpURI.getHost(), httpURI.getPort());
-        Credentials creds = new UsernamePasswordCredentials(user, passwd);
-        httpConn.getState().setCredentials(authScope, creds);
+    httpConn = new HttpClient();
+    URI httpURI = toHttpURI(uri);
+    
+    method = new PostMethod(httpURI.toString());
+    method.addRequestHeader("Content-type", "application/ipp");
+    method.addRequestHeader("Accept", "application/ipp, */*; q=.2");
+
+    // authentication
+    if (user != null && user.trim().length() > 0) {
+      LOG.debug("Using username: {}, passwd.length: {}", user, passwd.length());
+      method.setDoAuthentication(true);
+      AuthScope authScope = new AuthScope(httpURI.getHost(), httpURI.getPort());
+      Credentials creds = new UsernamePasswordCredentials(user, passwd);
+      httpConn.getState().setCredentials(authScope, creds);
+    }
+  }
+  
+  private URI toHttpURI(URI uri)
+  {
+    if (uri.getScheme().equals("ipp")) {
+      try {
+        return new URI(uri.toString().replaceAll("^ipp", "http"));
+      }
+      catch (URISyntaxException e) {
+        throw new RuntimeException("Exception while createing http uri for " + uri);
       }
     }
-    catch (Exception e) {
-      LOG.error(e.getMessage(), e);
-    }
+    return uri;
   }
 
   /**
@@ -95,21 +104,6 @@ class IppHttpConnection implements IppConnection
     return method.getStatusCode();
   }
 
-  private URI toHttpURI(URI uri)
-  {
-    if (uri.getScheme().equals("ipp")) {
-      String uriString = uri.toString().replaceAll("^ipp", "http");
-
-      try {
-        uri = new URI(uriString);
-      }
-      catch (URISyntaxException e) {
-        throw new RuntimeException("toHttpURI buggy? : uri was " + uri);
-      }
-    }
-    return uri;
-  }
-
   /**
    * @param stream
    */
@@ -120,17 +114,15 @@ class IppHttpConnection implements IppConnection
   }
 
   @Override
-  public boolean execute() throws HttpException, IOException
+  public void execute() throws HttpException, IOException
   {
-    if (method.validate()) {
-      httpConn.executeMethod(method);
-      if (this.getStatusCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
-        throw new AuthenticationException(method.getStatusText());
-      }
-      return true;
+    if (!method.validate()) {
+      throw new IllegalStateException("Request is not ready");
     }
-    else {
-      return false;
+      
+    httpConn.executeMethod(method);
+    if (this.getStatusCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
+      throw new AuthenticationException(method.getStatusText());
     }
   }
 }
