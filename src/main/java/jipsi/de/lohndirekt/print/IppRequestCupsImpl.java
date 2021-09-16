@@ -56,11 +56,9 @@ class IppRequestCupsImpl implements IppRequest
 
   static class IppResponseIppImpl implements IppResponse
   {
-
     private static final Logger LOG = LoggerFactory.getLogger(IppResponseIppImpl.class);
 
     private IppStatus status;
-
     private AttributeMap attributes;
 
     IppResponseIppImpl(InputStream response)
@@ -79,10 +77,10 @@ class IppRequestCupsImpl implements IppRequest
     {
       byte[] header = new byte[8];
       response.read(header);
-      this.status = IppStatus.fromStatusId((int) (header[2] << 8)
-                                  + (int) header[3]);
+      this.status = IppStatus.fromStatusId((int) (header[2] << 8) + (int) header[3]);
+      
       if (response.available() != 0) {
-        this.attributes = AttributeParser.parseResponse(response);
+        this.attributes = new AttributeParser().parseResponse(response);
       }
       else {
         this.attributes = new AttributeMap();
@@ -90,24 +88,17 @@ class IppRequestCupsImpl implements IppRequest
       LOG.debug("Status: {}", status.getText());
     }
 
-    /**
-     * @return
-     */
     @Override
     public AttributeMap getAttributes()
     {
       return attributes;
     }
 
-    /**
-     * @return
-     */
     @Override
     public IppStatus getStatus()
     {
       return status;
     }
-
   }
 
   private static final Logger LOG = LoggerFactory.getLogger(IppRequestCupsImpl.class);
@@ -195,10 +186,9 @@ class IppRequestCupsImpl implements IppRequest
   private void jobAttributes(ByteArrayOutputStream out) throws UnsupportedEncodingException
   {
     if (!jobAttributes.isEmpty()) {
-      out.write((byte) IppDelimiterTag.BEGIN_JOB_ATTRIBUTES
-          .getValue());
-      for (int i = 0; i < jobAttributes.toArray().length; i++) {
-        Attribute attribute = (Attribute) jobAttributes.toArray()[i];
+      out.write((byte) IppDelimiterTag.BEGIN_JOB_ATTRIBUTES.getValue());
+      
+      for (Attribute attribute : jobAttributes.toArray()) {
         AttributeWriter.attributeBytes(attribute, out);
       }
     }
@@ -212,11 +202,10 @@ class IppRequestCupsImpl implements IppRequest
   private void printerAttributes(ByteArrayOutputStream out) throws UnsupportedEncodingException
   {
     if (!printerAttributes.isEmpty()) {
-      out.write((byte) IppDelimiterTag.BEGIN_PRINTER_ATTRIBUTES
-          .getValue());
-      Attribute[] attributes = printerAttributes.toArray();
-      for (int i = 0; i < attributes.length; i++) {
-        AttributeWriter.attributeBytes(attributes[i], out);
+      out.write((byte) IppDelimiterTag.BEGIN_PRINTER_ATTRIBUTES.getValue());
+
+      for (Attribute attribute : printerAttributes.toArray()) {
+        AttributeWriter.attributeBytes(attribute, out);
       }
     }
   }
@@ -229,11 +218,10 @@ class IppRequestCupsImpl implements IppRequest
   private void operationAttributes(ByteArrayOutputStream out) throws UnsupportedEncodingException
   {
     if (!operationAttributes.isEmpty()) {
-      out.write((byte) IppDelimiterTag.BEGIN_OPERATION_ATTRIBUTES
-          .getValue());
-      Attribute[] attributes = AttributeHelper.getOrderedOperationAttributeArray(operationAttributes);
-      for (int i = 0; i < attributes.length; i++) {
-        AttributeWriter.attributeBytes(attributes[i], out);
+      out.write((byte) IppDelimiterTag.BEGIN_OPERATION_ATTRIBUTES.getValue());
+
+      for (Attribute attribute : AttributeHelper.getOrderedOperationAttributeArray(operationAttributes)) {
+        AttributeWriter.attributeBytes(attribute, out);
       }
     }
   }

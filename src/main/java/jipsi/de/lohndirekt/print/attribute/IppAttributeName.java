@@ -322,7 +322,7 @@ public enum IppAttributeName
 
   }
 
-  public static IppAttributeName get(String attributeName)
+  public static IppAttributeName fromAttributeName(String attributeName)
   {
     return CACHE.get(attributeName);
   }

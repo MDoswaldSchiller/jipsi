@@ -18,6 +18,7 @@
  */
 package jipsi.de.lohndirekt.print.attribute;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
@@ -54,20 +55,57 @@ public final class AttributeParser
   private final static Logger LOG = LoggerFactory.getLogger(AttributeParser.class);
   private final static EndOfAttributesException END_OF_ATTRIBUTES_EXCEPTION = new EndOfAttributesException();
 
+/**
+   * @param response The input stream containing the response data
+   * 
+   * @return map of attributes (key -> category, value -> Set with attributes)
+   */
+  public AttributeMap parseResponse(InputStream response) throws IOException
+  {
+    AttributeMap attributes = new AttributeMap();
+    
+    long start = System.currentTimeMillis();
+    Attribute lastAttribute = null;
+    boolean finished = false;
+    response.read();
+
+    while (!finished) {
+      try {
+        Attribute attribute = parseAttribute(response, lastAttribute);
+        if (attribute != null) {
+          lastAttribute = attribute;
+          attributes.put(attribute);
+          LOG.info("parsed attribute({}): {}", attribute.getName(), attribute);
+
+        }
+        else {
+          LOG.debug("Attribute was null");
+        }
+      }
+      catch (EndOfAttributesException e) {
+        finished = true;
+        LOG.debug("--- Attribute parsing finished ---");
+      }
+    }
+    long end = System.currentTimeMillis();
+    LOG.debug("Parsing took {} ms", (end - start));
+    return attributes;
+  }  
+  
   /**
    * @param name
    * @param values
    * @return
    */
-  private static Attribute getAttribute(String name, Object[] values)
+  private Attribute createAttribute(String name, Object[] values)
   {
-    Attribute attribute = null;
-    IppAttributeName attrName = IppAttributeName.get(name);
+    IppAttributeName attrName = IppAttributeName.fromAttributeName(name);
     
     if (attrName == null) {
       return new UnknownAttribute(name, values);
     }
     
+    Attribute attribute = null;
     Class attrClass = attrName.getAttributeClass();
     Class superClass = attrClass.getSuperclass();
     if (superClass != null) {
@@ -93,16 +131,9 @@ public final class AttributeParser
             }
           }
         }
-        catch (SecurityException e) {
+        catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
           LOG.error(e.getMessage(), e);
         }
-        catch (IllegalArgumentException e) {
-          LOG.error(e.getMessage(), e);
-        }
-        catch (IllegalAccessException e) {
-          LOG.error(e.getMessage(), e);
-        }
-
       }
       else {
         Class[] parameters = toClassArray(values);
@@ -120,12 +151,12 @@ public final class AttributeParser
   }
 
   /**
-   * @param byteArray
-   * @param byteCount
-   * @param lastAttribute
-   * @return
+   * @param in The input stream to parse
+   * @param lastAttribute The previous attribute read
+   * 
+   * @return 
    */
-  private static Attribute parseAttribute(InputStream in, Attribute lastAttribute)
+  private Attribute parseAttribute(InputStream in, Attribute lastAttribute)
       throws IOException, EndOfAttributesException
   {
 
@@ -146,7 +177,7 @@ public final class AttributeParser
       name = parseString(in, nameLength);
     }
 
-    Object[] values = parseValues(IppValueTag.fromId(valueTag), in);
+    Object[] values = parseValue(IppValueTag.fromId(valueTag), in);
 
     if (name.equals(IppAttributeName.PRINTER_STATE_REASONS.getName())) {
       return parsePrinterStateReasons((String) values[0], lastAttribute);
@@ -155,16 +186,16 @@ public final class AttributeParser
       return parseJobStateReasons(values, lastAttribute);
     }
     else {
-      return getAttribute(name, values);
+      return createAttribute(name, values);
     }
   }
 
-  private static String parseString(InputStream in, int nameLength) throws IOException
+  private String parseString(InputStream in, int nameLength) throws IOException
   {
     return parseString(in, nameLength, Charset.US_ASCII.getValue());
   }
 
-  private static String parseNameAndTextString(InputStream in, int nameLength) throws IOException
+  private String parseNameAndTextString(InputStream in, int nameLength) throws IOException
   {
     return parseString(in, nameLength, AttributeWriter.DEFAULT_CHARSET.getValue());
   }
@@ -173,7 +204,7 @@ public final class AttributeParser
    * @param in
    * @param nameLength
    */
-  private static String parseString(InputStream in, int nameLength, String charsetName) throws IOException
+  private String parseString(InputStream in, int nameLength, String charsetName) throws IOException
   {
     byte[] bytes = new byte[nameLength];
     in.read(bytes);
@@ -186,7 +217,7 @@ public final class AttributeParser
    * @param valueOffset
    * @return
    */
-  private static Date parseDate(InputStream in) throws IOException
+  private Date parseDate(InputStream in) throws IOException
   {
     DecimalFormat twoDigits = new DecimalFormat("00");
     DecimalFormat threeDigits = new DecimalFormat("000");
@@ -238,7 +269,7 @@ public final class AttributeParser
     return date;
   }
 
-  private static int parseInt4(InputStream in) throws IOException
+  private int parseInt4(InputStream in) throws IOException
   {
 
     //Same parsing as in java.io.DataInput readInt()
@@ -250,24 +281,7 @@ public final class AttributeParser
     return value;
   }
 
-  /**
-   * @param bytes
-   * @param offset
-   * @return
-   */
-  private static int parseInt4(byte[] bytes, int offset)
-  {
-
-    //Same parsing as in java.io.DataInput readInt()
-    byte a = bytes[offset++];
-    byte b = bytes[offset++];
-    byte c = bytes[offset++];
-    byte d = bytes[offset++];
-    int value = (((a & 0xff) << 24) | ((b & 0xff) << 16) | ((c & 0xff) << 8) | (d & 0xff));
-    return value;
-  }
-
-  private static int parseInt2(InputStream in) throws IOException
+  private int parseInt2(InputStream in) throws IOException
   {
 
     //Same parsing as in java.io.DataInput readInt()
@@ -282,7 +296,7 @@ public final class AttributeParser
    * @param lastAttribute
    * @return
    */
-  private static Attribute parseJobStateReasons(Object[] values, Attribute lastAttribute)
+  private Attribute parseJobStateReasons(Object[] values, Attribute lastAttribute)
   {
     JobStateReasons reasons;
     if (lastAttribute instanceof JobStateReasons) {
@@ -296,7 +310,7 @@ public final class AttributeParser
       reason = LdJobStateReason.NONE;
     }
     else {
-      reason = (JobStateReason) getAttribute(IppAttributeName.JOB_STATE_REASON.getName(), values);
+      reason = (JobStateReason) createAttribute(IppAttributeName.JOB_STATE_REASON.getName(), values);
     }
     reasons.add(reason);
     return reasons;
@@ -307,7 +321,7 @@ public final class AttributeParser
    * @param lastAttribute
    * @return
    */
-  private static PrinterStateReasons parsePrinterStateReasons(String reasonAndSeverity, Attribute lastAttribute)
+  private PrinterStateReasons parsePrinterStateReasons(String reasonAndSeverity, Attribute lastAttribute)
   {
     Severity severity = null;
     int severityOffset = 0;
@@ -331,7 +345,7 @@ public final class AttributeParser
     }
     Object[] values = new Object[]{reasonString};
     PrinterStateReason reason
-        = (PrinterStateReason) getAttribute(IppAttributeName.PRINTER_STATE_REASON.getName(), values);
+        = (PrinterStateReason) createAttribute(IppAttributeName.PRINTER_STATE_REASON.getName(), values);
     PrinterStateReasons reasons;
     if (lastAttribute instanceof PrinterStateReasons) {
       reasons = (PrinterStateReasons) lastAttribute;
@@ -349,61 +363,19 @@ public final class AttributeParser
   }
 
   /**
-   * @param bytes
-   * @return map of attributes (key -> category, value -> Set with attributes)
-   *
-   *
-   */
-  public static AttributeMap parseResponse(InputStream response) throws IOException
-  {
-    AttributeMap attributes = new AttributeMap();
-    long start = System.currentTimeMillis();
-    Attribute lastAttribute = null;
-    boolean finished = false;
-    response.read();
-
-    while (!finished) {
-      Attribute attribute = null;
-      try {
-        attribute = parseAttribute(response, lastAttribute);
-        if (attribute != null) {
-          lastAttribute = attribute;
-          attributes.put(attribute);
-          LOG.debug("parsed attribute({}): {}", attribute.getName(), attribute);
-
-        }
-        else {
-          LOG.debug("Attribute was null");
-        }
-      }
-      catch (EndOfAttributesException e) {
-
-        finished = true;
-        LOG.debug("--- Attribute parsing finished ---");
-      }
-    }
-    long end = System.currentTimeMillis();
-    LOG.debug("Parsing took {} ms", (end - start));
-    return attributes;
-  }
-
-  /**
    * @param byteArray
    * @param valueOffset
    * @param valueLength
    * @return
    */
-  private static URI parseUri(InputStream in, int valueLength) throws IOException
+  private URI parseUri(InputStream in, int valueLength) throws IOException
   {
-    String uriString = parseString(in, valueLength);
-    URI uri = null;
     try {
-      uri = new URI(uriString);
+      return new URI(parseString(in, valueLength));
     }
     catch (URISyntaxException e) {
       throw new RuntimeException(e);
     }
-    return uri;
   }
 
   /**
@@ -413,53 +385,61 @@ public final class AttributeParser
    * @param valueLength
    * @return
    */
-  private static Object[] parseValues(IppValueTag valueTag, InputStream in) throws IOException
+  private Object[] parseValue(IppValueTag valueTag, InputStream in) throws IOException
   {
+    //Read the specified number of bytes into a buffer. This ensures that we read
+    //the exact amount of data for the value.
     int valueLength = parseInt2(in);
+    byte[] valueData = in.readNBytes(valueLength);
+    if (valueData.length != valueLength) {
+      throw new IOException("Could not read requested number of bytes from value stream" + valueLength);
+    }
+    
+    ByteArrayInputStream valueIn = new ByteArrayInputStream(valueData);
     Object[] values = null;
     
     switch (valueTag) {
       case INTEGER:
       case ENUM:
-        values = new Object[]{ parseInt4(in) };
+        values = new Object[]{ parseInt4(valueIn) };
         break;
         
       case STRING:
       case TEXT:
       case NAME:
       case MEMBERNAME:
-        values = new Object[]{parseNameAndTextString(in, valueLength), Locale.getDefault()};
+        values = new Object[]{parseNameAndTextString(valueIn, valueLength), Locale.getDefault()};
         break;
         
       case CHARSET:
       case LANGUAGE:
       case MIMETYPE:
       case KEYWORD:
-        values = new Object[]{parseString(in, valueLength), Locale.getDefault()};
+        values = new Object[]{parseString(valueIn, valueLength), Locale.getDefault()};
         break;
         
       case URI:
-        values = new Object[]{ parseUri(in, valueLength) };
+        values = new Object[]{ parseUri(valueIn, valueLength) };
         break;
         
       case BOOLEAN:
-        values = new Object[]{ in.read() };
+        values = new Object[]{ valueIn.read() };
         break;
         
       case RANGE: {
-        Integer lowerBound = parseInt4(in);
-        Integer upperBound = parseInt4(in);
+        Integer lowerBound = parseInt4(valueIn);
+        Integer upperBound = parseInt4(valueIn);
         values = new Object[]{lowerBound, upperBound};
         } break;
       
       case DATE:
-        values = new Object[]{ parseDate(in) };
+        values = new Object[]{ parseDate(valueIn) };
         break;
         
       case RESOLUTION:
-        int crossFeedDirectionResolution = parseInt4(in);
-        int feedDirectionResolution = parseInt4(in);
-        byte units = (byte)in.read();
+        int crossFeedDirectionResolution = parseInt4(valueIn);
+        int feedDirectionResolution = parseInt4(valueIn);
+        byte units = (byte)valueIn.read();
         values = new Object[]{ crossFeedDirectionResolution, feedDirectionResolution, units };
         break;
         
@@ -471,13 +451,18 @@ public final class AttributeParser
       case BEGIN_COLLECTION:
       case END_COLLECTION:
         //not supported so skip
-        in.skipNBytes(valueLength);
+        valueIn.skipNBytes(valueLength);
         values = new Object[]{};
         break;
         
       default:
         throw new UnsupportedOperationException(String.format("Unsupported value type: %s", valueTag.name()));
     }
+    
+    if (valueIn.available() > 0) {
+      LOG.warn("Not all data read for value type {} (len: {}, remaining: {})", valueTag, valueLength, valueIn.available());
+    }
+    
     return values;
   }
 
@@ -485,7 +470,7 @@ public final class AttributeParser
    * @param values
    * @return
    */
-  private static Class[] toClassArray(Object[] values)
+  private Class[] toClassArray(Object[] values)
   {
     Class[] classes = new Class[values.length];
     for (int i = 0; i < values.length; i++) {
@@ -493,6 +478,10 @@ public final class AttributeParser
       if (clazz.equals(Integer.class)) {
         clazz = int.class;
       }
+      else if (clazz.equals(Byte.class)) {
+        clazz = byte.class;
+      }
+      
       classes[i] = clazz;
     }
     return classes;

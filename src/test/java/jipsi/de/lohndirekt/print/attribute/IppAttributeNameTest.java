@@ -44,7 +44,7 @@ public class IppAttributeNameTest extends TestCase
    */
   public void testGetString()
   {
-    IppAttributeName attributeName = IppAttributeName.get("attribute-does-not-exist");
+    IppAttributeName attributeName = IppAttributeName.fromAttributeName("attribute-does-not-exist");
     assertNull("IppAttributeName null", attributeName);
   }
 }
