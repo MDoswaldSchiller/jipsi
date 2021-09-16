@@ -27,7 +27,8 @@ public class UnknownAttribute implements SupportedValuesAttribute
   private final Object[] values;
 
   /**
-   * @param value
+   * @param name Name of the attribute
+   * @param values The attribute values
    */
   public UnknownAttribute(String name, Object[] values)
   {
@@ -35,27 +36,20 @@ public class UnknownAttribute implements SupportedValuesAttribute
     this.values = Arrays.copyOf(values, values.length);
   }
 
-  /**
-   *
-   */
   @Override
   public Class getCategory()
   {
     return UnknownAttribute.class;
   }
 
-  /**
-   *
-   */
-  public static String getIppName()
-  {
-    return "unknown-attribute";
-  }
-
   @Override
   public String getName()
   {
-    return getIppName() + "_" + name;
+    return name;
   }
 
+  public Object[] getValues()
+  {
+    return values;
+  }
 }
