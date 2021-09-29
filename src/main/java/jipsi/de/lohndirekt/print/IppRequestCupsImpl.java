@@ -54,14 +54,15 @@ import org.slf4j.LoggerFactory;
 class IppRequestCupsImpl implements IppRequest
 {
 
-  static class IppResponseIppImpl implements IppResponse
+  static class IppResponseImpl implements IppResponse
   {
-    private static final Logger LOG = LoggerFactory.getLogger(IppResponseIppImpl.class);
+
+    private static final Logger LOG = LoggerFactory.getLogger(IppResponseImpl.class);
 
     private IppStatus status;
     private AttributeMap attributes;
 
-    IppResponseIppImpl(InputStream response)
+    IppResponseImpl(InputStream response)
     {
       try {
         parseResponse(response);
@@ -78,7 +79,7 @@ class IppRequestCupsImpl implements IppRequest
       byte[] header = new byte[8];
       response.read(header);
       this.status = IppStatus.fromStatusId((int) (header[2] << 8) + (int) header[3]);
-      
+
       if (response.available() != 0) {
         this.attributes = new AttributeParser().parseResponse(response);
       }
@@ -172,9 +173,9 @@ class IppRequestCupsImpl implements IppRequest
   private byte[] ippAttributes() throws UnsupportedEncodingException
   {
     ByteArrayOutputStream out = new ByteArrayOutputStream();
-    operationAttributes(out);
-    printerAttributes(out);
-    jobAttributes(out);
+    serializeOperationAttributes(out);
+    serializePrinterAttributes(out);
+    serializieJobAttributes(out);
     byte[] body = out.toByteArray();
     return body;
   }
@@ -183,11 +184,11 @@ class IppRequestCupsImpl implements IppRequest
    * @param out
    * @return
    */
-  private void jobAttributes(ByteArrayOutputStream out) throws UnsupportedEncodingException
+  private void serializieJobAttributes(ByteArrayOutputStream out) throws UnsupportedEncodingException
   {
     if (!jobAttributes.isEmpty()) {
       out.write((byte) IppDelimiterTag.BEGIN_JOB_ATTRIBUTES.getValue());
-      
+
       for (Attribute attribute : jobAttributes.toArray()) {
         AttributeWriter.attributeBytes(attribute, out);
       }
@@ -199,7 +200,7 @@ class IppRequestCupsImpl implements IppRequest
    * @param out
    * @return
    */
-  private void printerAttributes(ByteArrayOutputStream out) throws UnsupportedEncodingException
+  private void serializePrinterAttributes(ByteArrayOutputStream out) throws UnsupportedEncodingException
   {
     if (!printerAttributes.isEmpty()) {
       out.write((byte) IppDelimiterTag.BEGIN_PRINTER_ATTRIBUTES.getValue());
@@ -215,7 +216,7 @@ class IppRequestCupsImpl implements IppRequest
    * @param out
    * @return
    */
-  private void operationAttributes(ByteArrayOutputStream out) throws UnsupportedEncodingException
+  private void serializeOperationAttributes(ByteArrayOutputStream out) throws UnsupportedEncodingException
   {
     if (!operationAttributes.isEmpty()) {
       out.write((byte) IppDelimiterTag.BEGIN_OPERATION_ATTRIBUTES.getValue());
@@ -283,24 +284,21 @@ class IppRequestCupsImpl implements IppRequest
       throw new IllegalStateException("Send must not be called twice");
     }
 
-    String username = findUserName(this.operationAttributes);
-    String password = findPassword(this.operationAttributes);
+    Vector<InputStream> v = new Vector<>();
+    v.add(new ByteArrayInputStream(this.ippHeader()));
+    v.add(new ByteArrayInputStream(this.ippAttributes()));
+    v.add(new ByteArrayInputStream(this.ippFooter()));
+    if (data != null) {
+      v.add(data);
+    }
+    SequenceInputStream stream = new SequenceInputStream(v.elements());
+    conn = new IppHttpConnection(path, findUserName(), findPassword());
+    conn.setIppRequest(stream);
+
     boolean ok = false;
     int tries = 0;
-    while (!ok && tries < SEND_REQUEST_COUNT) {
-      tries++;
 
-      this.conn = new IppHttpConnection(this.path, username, password);
-
-      Vector<InputStream> v = new Vector<>();
-      v.add(new ByteArrayInputStream(this.ippHeader()));
-      v.add(new ByteArrayInputStream(this.ippAttributes()));
-      v.add(new ByteArrayInputStream(this.ippFooter()));
-      if (data != null) {
-        v.add(data);
-      }
-      SequenceInputStream stream = new SequenceInputStream(v.elements());
-      conn.setIppRequest(stream);
+    do {
       conn.execute();
 
       if (conn.getStatusCode() != HttpURLConnection.HTTP_OK) {
@@ -321,9 +319,11 @@ class IppRequestCupsImpl implements IppRequest
       else {
         ok = true;
       }
-
+      tries++;
     }
-    this.sent = true;
+    while (!ok && tries < SEND_REQUEST_COUNT);
+
+    sent = true;
     return getResponse();
   }
 
@@ -331,14 +331,11 @@ class IppRequestCupsImpl implements IppRequest
    * @param list
    * @return
    */
-  private String findUserName(AttributeSet list)
+  private String findUserName()
   {
-    if (list != null) {
-      TextSyntax attr = (TextSyntax) list.get(IppAttributeName.REQUESTING_USER_NAME
-          .getCategory());
-      if (attr != null) {
-        return attr.getValue();
-      }
+    TextSyntax attr = (TextSyntax) operationAttributes.get(IppAttributeName.REQUESTING_USER_NAME.getCategory());
+    if (attr != null) {
+      return attr.getValue();
     }
     return null;
   }
@@ -347,22 +344,19 @@ class IppRequestCupsImpl implements IppRequest
    * @param list
    * @return
    */
-  private String findPassword(AttributeSet list)
+  private String findPassword()
   {
-    if (list != null) {
-      TextSyntax attr = (TextSyntax) list.get(IppAttributeName.REQUESTING_USER_PASSWD
-          .getCategory());
-      if (attr != null) {
-        return attr.getValue();
-      }
+    TextSyntax attr = (TextSyntax) operationAttributes.get(IppAttributeName.REQUESTING_USER_PASSWD.getCategory());
+    if (attr != null) {
+      return attr.getValue();
     }
     return null;
   }
 
   private IppResponse getResponse() throws IOException
   {
-    if (this.conn.getStatusCode() == HttpURLConnection.HTTP_OK) {
-      return new IppResponseIppImpl(conn.getIppResponse());
+    if (conn.getStatusCode() == HttpURLConnection.HTTP_OK) {
+      return new IppResponseImpl(conn.getIppResponse());
     }
     else {
       return null;
