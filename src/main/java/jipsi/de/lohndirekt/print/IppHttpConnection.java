@@ -62,7 +62,7 @@ class IppHttpConnection implements IppConnection
     method.addRequestHeader("Accept", "application/ipp, */*; q=.2");
 
     // authentication
-    if (user != null && user.trim().length() > 0) {
+    if (user != null && user.trim().length() > 0 && passwd != null) {
       LOG.debug("Using username: {}, passwd.length: {}", user, passwd.length());
       method.setDoAuthentication(true);
       AuthScope authScope = new AuthScope(httpURI.getHost(), httpURI.getPort());
