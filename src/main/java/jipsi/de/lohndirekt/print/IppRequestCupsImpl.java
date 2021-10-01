@@ -45,6 +45,7 @@ import jipsi.de.lohndirekt.print.attribute.IppStatus;
 import jipsi.de.lohndirekt.print.attribute.ipp.Charset;
 import jipsi.de.lohndirekt.print.attribute.ipp.NaturalLanguage;
 import jipsi.de.lohndirekt.print.attribute.ipp.printerdesc.supported.OperationsSupported;
+import org.apache.http.HttpException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,7 +105,7 @@ class IppRequestCupsImpl implements IppRequest
   }
 
   private static final Logger LOG = LoggerFactory.getLogger(IppRequestCupsImpl.class);
-  private static final int SEND_REQUEST_COUNT = 3;
+  private static final int SEND_REQUEST_COUNT = 1;
   private static final int SEND_REQUEST_TIMEOUT = 50;
   private static final NaturalLanguage NATURAL_LANGUAGE_DEFAULT = NaturalLanguage.EN;
   private static final Charset CHARSET_DEFAULT = Charset.UTF_8;
@@ -257,7 +258,12 @@ class IppRequestCupsImpl implements IppRequest
     int tries = 0;
 
     do {
-      conn.execute();
+      try {
+        conn.execute();
+      }
+      catch (HttpException ex) {
+        LOG.error("Error communicating", ex);
+      }
 
       if (conn.getStatusCode() != HttpURLConnection.HTTP_OK) {
         if (LOG.isInfoEnabled()) {

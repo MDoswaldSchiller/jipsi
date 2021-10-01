@@ -20,6 +20,7 @@ package jipsi.de.lohndirekt.print.attribute;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 public enum IppStatus
@@ -92,6 +93,11 @@ public enum IppStatus
   
   public static IppStatus fromStatusId(int statusId)
   {
-    return CACHE.get(statusId);
+    IppStatus status = CACHE.get(statusId);
+    if (status == null) {
+      throw new NoSuchElementException("Unknown status id: " + statusId);
+    }
+    
+    return status;
   }
 }

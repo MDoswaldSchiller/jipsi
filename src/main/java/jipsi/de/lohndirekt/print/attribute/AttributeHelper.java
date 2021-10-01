@@ -84,11 +84,11 @@ public final class AttributeHelper
         Attribute attribute = (Attribute) attributeArray[i];
         //attributes-charset, attributes-natural-language etc. are not set by the user
         if (attribute.getCategory().equals(IppAttributeName.JOB_NAME.getCategory())
+            || attribute.getCategory().equals(IppAttributeName.DOCUMENT_FORMAT.getCategory())
             || attribute.getCategory().equals(IppAttributeName.FIDELITY.getCategory())
             || attribute.getCategory().equals(IppAttributeName.JOB_IMPRESSIONS.getCategory())
             || attribute.getCategory().equals(IppAttributeName.JOB_K_OCTETS.getCategory())
             || attribute.getCategory().equals(IppAttributeName.JOB_MEDIA_SHEETS.getCategory())
-            || attribute.getCategory().equals(IppAttributeName.JOB_NAME.getCategory())
             || attribute.getCategory().equals(IppAttributeName.COMPRESSION.getCategory())
             || attribute.getCategory().equals(IppAttributeName.REQUESTING_USER_NAME.getCategory())
             || attribute.getCategory().equals(IppAttributeName.REQUESTING_USER_PASSWD.getCategory())) {

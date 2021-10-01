@@ -20,7 +20,7 @@ package jipsi.de.lohndirekt.print;
 
 import java.io.IOException;
 import java.io.InputStream;
-import org.apache.commons.httpclient.HttpException;
+import org.apache.http.HttpException;
 
 /**
  * 
