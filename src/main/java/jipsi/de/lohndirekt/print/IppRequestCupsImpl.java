@@ -28,6 +28,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.Objects;
 import java.util.Vector;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.print.attribute.Attribute;
 import javax.print.attribute.AttributeSet;
 import javax.print.attribute.HashAttributeSet;
@@ -112,8 +113,7 @@ class IppRequestCupsImpl implements IppRequest
   private boolean sent;
   private InputStream data;
 
-  //Id wird in der Cups-API zwar �bergeben, ist aber auch immer 1.
-  private int id = 1;
+  private final int id;
   private PrintJobAttributeSet jobAttributes = new HashPrintJobAttributeSet();
   private AttributeSet operationAttributes = new HashAttributeSet();
   private AttributeSet printerAttributes = new HashAttributeSet();
@@ -121,6 +121,8 @@ class IppRequestCupsImpl implements IppRequest
   private final URI path;
   private final OperationsSupported operation;
 
+  private static final AtomicInteger ID_COUNTER = new AtomicInteger(0);
+  
   /**
    * @param operation
    */
@@ -128,9 +130,16 @@ class IppRequestCupsImpl implements IppRequest
   {
     this.path = Objects.requireNonNull(path);
     this.operation = Objects.requireNonNull(operation);
-    init();
+    this.id = ID_COUNTER.addAndGet(1);
+    setStandardAttributes();
   }
 
+  private void setStandardAttributes()
+  {
+    operationAttributes.add(CHARSET_DEFAULT);
+    operationAttributes.add(NATURAL_LANGUAGE_DEFAULT);
+  }
+  
   /**
    * @param printerAttributes
    */
@@ -138,23 +147,6 @@ class IppRequestCupsImpl implements IppRequest
   public void setPrinterAttributes(AttributeSet attrs)
   {
     this.printerAttributes = attrs;
-  }
-
-  /**
-   *
-   */
-  private void init()
-  {
-    setStandardAttributes();
-  }
-
-  /**
-   *
-   */
-  private void setStandardAttributes()
-  {
-    operationAttributes.add(CHARSET_DEFAULT);
-    operationAttributes.add(NATURAL_LANGUAGE_DEFAULT);
   }
 
   /**
@@ -173,59 +165,25 @@ class IppRequestCupsImpl implements IppRequest
   private byte[] ippAttributes() throws UnsupportedEncodingException
   {
     ByteArrayOutputStream out = new ByteArrayOutputStream();
-    serializeOperationAttributes(out);
-    serializePrinterAttributes(out);
-    serializieJobAttributes(out);
-    byte[] body = out.toByteArray();
-    return body;
+    
+    serializeAttributes(IppDelimiterTag.BEGIN_OPERATION_ATTRIBUTES, AttributeHelper.getOrderedOperationAttributeArray(operationAttributes), out);
+    serializeAttributes(IppDelimiterTag.BEGIN_PRINTER_ATTRIBUTES, printerAttributes.toArray(), out);
+    serializeAttributes(IppDelimiterTag.BEGIN_JOB_ATTRIBUTES, jobAttributes.toArray(), out);
+    
+    return out.toByteArray();
   }
-
-  /**
-   * @param out
-   * @return
-   */
-  private void serializieJobAttributes(ByteArrayOutputStream out) throws UnsupportedEncodingException
+  
+  private void serializeAttributes(IppDelimiterTag beginTag, Attribute[] attributes, ByteArrayOutputStream out) throws UnsupportedEncodingException
   {
-    if (!jobAttributes.isEmpty()) {
-      out.write((byte) IppDelimiterTag.BEGIN_JOB_ATTRIBUTES.getValue());
+    if (attributes.length > 0) {
+      out.write((byte)beginTag.getValue());
 
-      for (Attribute attribute : jobAttributes.toArray()) {
+      for (Attribute attribute : attributes) {
         AttributeWriter.attributeBytes(attribute, out);
       }
     }
   }
-
-  /**
-   *
-   * @param out
-   * @return
-   */
-  private void serializePrinterAttributes(ByteArrayOutputStream out) throws UnsupportedEncodingException
-  {
-    if (!printerAttributes.isEmpty()) {
-      out.write((byte) IppDelimiterTag.BEGIN_PRINTER_ATTRIBUTES.getValue());
-
-      for (Attribute attribute : printerAttributes.toArray()) {
-        AttributeWriter.attributeBytes(attribute, out);
-      }
-    }
-  }
-
-  /**
-   *
-   * @param out
-   * @return
-   */
-  private void serializeOperationAttributes(ByteArrayOutputStream out) throws UnsupportedEncodingException
-  {
-    if (!operationAttributes.isEmpty()) {
-      out.write((byte) IppDelimiterTag.BEGIN_OPERATION_ATTRIBUTES.getValue());
-
-      for (Attribute attribute : AttributeHelper.getOrderedOperationAttributeArray(operationAttributes)) {
-        AttributeWriter.attributeBytes(attribute, out);
-      }
-    }
-  }
+  
 
   /**
    *
@@ -236,9 +194,9 @@ class IppRequestCupsImpl implements IppRequest
     ByteArrayOutputStream out = new ByteArrayOutputStream(8);
     //The first 2 bytes represent the IPP version number (1.1)
     //major version-number
-    out.write((byte) 1);
+    out.write((byte) 2);
     //minor version-number
-    out.write((byte) 1);
+    out.write((byte) 0);
     //2 byte operation id
     AttributeWriter.writeInt2(this.operation.getValue(), out);
     //4 byte request id
