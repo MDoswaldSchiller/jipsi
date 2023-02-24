@@ -19,6 +19,8 @@
 package jipsi.de.lohndirekt.print.attribute;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import javax.print.Doc;
 import javax.print.attribute.Attribute;
@@ -147,29 +149,36 @@ public final class AttributeHelper
    */
   public final static Attribute[] getOrderedOperationAttributeArray(AttributeSet operationAttributes2)
   {
-    AttributeSet copy = new HashAttributeSet(operationAttributes2);
-    Attribute[] attributes = new Attribute[copy.size()];
-    int i = 0;
-    // start with Charset
-    Class category = IppAttributeName.CHARSET.getCategory();
-    if (copy.containsKey(category)) {
-      attributes[i] = copy.get(category);
-      copy.remove(category);
-      i++;
-    }
-    // start with Charset
-    category = IppAttributeName.NATURAL_LANGUAGE.getCategory();
-    if (copy.containsKey(category)) {
-      attributes[i] = copy.get(category);
-      copy.remove(category);
-      i++;
-    }
-    // add the rest
-    Attribute[] remaining = copy.toArray();
-    for (int j = 0; j < remaining.length; j++) {
-      attributes[i + j] = remaining[j];
-    }
-    return attributes;
+    return orderAttributeSet(operationAttributes2,
+                             List.of(
+                                 IppAttributeName.CHARSET.getCategory(),
+                                 IppAttributeName.NATURAL_LANGUAGE.getCategory(),
+                                 IppAttributeName.PRINTER_URI.getCategory(),
+                                 IppAttributeName.REQUESTING_USER_NAME.getCategory(),
+                                 IppAttributeName.JOB_NAME.getCategory(),
+                                 IppAttributeName.FIDELITY.getCategory(),
+                                 IppAttributeName.DOCUMENT_NAME.getCategory(),
+                                 IppAttributeName.DOCUMENT_FORMAT.getCategory()
+                             ));
   }
 
+  private static Attribute[] orderAttributeSet(AttributeSet attributes, List<Class<? extends Attribute>> categoryOrder)
+  {
+    AttributeSet copy = new HashAttributeSet(attributes);
+    List<Attribute> orderedAttributes = new ArrayList<>(copy.size());
+    
+    for (Class<? extends Attribute> category : categoryOrder) {
+      if (copy.containsKey(category)) {
+        orderedAttributes.add(copy.get(category));
+        copy.remove(category);
+      }
+    }
+    
+    for (Attribute attr : copy.toArray()) {
+      orderedAttributes.add(attr);
+    }
+    
+    return orderedAttributes.toArray(new Attribute[0]);
+  }
+  
 }
