@@ -33,6 +33,7 @@ import javax.print.attribute.SetOfIntegerSyntax;
 import javax.print.attribute.TextSyntax;
 import javax.print.attribute.URISyntax;
 import jipsi.de.lohndirekt.print.attribute.ipp.Charset;
+import jipsi.de.lohndirekt.print.attribute.ipp.MimeMediaType;
 import jipsi.de.lohndirekt.print.attribute.ipp.NaturalLanguage;
 
 public final class AttributeWriter
@@ -125,6 +126,9 @@ public final class AttributeWriter
     }
     else if (attribute instanceof NaturalLanguage) {
       out.write((byte) IppValueTag.LANGUAGE.getId());
+    }
+    else if (attribute instanceof MimeMediaType) {
+      out.write((byte) IppValueTag.MIMETYPE.getId());
     }
     else {
       out.write((byte) IppValueTag.NAME.getId());

@@ -20,9 +20,8 @@ package jipsi.de.lohndirekt.print.attribute.ipp;
 
 import java.util.Locale;
 import javax.print.attribute.DocAttribute;
-import javax.print.attribute.TextSyntax;
 
-public class DocumentFormat extends TextSyntax implements DocAttribute
+public class DocumentFormat extends MimeMediaType implements DocAttribute
 {
 
   /**

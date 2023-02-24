@@ -420,6 +420,14 @@ public final class AttributeParser
         values = new Object[]{parseNameAndTextString(valueIn, valueLength), Locale.getDefault()};
         break;
         
+      case TEXTLANG:
+      case NAMELANG: {
+        String language = parseString(valueIn, parseInt2(valueIn));
+        String value = parseString(valueIn, parseInt2(valueIn));
+        
+        values = new Object[]{language, value};
+        } break;
+        
       case CHARSET:
       case LANGUAGE:
       case MIMETYPE:
@@ -463,6 +471,10 @@ public final class AttributeParser
         values = new Object[]{};
         break;
         
+      case URISCHEME:
+        values = new Object[]{parseString(valueIn, valueLength), Locale.getDefault()};
+        break;
+      
       default:
         throw new UnsupportedOperationException(String.format("Unsupported value type: %s", valueTag.name()));
     }
