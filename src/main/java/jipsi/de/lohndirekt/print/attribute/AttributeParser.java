@@ -68,8 +68,6 @@ public final class AttributeParser
   public AttributeMap parseResponse(InputStream response) throws IOException
   {
     AttributeMap attributes = new AttributeMap();
-    
-    long start = System.currentTimeMillis();
     Attribute lastAttribute = null;
     boolean finished = false;
     response.read();
@@ -80,7 +78,7 @@ public final class AttributeParser
         if (attribute != null) {
           lastAttribute = attribute;
           attributes.put(attribute);
-          LOG.info("parsed attribute({}): {}", attribute.getName(), attribute);
+          LOG.debug("parsed attribute({}): {}", attribute.getName(), attribute);
 
         }
         else {
@@ -92,8 +90,7 @@ public final class AttributeParser
         LOG.debug("--- Attribute parsing finished ---");
       }
     }
-    long end = System.currentTimeMillis();
-    LOG.debug("Parsing took {} ms", (end - start));
+    
     return attributes;
   }  
   

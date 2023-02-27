@@ -82,7 +82,6 @@ class IppHttpConnection implements IppConnection
   @Override
   public IppConnectionResponse send(InputStream requestBody) throws IOException
   {
-    LOG.info("Send ipp request");
     HttpRequest.Builder requestBuilder = HttpRequest.newBuilder();
     requestBuilder.uri(uri);
     requestBuilder.header("User-Agent", "jipsi");
