@@ -45,7 +45,6 @@ import jipsi.de.lohndirekt.print.attribute.IppStatus;
 import jipsi.de.lohndirekt.print.attribute.ipp.Charset;
 import jipsi.de.lohndirekt.print.attribute.ipp.NaturalLanguage;
 import jipsi.de.lohndirekt.print.attribute.ipp.printerdesc.supported.OperationsSupported;
-import org.apache.http.HttpException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -252,16 +251,15 @@ class IppRequestCupsImpl implements IppRequest
     }
     SequenceInputStream stream = new SequenceInputStream(v.elements());
     conn = new IppHttpConnection(path, findUserName(), findPassword());
-    conn.setIppRequest(stream);
 
     boolean ok = false;
     int tries = 0;
 
     do {
       try {
-        conn.execute();
+        conn.send(stream);
       }
-      catch (HttpException ex) {
+      catch (IOException ex) {
         LOG.error("Error communicating", ex);
       }
 
