@@ -22,23 +22,15 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InterruptedIOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.Base64;
 import jipsi.de.lohndirekt.print.exception.AuthenticationException;
-import org.apache.http.HttpException;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.Credentials;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.BufferedHttpEntity;
-import org.apache.http.entity.InputStreamEntity;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,10 +44,14 @@ class IppHttpConnection implements IppConnection
 {
   private static final Logger LOG = LoggerFactory.getLogger(IppHttpConnection.class);
 
-  private final CloseableHttpClient httpConn;
-  private final HttpPost method;
+  private final URI uri;
+  private final String user;
+  private final String password;
+  private final HttpClient httpClient;
+  
   private int status;
   private InputStream responseData;
+  
   /**
    * @param uri The uri of the IPP endpoint
    * @param user The user for authentication (optional)
@@ -63,35 +59,15 @@ class IppHttpConnection implements IppConnection
    */
   IppHttpConnection(URI uri, String user, String passwd) throws IOException
   {
-    URI httpURI = toHttpURI(uri);
-    
-    method = new HttpPost(httpURI.toString());
-    method.addHeader("Content-type", "application/ipp");
-    //method.addHeader("Accept", "application/ipp, */*; q=.2");
+    this.user = user;
+    this.password = passwd;
+    this.uri = toHttpURI(uri);
 
-    HttpClientBuilder clientBuilder = HttpClients.custom();
-    clientBuilder.disableContentCompression();
-    clientBuilder.setUserAgent("JAPI");
-
-    RequestConfig requestConfig =  RequestConfig.copy(RequestConfig.DEFAULT)
-        .setExpectContinueEnabled(true)
-        .setRedirectsEnabled(false)
-        .build();
-    clientBuilder.setDefaultRequestConfig(requestConfig);
+    HttpClient.Builder clientBuilder = HttpClient.newBuilder();
+    clientBuilder.version(HttpClient.Version.HTTP_1_1);
+    clientBuilder.followRedirects(HttpClient.Redirect.NEVER);
     
-    // authentication
-    if (user != null && user.trim().length() > 0 && passwd != null) {
-      LOG.debug("Using username: {}, passwd.length: {}", user, passwd.length());
-      AuthScope authScope = new AuthScope(httpURI.getHost(), httpURI.getPort());
-      Credentials creds = new UsernamePasswordCredentials(user, passwd);
-      
-      BasicCredentialsProvider credentialProvider = new BasicCredentialsProvider();
-      credentialProvider.setCredentials(authScope, creds);
-      
-      clientBuilder.setDefaultCredentialsProvider(credentialProvider);
-    }
-    
-    httpConn = clientBuilder.build();
+    httpClient = clientBuilder.build();
   }
   
   private URI toHttpURI(URI uri)
@@ -127,39 +103,54 @@ class IppHttpConnection implements IppConnection
     return status;
   }
 
-  /**
-   * @param stream
-   */
   @Override
-  public void setIppRequest(InputStream stream)
+  public void send(InputStream requestBody) throws IOException
   {
+    LOG.info("Send ipp request");
+    HttpRequest.Builder requestBuilder = HttpRequest.newBuilder();
+    requestBuilder.uri(uri);
+    requestBuilder.header("User-Agent", "jipsi");
+    requestBuilder.header("Content-type", "application/ipp");
+    requestBuilder.expectContinue(false);
+    //method.addHeader("Accept", "application/ipp, */*; q=.2");
+    addAuthenticationHeader(requestBuilder);
+    requestBuilder.POST(HttpRequest.BodyPublishers.ofByteArray(toByteArray(requestBody)));
+    
     try {
-      method.setEntity(new BufferedHttpEntity(new InputStreamEntity(stream)));
-    }
-    catch (IOException ex) {
-      LOG.error("Error while buffering ipp request", ex);
-    }
-  }
-
-  @Override
-  public void execute() throws HttpException, IOException
-  {
-//    if (!method.validate()) {
-//      throw new IllegalStateException("Request is not ready");
-//    }
-      
-    try (CloseableHttpResponse response = httpConn.execute(method)) {
-      status = response.getStatusLine().getStatusCode();
+      HttpResponse<byte[]> response = httpClient.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofByteArray());
+      status = response.statusCode();
       
       if (status == HttpURLConnection.HTTP_UNAUTHORIZED) {
-        throw new AuthenticationException(response.getStatusLine().getReasonPhrase());
+        throw new AuthenticationException();
       }
       
-      InputStream content = response.getEntity().getContent();
-      ByteArrayOutputStream contentBuffer = new ByteArrayOutputStream();
-      content.transferTo(contentBuffer);
-      
-      responseData = new ByteArrayInputStream(contentBuffer.toByteArray());
+      responseData = new ByteArrayInputStream(response.body());
+    }
+    catch (InterruptedException ex) {
+      throw new InterruptedIOException(ex.getMessage());
     }
   }
+  
+  private byte[] toByteArray(InputStream input) throws IOException
+  {
+    try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream(input.available())) {
+      input.transferTo(byteOut);
+      return byteOut.toByteArray();
+    }
+  }
+  
+  
+  private void addAuthenticationHeader(java.net.http.HttpRequest.Builder requestBuilder)
+  {
+    // authentication
+    if (user != null && user.trim().length() > 0 && password != null) {
+      LOG.debug("Using username: {}, passwd.length: {}", user, password.length());
+      String valueToEncode = user + ":" + password; // NOI18N
+      String encodedAuthenticationString = "Basic " + Base64.getEncoder().encodeToString(valueToEncode.getBytes()); // NOI18N
+      
+      requestBuilder.header("Authorization", encodedAuthenticationString);
+    }    
+  }
+  
+  
 }

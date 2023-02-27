@@ -20,7 +20,6 @@ package jipsi.de.lohndirekt.print;
 
 import java.io.IOException;
 import java.io.InputStream;
-import org.apache.http.HttpException;
 
 /**
  * 
@@ -43,9 +42,11 @@ interface IppConnection
   int getStatusCode() throws IOException;
 
   /**
-   * @param stream
+   * Sends a request to the IPP host
+   * 
+   * @param requestBody The input stream that contains the request body data
+   * 
+   * @throws IOException If the communication failed
    */
-  void setIppRequest(InputStream stream);
-
-  void execute() throws HttpException, IOException;
+  void send(InputStream requestBody) throws IOException;
 }
