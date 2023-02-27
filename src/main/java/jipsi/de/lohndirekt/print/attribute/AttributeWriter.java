@@ -18,7 +18,8 @@
  */
 package jipsi.de.lohndirekt.print.attribute;
 
-import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
 import java.util.Date;
@@ -36,6 +37,9 @@ import jipsi.de.lohndirekt.print.attribute.ipp.Charset;
 import jipsi.de.lohndirekt.print.attribute.ipp.MimeMediaType;
 import jipsi.de.lohndirekt.print.attribute.ipp.NaturalLanguage;
 
+import static jipsi.de.lohndirekt.print.attribute.IppIoUtils.writeInt2;
+import static jipsi.de.lohndirekt.print.attribute.IppIoUtils.writeInt4;
+
 public final class AttributeWriter
 {
   private static final int MILIS_IN_MINUTE = 1000 * 60;
@@ -49,13 +53,13 @@ public final class AttributeWriter
    * @param attribute
    * @return
    */
-  private static void fillName(ByteArrayOutputStream out, Attribute attribute)
+  private static void fillName(OutputStream out, Attribute attribute) throws IOException
   {
     String name = attribute.getName();
     fillName(out, name);
   }
 
-  private static void fillName(ByteArrayOutputStream out, String name)
+  private static void fillName(OutputStream out, String name) throws IOException
   {
     //name length
     writeInt2(name.length(), out);
@@ -69,7 +73,7 @@ public final class AttributeWriter
    * @param bytes
    * @return
    */
-  private static void attributeBytes(IntegerSyntax attribute, ByteArrayOutputStream out)
+  private static void attributeBytes(IntegerSyntax attribute, OutputStream out) throws IOException
   {
     //value tag
     out.write((byte) IppValueTag.INTEGER.getId());
@@ -86,7 +90,7 @@ public final class AttributeWriter
    * @param bytes
    * @return
    */
-  private static void attributeBytes(SetOfIntegerSyntax attribute, ByteArrayOutputStream out)
+  private static void attributeBytes(SetOfIntegerSyntax attribute, OutputStream out) throws IOException
   {
     int[][] members = attribute.getMembers();
     for (int i = 0; i < members.length; i++) {
@@ -118,7 +122,7 @@ public final class AttributeWriter
    * @param bytes
    * @return
    */
-  private static void attributeBytes(TextSyntax attribute, ByteArrayOutputStream out)
+  private static void attributeBytes(TextSyntax attribute, OutputStream out) throws IOException
   {
     // value tag
     if (attribute instanceof Charset) {
@@ -145,7 +149,7 @@ public final class AttributeWriter
    * @param bytes
    * @return
    */
-  private static void attributeBytes(EnumSyntax attribute, ByteArrayOutputStream out)
+  private static void attributeBytes(EnumSyntax attribute, OutputStream out) throws IOException
   {
     // Value tag
     out.write((byte) IppValueTag.TEXT.getId());
@@ -164,7 +168,7 @@ public final class AttributeWriter
    * @param bytes
    * @return
    */
-  private static void attributeBytes(DateTimeSyntax attribute, ByteArrayOutputStream out)
+  private static void attributeBytes(DateTimeSyntax attribute, OutputStream out) throws IOException
   {
 
     //Value tag
@@ -211,7 +215,7 @@ public final class AttributeWriter
    * @param bytes
    * @return
    */
-  private static void attributeBytes(URISyntax attribute, ByteArrayOutputStream out)
+  private static void attributeBytes(URISyntax attribute, OutputStream out) throws IOException
   {
     //Value tag
     out.write((byte) IppValueTag.URI.getId());
@@ -227,7 +231,7 @@ public final class AttributeWriter
    * @param bytes
    * @return
    */
-  private static void attributeBytes(ResolutionSyntax attribute, ByteArrayOutputStream out)
+  private static void attributeBytes(ResolutionSyntax attribute, OutputStream out) throws IOException
   {
     //Value tag
     out.write((byte) IppValueTag.INTEGER.getId());
@@ -239,27 +243,14 @@ public final class AttributeWriter
     int feedResolution = attribute.getFeedResolution(ResolutionSyntax.DPI);
     int crossFeedResolution = attribute.getCrossFeedResolution(ResolutionSyntax.DPI);
     //(Lower bound first)Integer in 4 bytes
-    writeInt4(crossFeedResolution, out);
+    IppIoUtils.writeInt4(crossFeedResolution, out);
     //(Upper bound)Integer in 4 bytes
-    writeInt4(feedResolution, out);
+    IppIoUtils.writeInt4(feedResolution, out);
     out.write((byte) ResolutionSyntax.DPI);
   }
 
-  public static void writeInt4(int value, ByteArrayOutputStream out)
-  {
-    out.write((byte) ((value & 0xff000000) >> 24));
-    out.write((byte) ((value & 0xff0000) >> 16));
-    out.write((byte) ((value & 0xff00) >> 8));
-    out.write((byte) (value & 0xff));
-  }
-
-  public static void writeInt2(int value, ByteArrayOutputStream out)
-  {
-    out.write((byte) ((value & 0xff00) >> 8));
-    out.write((byte) (value & 0xff));
-  }
-
-  public static void writeString(String value, ByteArrayOutputStream out, String charsetName)
+ 
+  public static void writeString(String value, OutputStream out, String charsetName) throws IOException
   {
     byte[] bytes;
     try {
@@ -271,12 +262,12 @@ public final class AttributeWriter
     out.write(bytes, 0, bytes.length);
   }
 
-  public static void writeString(String value, ByteArrayOutputStream out)
+  public static void writeString(String value, OutputStream out) throws IOException
   {
     writeString(value, out, Charset.US_ASCII.getValue());
   }
 
-  public static void writeNameAndTextString(String value, ByteArrayOutputStream out)
+  public static void writeNameAndTextString(String value, OutputStream out) throws IOException
   {
     writeString(value, out, DEFAULT_CHARSET.getValue());
   }
@@ -285,7 +276,7 @@ public final class AttributeWriter
    * @param attribute
    * @return
    */
-  public static void attributeBytes(Attribute attribute, ByteArrayOutputStream out)
+  public static void attributeBytes(Attribute attribute, OutputStream out) throws IOException
   {
     if (attribute instanceof IntegerSyntax) {
       attributeBytes((IntegerSyntax) attribute, out);

@@ -22,12 +22,11 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.SequenceInputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.Objects;
-import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.print.attribute.Attribute;
 import javax.print.attribute.AttributeSet;
@@ -41,6 +40,7 @@ import jipsi.de.lohndirekt.print.attribute.AttributeParser;
 import jipsi.de.lohndirekt.print.attribute.AttributeWriter;
 import jipsi.de.lohndirekt.print.attribute.IppAttributeName;
 import jipsi.de.lohndirekt.print.attribute.IppDelimiterTag;
+import jipsi.de.lohndirekt.print.attribute.IppIoUtils;
 import jipsi.de.lohndirekt.print.attribute.IppStatus;
 import jipsi.de.lohndirekt.print.attribute.ipp.Charset;
 import jipsi.de.lohndirekt.print.attribute.ipp.NaturalLanguage;
@@ -155,28 +155,22 @@ class IppRequestCupsImpl implements IppRequest
   /**
    *
    */
-  private byte[] ippFooter()
+  private void serializeIppFooter(OutputStream output) throws IOException
   {
-    byte[] footer = new byte[1];
-    footer[0] = (byte) IppDelimiterTag.END_ATTRIBUTES.getValue();
-    return footer;
+    output.write((byte) IppDelimiterTag.END_ATTRIBUTES.getValue());
   }
 
   /**
    *
    */
-  private byte[] ippAttributes() throws UnsupportedEncodingException
+  private void serializeIppAttributes(OutputStream output) throws UnsupportedEncodingException, IOException
   {
-    ByteArrayOutputStream out = new ByteArrayOutputStream();
-    
-    serializeAttributes(IppDelimiterTag.BEGIN_OPERATION_ATTRIBUTES, AttributeHelper.getOrderedOperationAttributeArray(operationAttributes), out);
-    serializeAttributes(IppDelimiterTag.BEGIN_PRINTER_ATTRIBUTES, printerAttributes.toArray(), out);
-    serializeAttributes(IppDelimiterTag.BEGIN_JOB_ATTRIBUTES, jobAttributes.toArray(), out);
-    
-    return out.toByteArray();
+    serializeAttributes(IppDelimiterTag.BEGIN_OPERATION_ATTRIBUTES, AttributeHelper.getOrderedOperationAttributeArray(operationAttributes), output);
+    serializeAttributes(IppDelimiterTag.BEGIN_PRINTER_ATTRIBUTES, printerAttributes.toArray(), output);
+    serializeAttributes(IppDelimiterTag.BEGIN_JOB_ATTRIBUTES, jobAttributes.toArray(), output);
   }
   
-  private void serializeAttributes(IppDelimiterTag beginTag, Attribute[] attributes, ByteArrayOutputStream out) throws UnsupportedEncodingException
+  private void serializeAttributes(IppDelimiterTag beginTag, Attribute[] attributes, OutputStream out) throws UnsupportedEncodingException, IOException
   {
     if (attributes.length > 0) {
       out.write((byte)beginTag.getValue());
@@ -191,20 +185,19 @@ class IppRequestCupsImpl implements IppRequest
   /**
    *
    */
-  private byte[] ippHeader()
+  private void serializeIppHeader(OutputStream output) throws IOException
   {
     //Ipp header data according to http://www.ietf.org/rfc/rfc2910.txt
-    ByteArrayOutputStream out = new ByteArrayOutputStream(8);
+
     //The first 2 bytes represent the IPP version number (1.1)
     //major version-number
-    out.write((byte) 2);
+    output.write((byte) 2);
     //minor version-number
-    out.write((byte) 0);
+    output.write((byte) 0);
     //2 byte operation id
-    AttributeWriter.writeInt2(this.operation.getValue(), out);
+    IppIoUtils.writeInt2(this.operation.getValue(), output);
     //4 byte request id
-    AttributeWriter.writeInt4(this.id, out);
-    return out.toByteArray();
+    IppIoUtils.writeInt4(this.id, output);
   }
 
   /**
@@ -245,14 +238,14 @@ class IppRequestCupsImpl implements IppRequest
       throw new IllegalStateException("Send must not be called twice");
     }
 
-    Vector<InputStream> v = new Vector<>();
-    v.add(new ByteArrayInputStream(this.ippHeader()));
-    v.add(new ByteArrayInputStream(this.ippAttributes()));
-    v.add(new ByteArrayInputStream(this.ippFooter()));
+    ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+    serializeIppHeader(byteOut);
+    serializeIppAttributes(byteOut);
+    serializeIppFooter(byteOut);
     if (data != null) {
-      v.add(data);
+      data.transferTo(byteOut);
     }
-    SequenceInputStream stream = new SequenceInputStream(v.elements());
+    
     conn = new IppHttpConnection(path, findUserName(), findPassword());
 
     boolean ok = false;
@@ -260,7 +253,7 @@ class IppRequestCupsImpl implements IppRequest
 
     do {
       try {
-        conn.send(stream);
+        conn.send(new ByteArrayInputStream(byteOut.toByteArray()));
       }
       catch (IOException ex) {
         LOG.error("Error communicating", ex);
