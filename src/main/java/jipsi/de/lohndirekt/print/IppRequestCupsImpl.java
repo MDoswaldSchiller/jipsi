@@ -112,7 +112,6 @@ class IppRequestCupsImpl implements IppRequest
   private static final NaturalLanguage NATURAL_LANGUAGE_DEFAULT = NaturalLanguage.EN;
   private static final Charset CHARSET_DEFAULT = Charset.UTF_8;
 
-  private IppConnection conn;
   private boolean sent;
   private InputStream data;
 
@@ -181,7 +180,6 @@ class IppRequestCupsImpl implements IppRequest
     }
   }
   
-
   /**
    *
    */
@@ -237,23 +235,14 @@ class IppRequestCupsImpl implements IppRequest
     if (sent) {
       throw new IllegalStateException("Send must not be called twice");
     }
-
-    ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
-    serializeIppHeader(byteOut);
-    serializeIppAttributes(byteOut);
-    serializeIppFooter(byteOut);
-    if (data != null) {
-      data.transferTo(byteOut);
-    }
     
-    conn = new IppHttpConnection(path, findUserName(), findPassword());
-
+    IppConnection conn = new IppHttpConnection(path, findUserName(), findPassword());
     boolean ok = false;
     int tries = 0;
 
     do {
       try {
-        conn.send(new ByteArrayInputStream(byteOut.toByteArray()));
+        conn.send(new ByteArrayInputStream(buildRequestBuffer()));
       }
       catch (IOException ex) {
         LOG.error("Error communicating", ex);
@@ -282,8 +271,21 @@ class IppRequestCupsImpl implements IppRequest
     while (!ok && tries < SEND_REQUEST_COUNT);
 
     sent = true;
-    return getResponse();
+    return getResponse(conn);
   }
+  
+  private byte[] buildRequestBuffer() throws IOException
+  {
+    ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+    serializeIppHeader(byteOut);
+    serializeIppAttributes(byteOut);
+    serializeIppFooter(byteOut);
+    if (data != null) {
+      data.transferTo(byteOut);
+    }
+    return byteOut.toByteArray();
+  }
+  
 
   /**
    * @param list
@@ -311,7 +313,7 @@ class IppRequestCupsImpl implements IppRequest
     return null;
   }
 
-  private IppResponse getResponse() throws IOException
+  private IppResponse getResponse(IppConnection conn) throws IOException
   {
     if (conn.getStatusCode() == HttpURLConnection.HTTP_OK) {
       return new IppResponseImpl(conn.getIppResponse());
