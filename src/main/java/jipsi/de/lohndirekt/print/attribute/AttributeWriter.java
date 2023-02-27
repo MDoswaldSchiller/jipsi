@@ -42,10 +42,65 @@ import static jipsi.de.lohndirekt.print.attribute.IppIoUtils.writeInt4;
 
 public final class AttributeWriter
 {
+
   private static final int MILIS_IN_MINUTE = 1000 * 60;
   private static final int MILIS_IN_HOUR = MILIS_IN_MINUTE * 60;
 
   public final static Charset DEFAULT_CHARSET = Charset.ISO_8859_1;
+
+  public void writeString(String value, OutputStream out, String charsetName) throws IOException
+  {
+    byte[] bytes;
+    try {
+      bytes = value.getBytes(charsetName);
+    }
+    catch (UnsupportedEncodingException e) {
+      throw new IllegalArgumentException(charsetName + " encoding not supported by JVM");
+    }
+    out.write(bytes, 0, bytes.length);
+  }
+
+  public void writeString(String value, OutputStream out) throws IOException
+  {
+    writeString(value, out, Charset.US_ASCII.getValue());
+  }
+
+  public void writeNameAndTextString(String value, OutputStream out) throws IOException
+  {
+    writeString(value, out, DEFAULT_CHARSET.getValue());
+  }
+
+  /**
+   * @param attribute
+   * @return
+   */
+  public void attributeBytes(Attribute attribute, OutputStream out) throws IOException
+  {
+    if (attribute instanceof IntegerSyntax) {
+      attributeBytes((IntegerSyntax) attribute, out);
+    }
+    else if (attribute instanceof TextSyntax) {
+      attributeBytes((TextSyntax) attribute, out);
+    }
+    else if (attribute instanceof DateTimeSyntax) {
+      attributeBytes((DateTimeSyntax) attribute, out);
+    }
+    else if (attribute instanceof ResolutionSyntax) {
+      attributeBytes((ResolutionSyntax) attribute, out);
+    }
+    else if (attribute instanceof SetOfIntegerSyntax) {
+      attributeBytes((SetOfIntegerSyntax) attribute, out);
+    }
+    else if (attribute instanceof EnumSyntax) {
+      attributeBytes((EnumSyntax) attribute, out);
+    }
+    else if (attribute instanceof URISyntax) {
+      attributeBytes((URISyntax) attribute, out);
+    }
+    else {
+      throw new IllegalArgumentException("The given attribute is of an unknown SubType (only IntegerSyntax, TextSyntax, DateTimeSyntax, ResolutionSyntax, SetOfIntegerSyntax, EnumSyntax and URISyntax supported)");
+    }
+  }
 
   /**
    * @param bytes
@@ -53,13 +108,13 @@ public final class AttributeWriter
    * @param attribute
    * @return
    */
-  private static void fillName(OutputStream out, Attribute attribute) throws IOException
+  private void fillName(OutputStream out, Attribute attribute) throws IOException
   {
     String name = attribute.getName();
     fillName(out, name);
   }
 
-  private static void fillName(OutputStream out, String name) throws IOException
+  private void fillName(OutputStream out, String name) throws IOException
   {
     //name length
     writeInt2(name.length(), out);
@@ -73,7 +128,7 @@ public final class AttributeWriter
    * @param bytes
    * @return
    */
-  private static void attributeBytes(IntegerSyntax attribute, OutputStream out) throws IOException
+  private void attributeBytes(IntegerSyntax attribute, OutputStream out) throws IOException
   {
     //value tag
     out.write((byte) IppValueTag.INTEGER.getId());
@@ -90,7 +145,7 @@ public final class AttributeWriter
    * @param bytes
    * @return
    */
-  private static void attributeBytes(SetOfIntegerSyntax attribute, OutputStream out) throws IOException
+  private void attributeBytes(SetOfIntegerSyntax attribute, OutputStream out) throws IOException
   {
     int[][] members = attribute.getMembers();
     for (int i = 0; i < members.length; i++) {
@@ -122,7 +177,7 @@ public final class AttributeWriter
    * @param bytes
    * @return
    */
-  private static void attributeBytes(TextSyntax attribute, OutputStream out) throws IOException
+  private void attributeBytes(TextSyntax attribute, OutputStream out) throws IOException
   {
     // value tag
     if (attribute instanceof Charset) {
@@ -149,7 +204,7 @@ public final class AttributeWriter
    * @param bytes
    * @return
    */
-  private static void attributeBytes(EnumSyntax attribute, OutputStream out) throws IOException
+  private void attributeBytes(EnumSyntax attribute, OutputStream out) throws IOException
   {
     // Value tag
     out.write((byte) IppValueTag.TEXT.getId());
@@ -168,7 +223,7 @@ public final class AttributeWriter
    * @param bytes
    * @return
    */
-  private static void attributeBytes(DateTimeSyntax attribute, OutputStream out) throws IOException
+  private void attributeBytes(DateTimeSyntax attribute, OutputStream out) throws IOException
   {
 
     //Value tag
@@ -215,7 +270,7 @@ public final class AttributeWriter
    * @param bytes
    * @return
    */
-  private static void attributeBytes(URISyntax attribute, OutputStream out) throws IOException
+  private void attributeBytes(URISyntax attribute, OutputStream out) throws IOException
   {
     //Value tag
     out.write((byte) IppValueTag.URI.getId());
@@ -231,7 +286,7 @@ public final class AttributeWriter
    * @param bytes
    * @return
    */
-  private static void attributeBytes(ResolutionSyntax attribute, OutputStream out) throws IOException
+  private void attributeBytes(ResolutionSyntax attribute, OutputStream out) throws IOException
   {
     //Value tag
     out.write((byte) IppValueTag.INTEGER.getId());
@@ -247,61 +302,6 @@ public final class AttributeWriter
     //(Upper bound)Integer in 4 bytes
     IppIoUtils.writeInt4(feedResolution, out);
     out.write((byte) ResolutionSyntax.DPI);
-  }
-
- 
-  public static void writeString(String value, OutputStream out, String charsetName) throws IOException
-  {
-    byte[] bytes;
-    try {
-      bytes = value.getBytes(charsetName);
-    }
-    catch (UnsupportedEncodingException e) {
-      throw new IllegalArgumentException(charsetName + " encoding not supported by JVM");
-    }
-    out.write(bytes, 0, bytes.length);
-  }
-
-  public static void writeString(String value, OutputStream out) throws IOException
-  {
-    writeString(value, out, Charset.US_ASCII.getValue());
-  }
-
-  public static void writeNameAndTextString(String value, OutputStream out) throws IOException
-  {
-    writeString(value, out, DEFAULT_CHARSET.getValue());
-  }
-
-  /**
-   * @param attribute
-   * @return
-   */
-  public static void attributeBytes(Attribute attribute, OutputStream out) throws IOException
-  {
-    if (attribute instanceof IntegerSyntax) {
-      attributeBytes((IntegerSyntax) attribute, out);
-    }
-    else if (attribute instanceof TextSyntax) {
-      attributeBytes((TextSyntax) attribute, out);
-    }
-    else if (attribute instanceof DateTimeSyntax) {
-      attributeBytes((DateTimeSyntax) attribute, out);
-    }
-    else if (attribute instanceof ResolutionSyntax) {
-      attributeBytes((ResolutionSyntax) attribute, out);
-    }
-    else if (attribute instanceof SetOfIntegerSyntax) {
-      attributeBytes((SetOfIntegerSyntax) attribute, out);
-    }
-    else if (attribute instanceof EnumSyntax) {
-      attributeBytes((EnumSyntax) attribute, out);
-    }
-    else if (attribute instanceof URISyntax) {
-      attributeBytes((URISyntax) attribute, out);
-    }
-    else {
-      throw new IllegalArgumentException("The given attribute is of an unknown SubType (only IntegerSyntax, TextSyntax, DateTimeSyntax, ResolutionSyntax, SetOfIntegerSyntax, EnumSyntax and URISyntax supported)");
-    }
   }
 
 }

@@ -171,11 +171,13 @@ class IppRequestCupsImpl implements IppRequest
   
   private void serializeAttributes(IppDelimiterTag beginTag, Attribute[] attributes, OutputStream out) throws UnsupportedEncodingException, IOException
   {
+    AttributeWriter attributeWriter = new AttributeWriter();
+    
     if (attributes.length > 0) {
       out.write((byte)beginTag.getValue());
 
       for (Attribute attribute : attributes) {
-        AttributeWriter.attributeBytes(attribute, out);
+        attributeWriter.attributeBytes(attribute, out);
       }
     }
   }
