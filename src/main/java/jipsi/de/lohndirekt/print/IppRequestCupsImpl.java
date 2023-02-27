@@ -68,17 +68,20 @@ class IppRequestCupsImpl implements IppRequest
       try {
         parseResponse(response);
       }
-      catch (IOException e) {
-        LOG.error(e.getMessage(), e);
-        throw new RuntimeException(e);
+      catch (IOException ex) {
+        LOG.error(ex.getMessage(), ex);
+        throw new RuntimeException(ex);
       }
 
     }
 
     private void parseResponse(InputStream response) throws IOException
     {
-      byte[] header = new byte[8];
-      response.read(header);
+      byte[] header = response.readNBytes(8);
+      if (header.length != 8) {
+        throw new IOException("Error reading header bytes");
+      }
+      
       this.status = IppStatus.fromStatusId((int) (header[2] << 8) + (int) header[3]);
 
       if (response.available() != 0) {
