@@ -237,20 +237,22 @@ class IppRequestCupsImpl implements IppRequest
     }
     
     IppConnection conn = new IppHttpConnection(path, findUserName(), findPassword());
+    IppConnection.IppConnectionResponse connectionResponse = null;
+    
     boolean ok = false;
     int tries = 0;
 
     do {
       try {
-        conn.send(new ByteArrayInputStream(buildRequestBuffer()));
+        connectionResponse = conn.send(new ByteArrayInputStream(buildRequestBuffer()));
       }
       catch (IOException ex) {
         LOG.error("Error communicating", ex);
       }
 
-      if (conn.getStatusCode() != HttpURLConnection.HTTP_OK) {
+      if (connectionResponse == null || connectionResponse.getStatusCode() != HttpURLConnection.HTTP_OK) {
         if (LOG.isInfoEnabled()) {
-          String msg = "Cups seems to be busy - STATUSCODE " + conn.getStatusCode();
+          String msg = "Cups seems to be busy - STATUSCODE " + connectionResponse.getStatusCode();
           if (tries < SEND_REQUEST_COUNT) {
             msg += " - going to retry in " + SEND_REQUEST_TIMEOUT + " ms";
           }
@@ -271,7 +273,7 @@ class IppRequestCupsImpl implements IppRequest
     while (!ok && tries < SEND_REQUEST_COUNT);
 
     sent = true;
-    return getResponse(conn);
+    return getResponse(connectionResponse);
   }
   
   private byte[] buildRequestBuffer() throws IOException
@@ -313,10 +315,10 @@ class IppRequestCupsImpl implements IppRequest
     return null;
   }
 
-  private IppResponse getResponse(IppConnection conn) throws IOException
+  private IppResponse getResponse(IppConnection.IppConnectionResponse response) throws IOException
   {
-    if (conn.getStatusCode() == HttpURLConnection.HTTP_OK) {
-      return new IppResponseImpl(conn.getIppResponse());
+    if (response.getStatusCode() == HttpURLConnection.HTTP_OK) {
+      return new IppResponseImpl(response.getResponseBody());
     }
     else {
       return null;

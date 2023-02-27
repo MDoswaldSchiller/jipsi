@@ -18,7 +18,6 @@
  */
 package jipsi.de.lohndirekt.print;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,9 +47,6 @@ class IppHttpConnection implements IppConnection
   private final String user;
   private final String password;
   private final HttpClient httpClient;
-  
-  private int status;
-  private InputStream responseData;
   
   /**
    * @param uri The uri of the IPP endpoint
@@ -83,28 +79,8 @@ class IppHttpConnection implements IppConnection
     return uri;
   }
 
-  /**
-   * @return content of the response
-   * @throws IOException
-   */
   @Override
-  public InputStream getIppResponse() throws IOException
-  {
-    return responseData;
-  }
-
-  /**
-   * @return the statuscode of last request
-   * @throws IOException
-   */
-  @Override
-  public int getStatusCode() throws IOException
-  {
-    return status;
-  }
-
-  @Override
-  public void send(InputStream requestBody) throws IOException
+  public IppConnectionResponse send(InputStream requestBody) throws IOException
   {
     LOG.info("Send ipp request");
     HttpRequest.Builder requestBuilder = HttpRequest.newBuilder();
@@ -117,14 +93,13 @@ class IppHttpConnection implements IppConnection
     requestBuilder.POST(HttpRequest.BodyPublishers.ofByteArray(toByteArray(requestBody)));
     
     try {
-      HttpResponse<byte[]> response = httpClient.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofByteArray());
-      status = response.statusCode();
+      HttpResponse<InputStream> response = httpClient.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
       
-      if (status == HttpURLConnection.HTTP_UNAUTHORIZED) {
+      if (response.statusCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
         throw new AuthenticationException();
       }
       
-      responseData = new ByteArrayInputStream(response.body());
+      return new IppConnectionResponse(response.statusCode(), response.body());
     }
     catch (InterruptedException ex) {
       throw new InterruptedIOException(ex.getMessage());
@@ -139,7 +114,6 @@ class IppHttpConnection implements IppConnection
     }
   }
   
-  
   private void addAuthenticationHeader(java.net.http.HttpRequest.Builder requestBuilder)
   {
     // authentication
@@ -151,6 +125,4 @@ class IppHttpConnection implements IppConnection
       requestBuilder.header("Authorization", encodedAuthenticationString);
     }    
   }
-  
-  
 }

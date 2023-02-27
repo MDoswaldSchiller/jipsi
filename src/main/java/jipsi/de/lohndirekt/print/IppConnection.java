@@ -30,23 +30,34 @@ import java.io.InputStream;
 interface IppConnection
 {
   /**
-   * @return content of the response
-   * @throws IOException
-   */
-  InputStream getIppResponse() throws IOException;
-
-  /**
-   * @return the statuscode of last request
-   * @throws IOException
-   */
-  int getStatusCode() throws IOException;
-
-  /**
    * Sends a request to the IPP host
    * 
    * @param requestBody The input stream that contains the request body data
    * 
    * @throws IOException If the communication failed
    */
-  void send(InputStream requestBody) throws IOException;
+  IppConnectionResponse send(InputStream requestBody) throws IOException;
+  
+  
+  class IppConnectionResponse
+  {
+    private final int statusCode;
+    private final InputStream responseBody;
+
+    public IppConnectionResponse(int statusCode, InputStream responseBody)
+    {
+      this.statusCode = statusCode;
+      this.responseBody = responseBody;
+    }
+
+    public int getStatusCode()
+    {
+      return statusCode;
+    }
+
+    public InputStream getResponseBody()
+    {
+      return responseBody;
+    }
+  }
 }
