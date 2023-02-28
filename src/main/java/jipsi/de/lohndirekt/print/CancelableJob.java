@@ -25,6 +25,8 @@ import javax.print.attribute.HashAttributeSet;
 import javax.print.event.PrintJobEvent;
 import jipsi.de.lohndirekt.print.attribute.IppStatus;
 import jipsi.de.lohndirekt.print.attribute.ipp.printerdesc.supported.OperationsSupported;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author bpusch
@@ -32,6 +34,7 @@ import jipsi.de.lohndirekt.print.attribute.ipp.printerdesc.supported.OperationsS
  */
 class CancelableJob extends Job implements CancelablePrintJob
 {
+  private static final Logger LOG = LoggerFactory.getLogger(CancelableJob.class);
 
   /**
    * @param service
