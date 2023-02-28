@@ -45,90 +45,30 @@ import jipsi.de.lohndirekt.print.attribute.IppStatus;
 import jipsi.de.lohndirekt.print.attribute.ipp.Charset;
 import jipsi.de.lohndirekt.print.attribute.ipp.NaturalLanguage;
 import jipsi.de.lohndirekt.print.attribute.ipp.printerdesc.supported.OperationsSupported;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author bpusch, speters, sefftinge
  *
  */
-class IppRequestCupsImpl implements IppRequest
+public class IppRequestCupsImpl implements IppRequest
 {
-
-  static class IppResponseImpl implements IppResponse
-  {
-
-    private static final Logger LOG = LoggerFactory.getLogger(IppResponseImpl.class);
-
-    private IppStatus status;
-    private AttributeMap attributes;
-
-    IppResponseImpl(InputStream response)
-    {
-      try {
-        parseResponse(response);
-      }
-      catch (IOException ex) {
-        LOG.error(ex.getMessage(), ex);
-        throw new RuntimeException(ex);
-      }
-
-    }
-
-    private void parseResponse(InputStream response) throws IOException
-    {
-      byte[] header = response.readNBytes(8);
-      if (header.length != 8) {
-        throw new IOException("Error reading header bytes");
-      }
-      
-      this.status = IppStatus.fromStatusId((int) (header[2] << 8) + (int) header[3]);
-
-      if (response.available() != 0) {
-        this.attributes = new AttributeParser().parseResponse(response);
-      }
-      else {
-        this.attributes = new AttributeMap();
-      }
-      LOG.debug("Status: {}", status.getText());
-    }
-
-    @Override
-    public AttributeMap getAttributes()
-    {
-      return attributes;
-    }
-
-    @Override
-    public IppStatus getStatus()
-    {
-      return status;
-    }
-  }
-
-  private static final Logger LOG = LoggerFactory.getLogger(IppRequestCupsImpl.class);
-  private static final int SEND_REQUEST_COUNT = 1;
-  private static final int SEND_REQUEST_TIMEOUT = 50;
   private static final NaturalLanguage NATURAL_LANGUAGE_DEFAULT = NaturalLanguage.EN;
   private static final Charset CHARSET_DEFAULT = Charset.UTF_8;
-
-  private boolean sent;
-  private InputStream data;
+  private static final AtomicInteger ID_COUNTER = new AtomicInteger(0);
 
   private final int id;
+  private final URI path;
+  private final OperationsSupported operation;
+  
+  private InputStream data;
   private PrintJobAttributeSet jobAttributes = new HashPrintJobAttributeSet();
   private AttributeSet operationAttributes = new HashAttributeSet();
   private AttributeSet printerAttributes = new HashAttributeSet();
-
-  private final URI path;
-  private final OperationsSupported operation;
-
-  private static final AtomicInteger ID_COUNTER = new AtomicInteger(0);
   
   /**
    * @param operation
    */
-  IppRequestCupsImpl(URI path, OperationsSupported operation)
+  public IppRequestCupsImpl(URI path, OperationsSupported operation)
   {
     this.path = Objects.requireNonNull(path);
     this.operation = Objects.requireNonNull(operation);
@@ -149,6 +89,62 @@ class IppRequestCupsImpl implements IppRequest
   public void setPrinterAttributes(AttributeSet attrs)
   {
     this.printerAttributes = attrs;
+  }
+
+  /**
+   * @param attributes
+   */
+  @Override
+  public void addOperationAttributes(AttributeSet attributes)
+  {
+    this.operationAttributes.addAll(attributes);
+  }
+
+  /**
+   * @param stream
+   */
+  @Override
+  public void setData(InputStream data)
+  {
+    this.data = data;
+  }
+
+  /**
+   * @param attributes
+   */
+  @Override
+  public void setJobAttributes(PrintJobAttributeSet attributes)
+  {
+    this.jobAttributes = attributes;
+  }
+
+  /**
+   * @see de.lohndirekt.print.IppRequest#send()
+   * @throws IllegalArgumentException when called twice
+   */
+  @Override
+  public IppResponse send() throws IOException
+  {
+    IppConnection conn = new IppHttpConnection(path, findUserName(), findPassword());
+    IppConnection.IppConnectionResponse connectionResponse = conn.send(new ByteArrayInputStream(buildRequestBuffer()));
+      
+    if (connectionResponse.getStatusCode() != HttpURLConnection.HTTP_OK) {
+      throw new IOException("Cups seems to be busy - STATUSCODE " + connectionResponse.getStatusCode());
+    }
+
+    return parseResponse(connectionResponse);
+  }
+  
+  private byte[] buildRequestBuffer() throws IOException
+  {
+    ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+    serializeIppHeader(byteOut);
+    serializeIppAttributes(byteOut);
+    serializeIppFooter(byteOut);
+    if (data != null) {
+      data.transferTo(byteOut);
+    }
+    return byteOut.toByteArray();
   }
 
   /**
@@ -199,98 +195,7 @@ class IppRequestCupsImpl implements IppRequest
     //4 byte request id
     IppIoUtils.writeInt4(this.id, output);
   }
-
-  /**
-   * @param attributes
-   */
-  @Override
-  public void addOperationAttributes(AttributeSet attributes)
-  {
-    this.operationAttributes.addAll(attributes);
-  }
-
-  /**
-   * @param stream
-   */
-  @Override
-  public void setData(InputStream data)
-  {
-    this.data = data;
-  }
-
-  /**
-   * @param attributes
-   */
-  @Override
-  public void setJobAttributes(PrintJobAttributeSet attributes)
-  {
-    this.jobAttributes = attributes;
-  }
-
-  /**
-   * @see de.lohndirekt.print.IppRequest#send()
-   * @throws IllegalArgumentException when called twice
-   */
-  @Override
-  public IppResponse send() throws IOException
-  {
-    if (sent) {
-      throw new IllegalStateException("Send must not be called twice");
-    }
-    
-    IppConnection conn = new IppHttpConnection(path, findUserName(), findPassword());
-    IppConnection.IppConnectionResponse connectionResponse = null;
-    
-    boolean ok = false;
-    int tries = 0;
-
-    do {
-      try {
-        connectionResponse = conn.send(new ByteArrayInputStream(buildRequestBuffer()));
-      }
-      catch (IOException ex) {
-        LOG.error("Error communicating", ex);
-      }
-
-      if (connectionResponse == null || connectionResponse.getStatusCode() != HttpURLConnection.HTTP_OK) {
-        if (LOG.isInfoEnabled()) {
-          String msg = "Cups seems to be busy - STATUSCODE " + connectionResponse.getStatusCode();
-          if (tries < SEND_REQUEST_COUNT) {
-            msg += " - going to retry in " + SEND_REQUEST_TIMEOUT + " ms";
-          }
-          LOG.info(msg);
-        }
-        try {
-          Thread.sleep(SEND_REQUEST_TIMEOUT);
-        }
-        catch (InterruptedException e) {
-          LOG.info("Send interrupted", e);
-        }
-      }
-      else {
-        ok = true;
-      }
-      tries++;
-    }
-    while (!ok && tries < SEND_REQUEST_COUNT);
-
-    sent = true;
-    return getResponse(connectionResponse);
-  }
   
-  private byte[] buildRequestBuffer() throws IOException
-  {
-    ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
-    serializeIppHeader(byteOut);
-    serializeIppAttributes(byteOut);
-    serializeIppFooter(byteOut);
-    if (data != null) {
-      data.transferTo(byteOut);
-    }
-    return byteOut.toByteArray();
-  }
-  
-
   /**
    * @param list
    * @return
@@ -317,13 +222,52 @@ class IppRequestCupsImpl implements IppRequest
     return null;
   }
 
-  private IppResponse getResponse(IppConnection.IppConnectionResponse response) throws IOException
+  private IppResponse parseResponse(IppConnection.IppConnectionResponse response) throws IOException
   {
-    if (response.getStatusCode() == HttpURLConnection.HTTP_OK) {
-      return new IppResponseImpl(response.getResponseBody());
+    if (response.getStatusCode() != HttpURLConnection.HTTP_OK) {
+      return null;
+    }
+    
+    InputStream input = response.getResponseBody();
+    byte[] header = input.readNBytes(8);
+    if (header.length != 8) {
+      throw new IOException("Error reading header bytes");
+    }
+      
+    IppStatus status = IppStatus.fromStatusId((int) (header[2] << 8) + (int) header[3]);
+    AttributeMap attributes;
+
+    if (input.available() != 0) {
+      attributes = new AttributeParser().parseResponse(input);
     }
     else {
-      return null;
+      attributes = new AttributeMap();
+    }
+    return new IppResponseCupsImpl(status, attributes);    
+  }
+  
+  
+  static class IppResponseCupsImpl implements IppResponse
+  {
+    private final IppStatus status;
+    private final AttributeMap attributes;
+
+    IppResponseCupsImpl(IppStatus status, AttributeMap attributes)
+    {
+      this.status = Objects.requireNonNull(status);
+      this.attributes = Objects.requireNonNull(attributes);
+    }
+
+    @Override
+    public AttributeMap getAttributes()
+    {
+      return attributes;
+    }
+
+    @Override
+    public IppStatus getStatus()
+    {
+      return status;
     }
   }
 }
