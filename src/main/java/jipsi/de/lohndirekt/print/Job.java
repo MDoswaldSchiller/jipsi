@@ -39,6 +39,7 @@ import javax.print.attribute.HashPrintJobAttributeSet;
 import javax.print.attribute.PrintJobAttribute;
 import javax.print.attribute.PrintJobAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
+import javax.print.attribute.standard.PrinterURI;
 import javax.print.event.PrintJobAttributeListener;
 import javax.print.event.PrintJobEvent;
 import javax.print.event.PrintJobListener;
@@ -58,11 +59,12 @@ import org.slf4j.LoggerFactory;
  */
 class Job implements DocPrintJob
 {
-  protected static final Logger LOG = LoggerFactory.getLogger(Job.class);
+  private static final Logger LOG = LoggerFactory.getLogger(Job.class);
 
   protected final IppPrintService printService;
   protected boolean ok;
   protected JobUri jobUri;
+  protected JobId jobId;
   private PrintJobAttributeSet jobAttributes;
   private List jobListeners;
   private Map attributeListeners;
@@ -90,6 +92,20 @@ class Job implements DocPrintJob
   @Override
   public PrintJobAttributeSet getAttributes()
   {
+    if (jobId != null) {
+      IppRequest getJobAttributes = IppRequestFactory.createIppRequest(printService.getUri(), OperationsSupported.GET_JOB_ATTRIBUTES, null, null);
+      getJobAttributes.addOperationAttributes(new HashAttributeSet(new PrinterURI(printService.getUri())));
+      getJobAttributes.addOperationAttributes(new HashAttributeSet(jobId));
+      
+      try {
+        IppResponse response = getJobAttributes.send();
+        return filterPrintJobAttributes(response.getAttributes());
+      }
+      catch (IOException ex) {
+        LOG.error("Error while fetching job attributes", ex);
+      }
+    }
+    
     return this.jobAttributes;
   }
 
@@ -134,6 +150,11 @@ class Job implements DocPrintJob
           Set<JobUri> jobUriList = responseAttributes.get(IppAttributeName.JOB_URI.getCategory());
           this.jobUri = jobUriList.iterator().next();
         }
+        if (responseAttributes.containsCategory(IppAttributeName.JOB_ID.getCategory())) {
+          Set<JobId> jobIdList = responseAttributes.get(IppAttributeName.JOB_ID.getCategory());
+          this.jobId = jobIdList.iterator().next();
+        }
+        
         notifyJobListeners(PrintJobEvent.JOB_COMPLETE);
         this.ok = true;
       }
@@ -282,6 +303,22 @@ class Job implements DocPrintJob
     return job;
   }
 
+  private HashPrintJobAttributeSet filterPrintJobAttributes(AttributeMap responseAttributes)
+  {
+    HashPrintJobAttributeSet attributes = new HashPrintJobAttributeSet();
+    for (var iter = responseAttributes.valueIterator(); iter.hasNext();) {
+      Set<Attribute> values = iter.next();
+      for (var listIter = values.iterator(); listIter.hasNext();) {
+        Attribute attribute = listIter.next();
+        if (attribute instanceof PrintJobAttribute) {
+          attributes.add(attribute);
+        }
+      }
+    }
+    return attributes;
+  }
+  
+  
   /**
    * @param responseAttributes
    */
