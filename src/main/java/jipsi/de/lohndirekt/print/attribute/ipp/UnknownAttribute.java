@@ -52,4 +52,12 @@ public class UnknownAttribute implements SupportedValuesAttribute
   {
     return values;
   }
+
+  @Override
+  public String toString()
+  {
+    return "UnknownAttribute{values=" + Arrays.toString(values) + '}';
+  }
+  
+  
 }
