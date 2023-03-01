@@ -78,7 +78,7 @@ public final class AttributeParser
         if (attribute != null) {
           lastAttribute = attribute;
           attributes.put(attribute);
-          LOG.info("parsed attribute({}): {}", attribute.getName(), attribute);
+          LOG.debug("parsed attribute({}): {}", attribute.getName(), attribute);
 
         }
         else {
