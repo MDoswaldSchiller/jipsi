@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.print.attribute.Attribute;
 
 /**
@@ -50,5 +51,20 @@ public final class AttributeMap
   public Iterator<Class<? extends Attribute>> keyIterator()
   {
     return attributes.keySet().iterator();
+  }
+  
+  @Override
+  public String toString()
+  {
+    StringBuilder builder = new StringBuilder("AttributeMap{");
+    for (Set<Attribute> attrSet : attributes.values()) {
+      if (!attrSet.isEmpty()) {
+        builder.append('[').append(attrSet.iterator().next().getName()).append('=');
+        builder.append(attrSet.stream().map(Attribute::toString).collect(Collectors.joining(",")));
+        builder.append("],");
+      }
+    }
+    
+    return builder.toString();
   }
 }
