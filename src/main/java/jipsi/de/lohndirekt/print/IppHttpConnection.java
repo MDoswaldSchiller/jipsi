@@ -41,13 +41,14 @@ import org.slf4j.LoggerFactory;
  */
 class IppHttpConnection implements IppConnection
 {
+
   private static final Logger LOG = LoggerFactory.getLogger(IppHttpConnection.class);
 
   private final URI uri;
   private final String user;
   private final String password;
   private final HttpClient httpClient;
-  
+
   /**
    * @param uri The uri of the IPP endpoint
    * @param user The user for authentication (optional)
@@ -62,19 +63,22 @@ class IppHttpConnection implements IppConnection
     HttpClient.Builder clientBuilder = HttpClient.newBuilder();
     clientBuilder.version(HttpClient.Version.HTTP_1_1);
     clientBuilder.followRedirects(HttpClient.Redirect.NEVER);
-    
+
     httpClient = clientBuilder.build();
   }
-  
+
   private URI toHttpURI(URI uri)
   {
-    if (uri.getScheme().equals("ipp")) {
-      try {
+    try {
+      if (uri.getScheme().equals("ipp")) {
         return new URI(uri.toString().replaceAll("^ipp", "http"));
       }
-      catch (URISyntaxException e) {
-        throw new RuntimeException("Exception while createing http uri for " + uri);
+      else if (uri.getScheme().equals("ipps")) {
+        return new URI(uri.toString().replaceAll("^ipps", "https"));
       }
+    }
+    catch (URISyntaxException e) {
+      throw new RuntimeException("Exception while createing http uri for " + uri);
     }
     return uri;
   }
@@ -90,21 +94,21 @@ class IppHttpConnection implements IppConnection
     //method.addHeader("Accept", "application/ipp, */*; q=.2");
     addAuthenticationHeader(requestBuilder);
     requestBuilder.POST(HttpRequest.BodyPublishers.ofByteArray(toByteArray(requestBody)));
-    
+
     try {
       HttpResponse<InputStream> response = httpClient.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
-      
+
       if (response.statusCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
         throw new AuthenticationException();
       }
-      
+
       return new IppConnectionResponse(response.statusCode(), response.body());
     }
     catch (InterruptedException ex) {
       throw new InterruptedIOException(ex.getMessage());
     }
   }
-  
+
   private byte[] toByteArray(InputStream input) throws IOException
   {
     try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream(input.available())) {
@@ -112,7 +116,7 @@ class IppHttpConnection implements IppConnection
       return byteOut.toByteArray();
     }
   }
-  
+
   private void addAuthenticationHeader(java.net.http.HttpRequest.Builder requestBuilder)
   {
     // authentication
@@ -120,8 +124,8 @@ class IppHttpConnection implements IppConnection
       LOG.debug("Using username: {}, passwd.length: {}", user, password.length());
       String valueToEncode = user + ":" + password; // NOI18N
       String encodedAuthenticationString = "Basic " + Base64.getEncoder().encodeToString(valueToEncode.getBytes()); // NOI18N
-      
+
       requestBuilder.header("Authorization", encodedAuthenticationString);
-    }    
+    }
   }
 }
