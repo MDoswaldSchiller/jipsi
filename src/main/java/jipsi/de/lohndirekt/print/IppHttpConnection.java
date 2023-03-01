@@ -18,6 +18,7 @@
  */
 package jipsi.de.lohndirekt.print;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -96,13 +97,13 @@ class IppHttpConnection implements IppConnection
     requestBuilder.POST(HttpRequest.BodyPublishers.ofByteArray(toByteArray(requestBody)));
 
     try {
-      HttpResponse<InputStream> response = httpClient.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
+      HttpResponse<byte[]> response = httpClient.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofByteArray());
 
       if (response.statusCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
         throw new AuthenticationException();
       }
 
-      return new IppConnectionResponse(response.statusCode(), response.body());
+      return new IppConnectionResponse(response.statusCode(), new ByteArrayInputStream(response.body()));
     }
     catch (InterruptedException ex) {
       throw new InterruptedIOException(ex.getMessage());
