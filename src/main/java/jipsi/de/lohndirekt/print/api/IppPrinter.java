@@ -2,6 +2,7 @@ package jipsi.de.lohndirekt.print.api;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -9,8 +10,10 @@ import javax.print.Doc;
 import javax.print.DocFlavor;
 import javax.print.PrintException;
 import javax.print.attribute.Attribute;
+import javax.print.attribute.AttributeSet;
 import javax.print.attribute.HashAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
+import javax.print.attribute.standard.ColorSupported;
 import javax.print.attribute.standard.PrinterURI;
 import javax.print.attribute.standard.RequestingUserName;
 import jipsi.de.lohndirekt.print.IppRequest;
@@ -75,13 +78,21 @@ public class IppPrinter
   
   public Set<DocFlavor> getSupportedDocFlavors()
   {
-    Set<DocumentFormatSupported> flavorAttributes = getAllAttributes().get(IppAttributeName.DOCUMENT_FORMAT_SUPORTED.getCategory());
+    Set<DocumentFormatSupported> flavorAttributes = getAttributes(IppAttributeName.DOCUMENT_FORMAT_SUPORTED).get(IppAttributeName.DOCUMENT_FORMAT_SUPORTED.getCategory());
 
     return flavorAttributes.stream()
           .map(attr -> getDocFlavor(attr.getValue()))
           .filter(Objects::nonNull)
           .collect(Collectors.toSet());
   }
+  
+  public boolean isColorSupported()
+  {
+    Set<ColorSupported> colorSupported = getAttributes(IppAttributeName.COLOR_SUPPORTED).get(IppAttributeName.COLOR_SUPPORTED.getCategory());
+    return colorSupported.stream()
+            .anyMatch(attr -> attr == ColorSupported.SUPPORTED);
+  }
+  
   
   private DocFlavor getDocFlavor(String mimeType)
   {
@@ -149,7 +160,7 @@ public class IppPrinter
 
   
   
-  public IppSimpleJob printDocument(Doc doc, PrintRequestAttributeSet attributes) throws PrintException
+  public IppSimpleJob printDocument(Doc doc, AttributeSet attributes) throws PrintException
   {
     IppRequest request = IppRequestFactory.createIppRequest(uri, OperationsSupported.PRINT_JOB, requestingUserName, requestingUserPassword);
     request.addOperationAttributes(new HashAttributeSet(new PrinterURI(this.uri)));
@@ -188,7 +199,7 @@ public class IppPrinter
     }
   }
   
-  private String description(PrintRequestAttributeSet attributes)
+  private String description(AttributeSet attributes)
   {
     String description = "job";
     if (attributes != null) {
@@ -200,11 +211,12 @@ public class IppPrinter
     return description;
   }
   
-  private AttributeMap getAllAttributes()
+  private AttributeMap getAttributes(IppAttributeName... attributes)
   {
     try {
       IppRequest request = IppRequestFactory.createIppRequest(uri, OperationsSupported.GET_PRINTER_ATTRIBUTES, requestingUserName, requestingUserPassword);
       request.addOperationAttributes(new HashAttributeSet(new PrinterURI(this.uri)));
+      request.setRequestedAttributes(List.of(attributes));
 
       IppResponse response = request.send();
       if (response != null) {

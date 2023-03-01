@@ -38,6 +38,7 @@ import jipsi.de.lohndirekt.print.attribute.ipp.Charset;
 import jipsi.de.lohndirekt.print.attribute.ipp.MimeMediaType;
 import jipsi.de.lohndirekt.print.attribute.ipp.NaturalLanguage;
 import jipsi.de.lohndirekt.print.attribute.ipp.RequestedAttributes;
+import jipsi.de.lohndirekt.print.attribute.ipp.jobdesc.PrintColorMode;
 
 import static jipsi.de.lohndirekt.print.attribute.IppIoUtils.writeInt2;
 import static jipsi.de.lohndirekt.print.attribute.IppIoUtils.writeInt4;
@@ -210,6 +211,9 @@ public final class AttributeWriter
     }
     else if (attribute instanceof MimeMediaType) {
       out.write((byte) IppValueTag.MIMETYPE.getId());
+    }
+    else if (attribute instanceof PrintColorMode) {
+      out.write((byte) IppValueTag.KEYWORD.getId());
     }
     else {
       out.write((byte) IppValueTag.NAME.getId());

@@ -29,7 +29,6 @@ import javax.print.attribute.HashAttributeSet;
 import javax.print.attribute.HashPrintJobAttributeSet;
 import javax.print.attribute.PrintJobAttribute;
 import javax.print.attribute.PrintJobAttributeSet;
-import javax.print.attribute.PrintRequestAttributeSet;
 import javax.print.attribute.standard.DocumentName;
 import jipsi.de.lohndirekt.print.SimpleMultiDoc;
 import jipsi.de.lohndirekt.print.attribute.ipp.DocumentFormat;
@@ -54,7 +53,7 @@ public final class AttributeHelper
    * @return only the attributes wich are of type <code>PrintJobAttribute</code>
    * and not operation attributes
    */
-  public final static PrintJobAttributeSet jobAttributes(PrintRequestAttributeSet attributes)
+  public final static PrintJobAttributeSet jobAttributes(AttributeSet attributes)
   {
     PrintJobAttributeSet jobAttributes = new HashPrintJobAttributeSet();
     if (attributes != null) {
@@ -77,7 +76,7 @@ public final class AttributeHelper
    * @param attributes
    * @return only job-operation attributes
    */
-  public final static AttributeSet jobOperationAttributes(PrintRequestAttributeSet attributes)
+  public final static AttributeSet jobOperationAttributes(AttributeSet attributes)
   {
     AttributeSet operationAttributes = new HashAttributeSet();
     if (attributes != null) {
