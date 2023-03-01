@@ -154,6 +154,7 @@ public final class AttributeHelper
                                  IppAttributeName.CHARSET.getCategory(),
                                  IppAttributeName.NATURAL_LANGUAGE.getCategory(),
                                  IppAttributeName.PRINTER_URI.getCategory(),
+                                 IppAttributeName.JOB_ID.getCategory(),
                                  IppAttributeName.REQUESTING_USER_NAME.getCategory(),
                                  IppAttributeName.JOB_NAME.getCategory(),
                                  IppAttributeName.FIDELITY.getCategory(),

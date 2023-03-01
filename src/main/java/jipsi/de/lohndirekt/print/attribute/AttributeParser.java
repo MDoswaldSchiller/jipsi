@@ -78,7 +78,7 @@ public final class AttributeParser
         if (attribute != null) {
           lastAttribute = attribute;
           attributes.put(attribute);
-          LOG.debug("parsed attribute({}): {}", attribute.getName(), attribute);
+          LOG.info("parsed attribute({}): {}", attribute.getName(), attribute);
 
         }
         else {
@@ -144,7 +144,7 @@ public final class AttributeParser
           attribute = (Attribute) constructor.newInstance(values);
         }
         catch (IllegalAccessException | IllegalArgumentException | InstantiationException | NoSuchMethodException | SecurityException | InvocationTargetException e) {
-          LOG.error("Error constructing attribute object for " + name, e);
+          LOG.error("Error constructing attribute object for {} ({})", name, Arrays.toString(parameters), e);
         }
       }
     }
@@ -191,8 +191,11 @@ public final class AttributeParser
     else if (name.equals(IppAttributeName.JOB_STATE_REASONS.getName())) {
       return parseJobStateReasons(values, lastAttribute);
     }
-    else {
+    else if (valueTag != IppValueTag.NOVALUE) {
       return createAttribute(name, values);
+    }
+    else {
+      return null;
     }
   }
 
@@ -398,7 +401,7 @@ public final class AttributeParser
     int valueLength = parseInt2(in);
     byte[] valueData = in.readNBytes(valueLength);
     if (valueData.length != valueLength) {
-      throw new IOException("Could not read requested number of bytes from value stream" + valueLength);
+      throw new IOException("Could not read requested number of bytes from value stream: " + valueLength);
     }
     
     ByteArrayInputStream valueIn = new ByteArrayInputStream(valueData);

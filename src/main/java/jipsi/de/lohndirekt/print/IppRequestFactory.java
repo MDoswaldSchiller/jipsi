@@ -35,7 +35,7 @@ public final class IppRequestFactory
 
   public final static String IPP_REQUEST_IMPL_KEY = "de.lohndirekt.print.IppRequest.Impl";
 
-  final static IppRequest createIppRequest(URI uri,
+  public final static IppRequest createIppRequest(URI uri,
                                            OperationsSupported operation, RequestingUserName user,
                                            RequestingUserPassword passwd)
   {
@@ -65,10 +65,12 @@ public final class IppRequestFactory
         throw new RuntimeException(e);
       }
     }
-    if (user != null && passwd != null) {
+    if (user != null) {
       AttributeSet set = new HashAttributeSet();
       set.add(user);
-      set.add(passwd);
+      if (passwd != null) {
+        set.add(passwd);
+      }
       request.addOperationAttributes(set);
     }
     return request;

@@ -20,8 +20,10 @@ package jipsi.de.lohndirekt.print;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import javax.print.attribute.AttributeSet;
 import javax.print.attribute.PrintJobAttributeSet;
+import jipsi.de.lohndirekt.print.attribute.IppAttributeName;
 
 /**
  * @author sefftinge
@@ -39,4 +41,6 @@ public interface IppRequest
   void addOperationAttributes(AttributeSet attributes);
 
   void setPrinterAttributes(AttributeSet attributes);
+  
+  void setRequestedAttributes(List<IppAttributeName> attributes);
 }

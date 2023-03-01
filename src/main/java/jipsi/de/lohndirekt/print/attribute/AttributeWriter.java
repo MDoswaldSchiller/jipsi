@@ -24,6 +24,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.TimeZone;
 import javax.print.attribute.Attribute;
 import javax.print.attribute.DateTimeSyntax;
@@ -36,6 +37,7 @@ import javax.print.attribute.URISyntax;
 import jipsi.de.lohndirekt.print.attribute.ipp.Charset;
 import jipsi.de.lohndirekt.print.attribute.ipp.MimeMediaType;
 import jipsi.de.lohndirekt.print.attribute.ipp.NaturalLanguage;
+import jipsi.de.lohndirekt.print.attribute.ipp.RequestedAttributes;
 
 import static jipsi.de.lohndirekt.print.attribute.IppIoUtils.writeInt2;
 import static jipsi.de.lohndirekt.print.attribute.IppIoUtils.writeInt4;
@@ -70,6 +72,26 @@ public final class AttributeWriter
     writeString(value, out, DEFAULT_CHARSET.getValue());
   }
 
+  public void requestedAttributeBytes(List<IppAttributeName> requestedAttributes, OutputStream out) throws IOException
+  {
+    boolean first = true;
+    for (IppAttributeName attr : requestedAttributes) {
+      out.write((byte) IppValueTag.KEYWORD.getId());
+      
+      if (first) {
+        fillName(out, RequestedAttributes.getIppName());
+        first = false;
+      }
+      else {
+        writeInt2(0, out);
+      }
+      //value length
+      String attributeName = attr.getName();
+      writeInt2(attributeName.length(), out);
+      writeNameAndTextString(attributeName, out);
+    }
+  }
+  
   /**
    * @param attribute
    * @return

@@ -26,6 +26,7 @@ public class NaturalLanguage extends TextSyntax implements PrintRequestAttribute
 {
 
   public final static NaturalLanguage EN = new NaturalLanguage("en", Locale.getDefault());
+  public final static NaturalLanguage EN_US = new NaturalLanguage("en-us", Locale.getDefault());
   public final static NaturalLanguage DE = new NaturalLanguage("de", Locale.getDefault());
 
   /**

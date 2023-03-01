@@ -54,8 +54,7 @@ class CancelableJob extends Job implements CancelablePrintJob
     operationAttributes.add(this.jobUri);
     try {
       IppResponse response
-          = sendRequest(
-              OperationsSupported.CANCEL_JOB,
+          = sendRequest(OperationsSupported.CANCEL_JOB,
               operationAttributes);
       if (response.getStatus().equals(IppStatus.SUCCESSFUL_OK)
           || response.getStatus().equals(

@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.Locale;
 import javax.print.attribute.AttributeSet;
 import javax.print.attribute.HashAttributeSet;
@@ -44,6 +45,7 @@ import javax.print.attribute.standard.Sides;
 import jipsi.de.lohndirekt.print.IppRequest;
 import jipsi.de.lohndirekt.print.IppResponse;
 import jipsi.de.lohndirekt.print.attribute.AttributeMap;
+import jipsi.de.lohndirekt.print.attribute.IppAttributeName;
 import jipsi.de.lohndirekt.print.attribute.IppStatus;
 import jipsi.de.lohndirekt.print.attribute.ipp.Charset;
 import jipsi.de.lohndirekt.print.attribute.ipp.NaturalLanguage;
@@ -116,6 +118,12 @@ public class IppRequestTestImpl implements IppRequest
     this.printerAttributes = attrs;
   }
 
+  @Override
+  public void setRequestedAttributes(List<IppAttributeName> attributes)
+  {
+  
+  }
+  
   /**
    * @param operation
    */

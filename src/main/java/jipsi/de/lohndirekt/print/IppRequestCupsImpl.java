@@ -26,6 +26,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.print.attribute.Attribute;
@@ -52,7 +53,7 @@ import jipsi.de.lohndirekt.print.attribute.ipp.printerdesc.supported.OperationsS
  */
 public class IppRequestCupsImpl implements IppRequest
 {
-  private static final NaturalLanguage NATURAL_LANGUAGE_DEFAULT = NaturalLanguage.EN;
+  private static final NaturalLanguage NATURAL_LANGUAGE_DEFAULT = NaturalLanguage.EN_US;
   private static final Charset CHARSET_DEFAULT = Charset.UTF_8;
   private static final AtomicInteger ID_COUNTER = new AtomicInteger(0);
 
@@ -64,6 +65,7 @@ public class IppRequestCupsImpl implements IppRequest
   private PrintJobAttributeSet jobAttributes = new HashPrintJobAttributeSet();
   private AttributeSet operationAttributes = new HashAttributeSet();
   private AttributeSet printerAttributes = new HashAttributeSet();
+  private List<IppAttributeName> requestedAttributes;
   
   /**
    * @param operation
@@ -100,6 +102,12 @@ public class IppRequestCupsImpl implements IppRequest
     this.operationAttributes.addAll(attributes);
   }
 
+  @Override
+  public void setRequestedAttributes(List<IppAttributeName> requestedAttributes)
+  {
+    this.requestedAttributes = requestedAttributes;
+  }
+ 
   /**
    * @param stream
    */
@@ -139,7 +147,15 @@ public class IppRequestCupsImpl implements IppRequest
   {
     ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
     serializeIppHeader(byteOut);
-    serializeIppAttributes(byteOut);
+    
+    serializeAttributes(IppDelimiterTag.BEGIN_OPERATION_ATTRIBUTES, AttributeHelper.getOrderedOperationAttributeArray(operationAttributes), byteOut);
+    if (requestedAttributes!= null && !requestedAttributes.isEmpty()) {
+      new AttributeWriter().requestedAttributeBytes(requestedAttributes, byteOut);
+    }
+    
+    serializeAttributes(IppDelimiterTag.BEGIN_PRINTER_ATTRIBUTES, printerAttributes.toArray(), byteOut);
+    serializeAttributes(IppDelimiterTag.BEGIN_JOB_ATTRIBUTES, jobAttributes.toArray(), byteOut);
+    
     serializeIppFooter(byteOut);
     if (data != null) {
       data.transferTo(byteOut);
@@ -153,16 +169,6 @@ public class IppRequestCupsImpl implements IppRequest
   private void serializeIppFooter(OutputStream output) throws IOException
   {
     output.write((byte) IppDelimiterTag.END_ATTRIBUTES.getValue());
-  }
-
-  /**
-   *
-   */
-  private void serializeIppAttributes(OutputStream output) throws UnsupportedEncodingException, IOException
-  {
-    serializeAttributes(IppDelimiterTag.BEGIN_OPERATION_ATTRIBUTES, AttributeHelper.getOrderedOperationAttributeArray(operationAttributes), output);
-    serializeAttributes(IppDelimiterTag.BEGIN_PRINTER_ATTRIBUTES, printerAttributes.toArray(), output);
-    serializeAttributes(IppDelimiterTag.BEGIN_JOB_ATTRIBUTES, jobAttributes.toArray(), output);
   }
   
   private void serializeAttributes(IppDelimiterTag beginTag, Attribute[] attributes, OutputStream out) throws UnsupportedEncodingException, IOException
