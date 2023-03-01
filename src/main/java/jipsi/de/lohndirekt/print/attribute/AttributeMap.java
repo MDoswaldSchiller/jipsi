@@ -65,6 +65,7 @@ public final class AttributeMap
       }
     }
     
+    builder.append('}');
     return builder.toString();
   }
 }
