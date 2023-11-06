@@ -52,7 +52,6 @@ public class IppPrintServiceTest extends TestCase
   @Override
   protected void setUp() throws Exception
   {
-    super.setUp();
     System.setProperty(IppRequestFactory.IPP_REQUEST_IMPL_KEY, IppRequestTestImpl.class.getName());
     IppPrintServiceLookup lookup = new IppPrintServiceLookup(new URI("http://127.0.0.1"), "", "");
     PrintService[] services = lookup.getPrintServices();
